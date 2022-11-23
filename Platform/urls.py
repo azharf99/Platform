@@ -15,8 +15,25 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from django.shortcuts import render
+
+
+def home(request):
+    return render(request, 'home.html')
+
+def home_ekskul(request):
+    return render(request, 'ekskul.html')
 
 urlpatterns = [
+    path('', home),
     path('admin/', admin.site.urls),
-    path('', include('ekskul.urls'))
+    path('ekskul/', home_ekskul),
+    path('ekskul/proposal/', include('proposal.urls')),
+    path('ekskul/laporan/', include('laporan.urls')),
+    path('ekskul/nilai/', include('nilai.urls')),
+    path('ekskul/data/', include('ekskul.urls')),
 ]
+
+urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
