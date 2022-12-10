@@ -38,8 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ekskul.apps.EkskulConfig',
-    'proposal.apps.ProposalConfig',
+    # 'inventaris.apps.InventarisConfig',
+    # 'laporan.apps.LaporanConfig',
+    # 'nilai.apps.NilaiConfig',
+    # 'proposal.apps.ProposalConfig',
+    # 'timeline.apps.TimelineConfig',
+
 ]
+
+AUTH_USER_MODEL = 'ekskul.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

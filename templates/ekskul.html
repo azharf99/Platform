@@ -1,10 +1,91 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Ekstrakurikuler</title>
-</head>
-<body>
-<h1>Ini Halaman Ekstrakurikuler</h1>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<div class="container">
+    <h1>Ini Halaman Ekstrakurikuler</h1>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="card col-4 col-md m-2" style="width: 18rem;">
+            <img src="#" class="card-img-top" alt="Gambar Ekskul">
+            <div class="card-body">
+                <h5 class="card-title">Info ekskul</h5>
+                <p class="card-text">Informasi terkait data ekskul di sekolah</p>
+                <a href="{% url 'data-index' %}" class="btn btn-primary">Lihat</a>
+            </div>
+        </div>
+        <div class="card col-4 col-md m-2" style="width: 18rem;">
+            <img src="#" class="card-img-top" alt="Gambar Ekskul">
+            <div class="card-body">
+                <h5 class="card-title">Laporan Kehadiran</h5>
+                <p class="card-text">Portal laporan kehadiran ekskul</p>
+                <a href="{% url 'laporan-index' %}" class="btn btn-primary">Lihat</a>
+            </div>
+        </div>
+        <div class="card col-4 col-md m-2" style="width: 18rem;">
+            <img src="#" class="card-img-top" alt="Gambar Ekskul">
+            <div class="card-body">
+                <h5 class="card-title">Proposal</h5>
+                <p class="card-text">Portal pengajuan proposal ekskul</p>
+                <a href="{% url 'proposal-index' %}" class="btn btn-primary">Lihat</a>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="card col-4 col-md m-2" style="width: 18rem;">
+            <img src="#" class="card-img-top" alt="Gambar Ekskul">
+            <div class="card-body">
+                <h5 class="card-title">Inventaris</h5>
+                <p class="card-text">Berisi data inventaris ekskul</p>
+                <a href="{% url 'inventaris-index' %}" class="btn btn-primary">Lihat</a>
+            </div>
+        </div>
+        <div class="card col-4 col-md m-2" style="width: 18rem;">
+            <img src="#" class="card-img-top" alt="Gambar Ekskul">
+            <div class="card-body">
+                <h5 class="card-title">Timeline</h5>
+                <p class="card-text">Berisi agenda-agenda ekskul yang akan dilaksanakan</p>
+                <a href="{% url 'timeline-index' %}" class="btn btn-primary">Lihat</a>
+            </div>
+        </div>
+        <div class="card col-4 col-md m-2" style="width: 18rem;">
+            <img src="#" class="card-img-top" alt="Gambar Ekskul">
+            <div class="card-body">
+                <h5 class="card-title">Nilai</h5>
+                <p class="card-text">Berisi informasi nilai ekskul santri</p>
+                <a href="{% url 'nilai-index' %}" class="btn btn-primary">Lihat</a>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="card col-4 col-md m-2" style="width: 18rem;">
+            <img src="#" class="card-img-top" alt="Gambar Ekskul">
+            <div class="card-body">
+                <h5 class="card-title">Catatan Prestasi</h5>
+                <p class="card-text">Berisi informasi catatan prestasi</p>
+                <a href="{% url 'prestasi-page' %}" class="btn btn-primary">Lihat</a>
+            </div>
+        </div>
+        <div class="card col-4 col-md m-2" style="width: 18rem;">
+            <img src="#" class="card-img-top" alt="Gambar Ekskul">
+            <div class="card-body">
+                <h5 class="card-title">Struktur Organisasi</h5>
+                <p class="card-text">Berisi informasi struktur organisasi bidang ekstrakurikuler dan prestasi</p>
+                <a href="{% url 'struktur-page' %}" class="btn btn-primary">Lihat</a>
+            </div>
+        </div>
+        <div class="card col-4 col-md m-2" style="width: 18rem;">
+            <img src="#" class="card-img-top" alt="Gambar Ekskul">
+            <div class="card-body">
+                <h5 class="card-title">Unduh</h5>
+                <p class="card-text">Halaman untuk unduh data informasi publik</p>
+                <a href="{% url 'unduh-page' %}" class="btn btn-primary">Lihat</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

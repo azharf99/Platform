@@ -1,15 +1,14 @@
 from django.db import models
-from ekskul.models import Teacher, Extracurricular
-
+from ekskul.models import Extracurricular, Teacher
 
 # Create your models here.
 
 class Report(models.Model):
-    nama_ekskul = models.CharField(max_length=100)
-    nama_pembina = models.CharField(max_length=100)
-    tanggal_pembinaan = models.DateField(auto_now=True)
+    nama_ekskul = models.ForeignKey(Extracurricular)
+    nama_pembina = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    tanggal_pembinaan = models.DateField()
 
 
-class Image(models.Model):
-    ekskul = models.ForeignKey(Report, on_delete=models.CASCADE)
-    # foto = models.ImageField(upload_to=)
+class UploadImage(models.Model):
+    ekskul = models.ForeignKey(Report, on_delete=models.SET_NULL, null=True)
+    foto = models.ImageField(upload_to='laporan-bulanan')

@@ -1,0 +1,28 @@
+1. Membuat back-end atau desain model database DATA EKSKUL
+2. Membuat front-end untuk DATA EKSKUL
+3. Membuat front-end untuk RINCIAN DATA EKSKUL
+4. Membuat back-end atau desain model database INVENTARIS
+5. Membuat front-end untuk INVENTARIS
+6. Membuat front-end untuk RINCIAN INVENTARIS
+7. Membuat back-end atau desain model database LAPORAN EKSKUL
+8. Membuat front-end untuk LAPORAN EKSKUL
+9. Membuat front-end untuk RINCIAN LAPORAN EKSKUL
+10. Membuat back-end atau desain model database NILAI EKSKUL
+11. Membuat front-end untuk NILAI EKSKUL
+12. Membuat front-end untuk RINCIAN NILAI EKSKUL
+13. Membuat back-end atau desain model database PROPOSAL EKSKUL
+14. Membuat front-end untuk PROPOSAL EKSKUL
+15. Membuat front-end untuk RINCIAN PROPOSAL EKSKUL
+16. Membuat back-end atau desain model database PROPOSAL EKSKUL
+17. Membuat front-end untuk PROPOSAL EKSKUL
+18. Membuat front-end untuk RINCIAN PROPOSAL EKSKUL
+19. Membuat back-end atau desain model database TIMELINE EKSKUL
+20. Membuat front-end untuk TIMELINE EKSKUL
+21. Membuat front-end untuk RINCIAN TIMELINE EKSKUL
+22. Membuat back-end atau desain model database STRUKTUR EKSKUL
+23. Membuat front-end untuk STRUKTUR EKSKUL
+24. Membuat back-end atau desain model database PRESTASI EKSKUL
+25. Membuat front-end untuk PRESTASI EKSKUL
+26. Membuat back-end atau desain model database UNDUH DATA
+27. Membuat front-end untuk UNDUH DATA
+

@@ -6,3 +6,4 @@ from ekskul.models import *
 admin.site.register(Teacher)
 admin.site.register(Student)
 admin.site.register(Extracurricular)
+admin.site.register(User)

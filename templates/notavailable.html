@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-5 p-5">
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Uppss!</h4>
+            <p>Mohon maaf saat ini fitur belum tersedia. :( </p>
+            <hr>
+            <p class="mb-2">Kami hanya fokus mengembangkan bidang Ekstrakurikuler saja.
+                Jika anda meminta, silahkan hubungi <em>developer</em> aplikasi dengan membawa konsep/desain/ui
+                yang sudah lengkap dan matang. Jika ingin membuat sendiri, silahkan tambahkan fiturnya
+                ke source code dengan <em>clone</em> melalui
+                <a href="https://github.com/azharf99/Platform">github</a>.
+                Kami <em>development</em> aplikasi ini dengan bahasa pemrograman Python.</p>
+            <a class="btn btn-danger" href="{% url 'app-index' %}">Kembali</a>
+        </div>
+    </div>
+{% endblock %}

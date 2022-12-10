@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center align-items-center mt-5">
+            <div class="col-md-4 text-center mt-2">
+                <img src="{{ teacher.foto.url }}" style="max-height: 10rem; max-width: 10rem;">
+
+            </div>
+            <div class="col-md-4 mt-2">
+                <h2>{{ ekskul.nama }}</h2>
+                <h6>Ustadz {{ ekskul.pembina.first }}</h6>
+                <p>{{ teacher.email }} | {{ teacher.no_hp }}</p>
+                <p>Jadwal pertemuan: {{ ekskul.jadwal}} {{ ekskul.waktu }}</p>
+                <p>Pertemuan tambahan: {{ ekskul.jadwal_tambahan}} {{ ekskul.waktu_tambahan }}</p>
+
+            </div>
+        </div>
+        <div class="row align-item-center">
+            <div class="col-sm">
+
+                <table class="table table-hover w-100">
+                    <thead>
+                    <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">Nama Anggota</th>
+                        <th scope="col">NIS</th>
+                        <th scope="col">NISN</th>
+                        <th scope="col">Kelas</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if siswa %}
+                        {% for student in siswa %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ student.nama }}</td>
+                                <td>{{ student.nis }}</td>
+                                <td>{{ student.nisn }}</td>
+                                <td>{{ student.kelas }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                        <td colspan="5" class="text-center fw-bold">Maaf, belum ada anggota :(</td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

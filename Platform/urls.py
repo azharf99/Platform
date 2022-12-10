@@ -25,15 +25,30 @@ def home(request):
 
 def home_ekskul(request):
     return render(request, 'ekskul.html')
+def prestasi(request):
+    return render(request, 'prestasi.html')
+def struktur(request):
+    return render(request, 'struktur.html')
+def unduh(request):
+    return render(request, 'unduh.html')
+
+def not_available(request):
+    return render(request, 'notavailable.html')
 
 urlpatterns = [
-    path('', home),
+    path('', home, name='app-index'),
     path('admin/', admin.site.urls),
-    path('ekskul/', home_ekskul),
+    path('ekskul/', home_ekskul, name='ekskul-page'),
     path('ekskul/proposal/', include('proposal.urls')),
     path('ekskul/laporan/', include('laporan.urls')),
     path('ekskul/nilai/', include('nilai.urls')),
     path('ekskul/data/', include('ekskul.urls')),
+    path('ekskul/inventaris/', include('inventaris.urls')),
+    path('ekskul/timeline/', include('timeline.urls')),
+    path('ekskul/prestasi/', prestasi, name='prestasi-page'),
+    path('ekskul/struktur/', struktur, name='struktur-page'),
+    path('ekskul/unduh/', unduh, name='unduh-page'),
+    path('notavailable/', not_available, name='not-available'),
 ]
 
 urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
