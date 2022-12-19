@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="position-absolute top-50 start-50 translate-middle">
+            <div class="card" style="min-width: 18rem;">
+                <div class="card-header bg-dark text-light">
+                    Input Anggota Ekskul {{ ekskul.nama }}
+                </div>
+                <div class="card-body">
+                    <div class="d-block m-3 fw-bold">
+                        <label for="id_ekskul_siswa">Ekskul siswa:</label>
+                        <select name="ekskul_siswa" required id="id_ekskul_siswa">
+                            <option value="{{ ekskul.id }}">{{ ekskul.nama}}</option>
+                        </select>
+                    </div>
+                    <div class="d-block m-3 fw-bold">
+                        <label for="id_nama_siswa">Nama siswa:</label>
+                        {{ form.nama_siswa }}
+                    </div>
+                    <div class="d-block mt-3 fw-bold text-center">
+
+                        <a href="{% url 'ekskul:data-detail' ekskul.slug %}" class="card-link btn btn-danger">Kembali</a>
+                        <input type="submit" class="card-link btn btn-success" value="Save Data">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="position-absolute top-50 start-50 translate-middle">
+            <div class="card" style="min-width: 18rem;">
+                <div class="card-header bg-dark text-light">
+                    Input Laporan Kehadiran Ekskul {{ ekskul.nama }}
+                </div>
+                <div class="card-body">
+                    {% if filtered_student %}
+
+                        <div class="field">
+                            <label for="id_nama_ekskul">Nama ekskul:</label>
+                            <select name="nama_ekskul" required id="id_nama_ekskul">
+                                <option value="{{ ekskul.id }}">{{ ekskul.nama }}</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="id_pembina_ekskul">Pembina Ekskul:</label>
+                            {{ form.pembina_ekskul }}
+                        </div>
+                        <div class="field">
+                            <label for="id_tanggal_pembinaan">Tanggal Pembinaan:</label>
+                            <input type="date" name="tanggal_pembinaan" required id="id_tanggal_pembinaan">
+                        </div>
+                        <div class="field">
+                            <label for="id_kehadiran_santri">Kehadiran santri:</label>
+                            <select name="kehadiran_santri" required id="id_kehadiran_santri" multiple>
+                                {% for student in filtered_student %}
+                                    <option value="{{ student.id }}">{{ student.nama_siswa }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="id_catatan_pembinaan">Catatan Pembinaan:</label>
+                            {{ form.catatan_pembinaan }}
+                        </div>
+
+                    {% else %}
+                        <h3 class="text-danger">Maaf, sistem kami mendeteksi anda belum input data anggota ekskul. Silahkan input data anggota ekskul terlebih dahulu sebelum anda input laporan. Terima kasih. :)</h3>
+                    {% endif %}
+
+                </div>
+                <div class="card-footer text-center">
+                    {% if filtered_student %}
+                        <a href="{% url 'laporan:laporan-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
+                        <input type="submit" class="card-link btn btn-success m-1" value="Save Data">
+                    {% else %}
+                        <a href="{% url 'laporan:laporan-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
+                        <a href="{% url 'ekskul:input-anggota' ekskul.slug %}" class="card-link btn btn-primary m-1">Input Anggota {{ ekskul.nama }}</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

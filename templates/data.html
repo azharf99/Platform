@@ -3,9 +3,11 @@
 {% block content %}
 
 
-    <div class="container">
+    <div class="container m-5 text-center">
         <h1>Ini adalah halaman data</h1>
+        <a href="{% url 'ekskul:input-pembina' %}" class="btn btn-sm btn-primary">Tambah Data Pembina Ekskul</a>
     </div>
+
     <div class="container">
         <div class="text-center">
 
@@ -21,12 +23,12 @@
                         {% endfor %}
                         <p class="p-0 m-0">Jadwal Pertemuan: {{ ekskul.jadwal }} {{ ekskul.waktu }}</p>
                         {% if ekskul.jadwal_tambahan %}
-                        <p class="p-0 m-0">Pertemuan tambahan: {{ ekskul.jadwal_tambahan }} {{ ekskul.waktu_tambahan }}</p>
+                            <p class="p-0 m-0">Pertemuan tambahan: {{ ekskul.jadwal_tambahan }} {{ ekskul.waktu_tambahan }}</p>
                         {% endif %}
-                        <p class="card-text p-0 m-0">Jumlah anggota : {{ ekskul.student_set.count }}</p>
+                        <p class="card-text p-0 m-0">Jumlah anggota : {{ ekskul.studentorganization_set.count }}</p>
                     </div>
                     <div class="card-footer border-dark text-light">
-                        <a href="{% url 'data-detail' ekskul.id %}" class="btn btn-sm btn-outline-primary">Info {{ ekskul.tipe }}</a>
+                        <a href="{% url 'ekskul:data-detail' ekskul.slug %}" class="btn btn-sm btn-outline-primary">Info {{ ekskul.tipe }}</a>
                         <a href="#" class="btn btn-sm btn-outline-success">Dokumentasi</a>
                     </div>
                 </div>

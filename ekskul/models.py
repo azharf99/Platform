@@ -4,19 +4,22 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class User(AbstractUser):
-    no_hp = models.IntegerField(blank=True, default=0)
+    # no_hp = models.IntegerField(blank=True, default=0)
     foto = models.ImageField(upload_to='user', default='blank-profile.png')
 
 
 
 class Teacher(models.Model):
-    nama = models.OneToOneField('User', on_delete=models.CASCADE)
-    nama_lengkap = models.CharField(max_length=100)
-    niy = models.IntegerField(default=0)
+    nama = models.OneToOneField('User', on_delete=models.CASCADE, verbose_name="Username")
+    nama_lengkap = models.CharField(max_length=100, verbose_name="Nama Pembina")
+    niy = models.IntegerField(default=0, verbose_name='NIY')
     gelar_depan = models.CharField(max_length=20, blank=True)
     gelar_belakang = models.CharField(max_length=20, blank=True)
     jabatan = models.CharField(max_length=20, blank=True)
     jabatan_khusus = models.CharField(max_length=50, blank=True)
+    email = models.EmailField(default='user@gmail.com')
+    no_hp = models.IntegerField(blank=True, default=0)
+    # foto = models.ImageField(upload_to='user', default='blank-profile.png')
 
 
     def __str__(self):
@@ -49,13 +52,14 @@ class Extracurricular(models.Model):
         ("Siang","Siang"),
     )
 
-    nama = models.CharField(max_length=50)
+    nama = models.CharField(max_length=50, verbose_name="Nama Ekskul")
     pembina = models.ManyToManyField(Teacher)
-    jadwal = models.CharField(max_length=15, choices=hari)
+    jadwal = models.CharField(max_length=15, choices=hari, verbose_name="Jadwal Pembinaan")
     waktu = models.CharField(max_length=15, choices=pilihan_waktu)
     jadwal_tambahan = models.CharField(max_length=20, choices=hari, default="Tidak ada", blank=True)
     waktu_tambahan = models.CharField(max_length=15, choices=pilihan_waktu, blank=True)
     tipe = models.CharField(max_length=20, choices=jenis, blank=True)
+    slug = models.SlugField(blank=True)
 
     def __str__(self):
         return self.nama
@@ -90,9 +94,18 @@ class Student(models.Model):
     )
     nama = models.CharField(max_length=100)
     nis = models.IntegerField(unique=True)
-    nisn = models.IntegerField(unique=True)
+    nisn = models.CharField(max_length=20)
     kelas = models.CharField(max_length=15, choices=pilih_kelas)
-    ekskul = models.ManyToManyField(Extracurricular)
+    # ekskul = models.ManyToManyField(Extracurricular)
 
     def __str__(self):
-        return self.nama
+        return '%s | %s' % (self.kelas, self.nama[:18])
+
+
+class StudentOrganization(models.Model):
+    ekskul_siswa = models.ForeignKey(Extracurricular, on_delete=models.CASCADE)
+    # pembina_ekskul = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    nama_siswa = models.ForeignKey(Student, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "%s | %s" % (self.ekskul_siswa.slug.upper(), self.nama_siswa)

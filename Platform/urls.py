@@ -35,6 +35,9 @@ def unduh(request):
 def not_available(request):
     return render(request, 'notavailable.html')
 
+def restricted(request):
+    return render(request, 'restricted.html')
+
 urlpatterns = [
     path('', home, name='app-index'),
     path('admin/', admin.site.urls),
@@ -49,6 +52,7 @@ urlpatterns = [
     path('ekskul/struktur/', struktur, name='struktur-page'),
     path('ekskul/unduh/', unduh, name='unduh-page'),
     path('notavailable/', not_available, name='not-available'),
+    path('restricted/', restricted, name='restricted'),
 ]
 
 urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

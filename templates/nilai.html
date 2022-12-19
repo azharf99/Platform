@@ -1,6 +1,35 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Ini adalah halaman nilai</h1>
+
+
+    <div class="container m-5 text-center">
+        <h1>Ini adalah halaman nilai</h1>
+    </div>
+
+    <div class="container">
+        <div class="text-center">
+
+            {% for data in ekskul %}
+                <div class="card border-success d-inline-flex text-start m-2" style="width: 18rem; height: 100%;">
+                    <div class="card-header bg-success text-light">
+                        {{ data.get_tipe_display }}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ data.nama }}</h5>
+                        {% for pembina in data.pembina.all %}
+                            <h6 class="card-subtitle mb-2 text-muted">Ustadz {{ pembina }}</h6>
+                        {% endfor %}
+                        <p class="card-text p-0 m-0">Jumlah anggota : {{ data.studentorganization_set.count }}</p>
+                    </div>
+                    <div class="card-footer border-success text-light">
+                        <a href="{% url 'nilai:nilai-input' data.slug %}" class="btn btn-sm btn-primary">Input Nilai</a>
+                        <a href="{% url 'nilai:nilai-detail' data.slug %}" class="btn btn-sm btn-outline-success">Daftar Nilai</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
 
 {% endblock %}

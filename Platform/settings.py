@@ -38,11 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ekskul.apps.EkskulConfig',
-    # 'inventaris.apps.InventarisConfig',
-    # 'laporan.apps.LaporanConfig',
-    # 'nilai.apps.NilaiConfig',
-    # 'proposal.apps.ProposalConfig',
-    # 'timeline.apps.TimelineConfig',
+    'inventaris.apps.InventarisConfig',
+    'laporan.apps.LaporanConfig',
+    'nilai.apps.NilaiConfig',
+    'proposal.apps.ProposalConfig',
+    'timeline.apps.TimelineConfig',
 
 ]
 

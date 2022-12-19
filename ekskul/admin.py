@@ -3,7 +3,6 @@ from ekskul.models import *
 
 # Register your models here.
 
-admin.site.register(Teacher)
-admin.site.register(Student)
-admin.site.register(Extracurricular)
-admin.site.register(User)
+@admin.register(User, Student, StudentOrganization,Extracurricular, Teacher)
+class AdminUmum(admin.ModelAdmin):
+    pass

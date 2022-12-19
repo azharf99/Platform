@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container text-center">
+    <h1 class="m-3">Data Nilai Ekstrakurikuler {{ ekskul.nama }}</h1>
+    </div>
+
+    <div class="container">
+    <table class="table table-hover w-100">
+        <thead>
+        <tr>
+            <th scope="col">No.</th>
+            <th scope="col">Nama Santri</th>
+            <th scope="col">Kelas</th>
+            <th scope="col">Nilai</th>
+            <th scope="col">Aksi</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if nilai %}
+            {% for data in nilai %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ data.siswa.nama_siswa.nama }}</td>
+                    <td>{{ data.siswa.nama_siswa.kelas }}</td>
+                    <td>{{ data.nilai }}</td>
+                    <td>Edit, Hapus</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="5" class="text-center fw-bold text-danger">Maaf, belum ada data nilai :(</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+    </div>
+
+{% endblock %}

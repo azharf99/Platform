@@ -3,4 +3,6 @@ from nilai.models import Penilaian
 
 # Register your models here.
 
-admin.site.register(Penilaian)
+@admin.register(Penilaian)
+class TampilanAdmin(admin.ModelAdmin):
+    pass

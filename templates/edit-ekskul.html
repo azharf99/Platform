@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="position-absolute top-50 start-50 translate-middle">
+            <div class="card" style="min-width: 18rem;">
+                <div class="card-header bg-dark text-light">
+                    Edit Data Ekskul {{ ekskul.nama }}
+                </div>
+                <div class="card-body">
+                    {{ form.as_p }}
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'ekskul:data-detail' ekskul.slug %}" class="card-link btn btn-danger">Kembali</a>
+                    <input type="submit" class="card-link btn btn-success" value="Save Data">
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
