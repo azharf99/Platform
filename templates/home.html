@@ -2,7 +2,7 @@
 {% block content %}
     <div class="mt-5 pt-4 text-center">
         {% if request.user.is_authenticated %}
-            <p class="my-1">السلام عليكم.</p>
+            <p class="my-1">السلام عليكم</p>
             <p class="my-1">أَهْلًا وَسَهْلًا يا أستاذ  </p>
             <p class="my-1">{{ request.user.teacher }}</p>
         {% else %}
