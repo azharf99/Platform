@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container-fluid mt-5 p-5">
+        <div class="w-100 h-100 d-flex justify-content-center">
+            <form enctype="multipart/form-data" method="post" action="">
+                {% csrf_token %}
+                {% if messages %}
+                    <ul class="messages text-danger fw-bold">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <div class="card" style="min-width: 18rem;">
+                    <div class="card-header bg-dark text-light">
+                        Input Nilai Ekskul {{ ekskul.nama }}
+                    </div>
+                    <div class="card-body">
+                        {{ form.as_p }}
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="{% url 'profil' %}" class="btn btn-danger">Back to Profil</a>
+                        <input class="btn btn-success" type="submit" value="Simpan Perubahan">
+                    </div>
+                </div>
+        </div>
+    </div>
+
+{% endblock %}

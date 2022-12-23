@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container-fluid mt-5 p-5">
+        <div class="w-100 h-100 d-flex justify-content-center">
+            <form action="" method="post">
+                {% csrf_token %}
+                {% if messages %}
+                    <ul class="messages text-danger fw-bold">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <div class="card" style="min-width: 18rem;">
+                    <div class="card-header text-bg-dark text-center">
+                        Input Laporan Kehadiran Ekskul {{ ekskul.nama }}
+                    </div>
+                    <div class="card-body">
+                        {{ form.as_p }}
+
+                    </div>
+                    <div class="card-footer text-center">
+                            <a href="{% url 'laporan:laporan-detail' ekskul.slug %}" class="card-link btn btn-danger m-1">Kembali</a>
+                            <input type="submit" class="card-link btn btn-success m-1" value="Save Data">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

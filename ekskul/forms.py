@@ -8,7 +8,7 @@ class InputAnggotaEkskulForm(forms.ModelForm):
         fields = '__all__'
 
 
-class InputPembinaEkskulForm(forms.ModelForm):
+class PembinaEkskulForm(forms.ModelForm):
     class Meta:
         model = Teacher
         fields = '__all__'

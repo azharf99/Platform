@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-5 pt-4">
+        {% if teacher %}
+            <div class="row justify-content-center align-items-center">
+                <div class="col-sm text-center my-2">
+                    <img src="{{ teacher.foto.url }}" width="150" height="150" class="shadow-lg">
+                </div>
+                <div class="col-sm my-2">
+                    <h3>{{ teacher }}</h3>
+                    <h4><span class="badge bg-secondary">{{ teacher.user.username }}</span></h4>
+                    {% if teacher.niy %}
+                        <h4>{{ teacher.niy }}</h4>
+                    {% else %}
+                        <h6 class="text-danger">NIY belum diisi</h6>
+                    {% endif %}
+                    <h5>{{ teacher.email }}</h5>
+                    {% if teacher.no_hp %}
+                        <h5>{{ teacher.no_hp }}</h5>
+                    {% else %}
+                        <h6 class="text-danger">No HP belum diisi</h6>
+                    {% endif %}
+                    <h5>{{ teacher.jabatan }}</h5>
+                    <h5>{{ teacher.jabatan_khusus }}</h5>
+                    <a href="{% url 'edit-profil' %}" class="btn btn-warning fw-bold w-100 p-2 my-4">Edit Profil?</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

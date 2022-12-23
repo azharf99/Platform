@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = 'ekskul.User'
+
 
 # Application definition
 
@@ -43,10 +45,10 @@ INSTALLED_APPS = [
     'nilai.apps.NilaiConfig',
     'proposal.apps.ProposalConfig',
     'timeline.apps.TimelineConfig',
+    'deskripsi.apps.DeskripsiConfig',
 
 ]
 
-AUTH_USER_MODEL = 'ekskul.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

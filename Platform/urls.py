@@ -19,12 +19,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import render
 
+import deskripsi.views
+import ekskul.views
 
-def home(request):
-    return render(request, 'home.html')
 
-def home_ekskul(request):
-    return render(request, 'ekskul.html')
 def prestasi(request):
     return render(request, 'prestasi.html')
 def struktur(request):
@@ -38,10 +36,16 @@ def not_available(request):
 def restricted(request):
     return render(request, 'restricted.html')
 
+
+
 urlpatterns = [
-    path('', home, name='app-index'),
+    path('', deskripsi.views.home_view, name='app-index'),
     path('admin/', admin.site.urls),
-    path('ekskul/', home_ekskul, name='ekskul-page'),
+    path('login/', ekskul.views.login_view, name='login'),
+    path('profil/', ekskul.views.profil_view, name='profil'),
+    path('profil/edit', ekskul.views.edit_profil_view, name='edit-profil'),
+    path('logout/', ekskul.views.logout_view, name='logout'),
+    path('ekskul/', deskripsi.views.ekskul_view, name='ekskul-page'),
     path('ekskul/proposal/', include('proposal.urls')),
     path('ekskul/laporan/', include('laporan.urls')),
     path('ekskul/nilai/', include('nilai.urls')),

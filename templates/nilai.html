@@ -3,31 +3,44 @@
 {% block content %}
 
 
-    <div class="container m-5 text-center">
-        <h1>Ini adalah halaman nilai</h1>
+    <div class="my-5 pt-5 text-center">
+        <h1>Nilai Ekstrakurikuler SMA IT Al Binaa</h1>
+        <a href="{% url 'nilai:nilai-per-kelas' %}" class="btn btn-success">Lihat Nilai Berdasarkan Kelas?</a>
     </div>
 
-    <div class="container">
-        <div class="text-center">
-
-            {% for data in ekskul %}
-                <div class="card border-success d-inline-flex text-start m-2" style="width: 18rem; height: 100%;">
-                    <div class="card-header bg-success text-light">
-                        {{ data.get_tipe_display }}
+    <div class="container text-center">
+        <form class="d-flex my-4 mx-4" role="search" method="get" action="{% url 'nilai:nilai-index' %}">
+            <input class="form-control me-2" name="q" type="text" placeholder="Cari sesuatu?" aria-label="Search">
+            <input class="btn btn-outline-success" type="submit" value="Cariin dong">
+        </form>
+        <div class="d-flex flex-wrap justify-content-center">
+            {% if ekskul %}
+                {% for data in ekskul %}
+                    <div class="card border-success m-2" style="width: 18rem; height: 100%;">
+                        <div class="card-header bg-success text-light">
+                            {{ data.get_tipe_display }}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ data.nama }}</h5>
+                            {% for pembina in data.pembina.all %}
+                                <h6 class="card-subtitle mb-2 text-muted">Ustadz {{ pembina }}</h6>
+                            {% endfor %}
+                            <p class="card-text p-0 m-0">Jumlah anggota : {{ data.studentorganization_set.count }}</p>
+                        </div>
+                        <div class="card-footer border-success text-light">
+                            <a href="{% url 'nilai:nilai-input' data.slug %}" class="btn btn-sm btn-primary">Input Nilai</a>
+                            <a href="{% url 'nilai:nilai-detail' data.slug %}" class="btn btn-sm btn-outline-success">Daftar Nilai</a>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">{{ data.nama }}</h5>
-                        {% for pembina in data.pembina.all %}
-                            <h6 class="card-subtitle mb-2 text-muted">Ustadz {{ pembina }}</h6>
-                        {% endfor %}
-                        <p class="card-text p-0 m-0">Jumlah anggota : {{ data.studentorganization_set.count }}</p>
-                    </div>
-                    <div class="card-footer border-success text-light">
-                        <a href="{% url 'nilai:nilai-input' data.slug %}" class="btn btn-sm btn-primary">Input Nilai</a>
-                        <a href="{% url 'nilai:nilai-detail' data.slug %}" class="btn btn-sm btn-outline-success">Daftar Nilai</a>
-                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">Uppss!</h4>
+                    <h5>Maaf yang kamu cari gak ada nih. :( </h5>
+                    <hr>
+                    <p class="mb-2">Mungkin bisa pake kata kunci pencarian yang lain :)</p>
                 </div>
-            {% endfor %}
+            {% endif %}
         </div>
     </div>
 

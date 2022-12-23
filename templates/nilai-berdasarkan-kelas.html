@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="mt-5 pt-4 text-center">
-    <h1 class="m-3">Data Nilai Ekstrakurikuler {{ ekskul.nama }}</h1>
+    <div class="my-5 pt-5 text-center">
+    <h1>Data Nilai Ekstrakurikuler Per Kelas</h1>
+    <a href="{% url 'nilai:nilai-index' %}" class="btn btn-warning">Lihat Nilai Berdasarkan Ekskul?</a>
     </div>
 
     <div class="container">
@@ -10,10 +11,10 @@
         <thead>
         <tr>
             <th scope="col">No.</th>
+            <th scope="col">Ekskul</th>
             <th scope="col">Nama Santri</th>
             <th scope="col">Kelas</th>
             <th scope="col">Nilai</th>
-            <th scope="col">Aksi</th>
         </tr>
         </thead>
         <tbody>
@@ -21,10 +22,10 @@
             {% for data in nilai %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
+                    <td>{{ data.siswa.ekskul_siswa.nama }}</td>
                     <td>{{ data.siswa.nama_siswa.nama }}</td>
                     <td>{{ data.siswa.nama_siswa.kelas }}</td>
                     <td>{{ data.nilai }}</td>
-                    <td>Edit, Hapus</td>
                 </tr>
             {% endfor %}
         {% else %}

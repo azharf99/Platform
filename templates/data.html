@@ -3,14 +3,17 @@
 {% block content %}
 
 
-    <div class="container m-5 text-center">
-        <h1>Ini adalah halaman data</h1>
-        <a href="{% url 'ekskul:input-pembina' %}" class="btn btn-sm btn-primary">Tambah Data Pembina Ekskul</a>
+    <div class="mt-5 p-4 text-center">
+        <h1>Data Ekstrakurikuler SMA IT Al Binaa</h1>
+        <h5 class="btn btn-primary">Jumlah Ekstrakurikuler dan SC: {{ data.count }}</h5>
     </div>
 
     <div class="container">
+        <form class="d-flex my-4 mx-4" role="search" method="get" action="{% url 'laporan:laporan-index' %}">
+            <input class="form-control me-2" name="q" type="text" placeholder="Cari sesuatu?" aria-label="Search">
+            <input class="btn btn-outline-success" type="submit" value="Cariin dong">
+        </form>
         <div class="text-center">
-
             {% for ekskul in data %}
                 <div class="card border-dark d-inline-flex text-start m-2" style="width: 18rem; height: 100%;">
                     <div class="card-header bg-dark text-light">
@@ -29,7 +32,7 @@
                     </div>
                     <div class="card-footer border-dark text-light">
                         <a href="{% url 'ekskul:data-detail' ekskul.slug %}" class="btn btn-sm btn-outline-primary">Info {{ ekskul.tipe }}</a>
-                        <a href="#" class="btn btn-sm btn-outline-success">Dokumentasi</a>
+{#                        <a href="#" class="btn btn-sm btn-outline-success">Dokumentasi</a>#}
                     </div>
                 </div>
             {% endfor %}

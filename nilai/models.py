@@ -1,13 +1,16 @@
 from django.db import models
-from ekskul.models import Student, Extracurricular, StudentOrganization
+from ekskul.models import StudentOrganization
 
 # Create your models here.
 
 class Penilaian(models.Model):
-    # nama_ekskul = models.ForeignKey(Extracurricular, on_delete=models.SET_NULL, null=True)
-    # nama_siswa = models.ForeignKey(Student, on_delete=models.CASCADE)
+    pilih_nilai = (
+        ("A", "A"),
+        ("B", "B"),
+        ("C", "C"),
+    )
     siswa = models.ForeignKey(StudentOrganization, on_delete=models.CASCADE)
-    nilai = models.FloatField()
+    nilai = models.CharField(max_length=3, choices=pilih_nilai)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -1,48 +1,54 @@
 {% extends 'base.html' %}
 {% block content %}
+    <div class="container-fluid mt-5 p-5">
+        <div class="w-100 h-100 d-flex justify-content-center">
+            <form action="" method="post">
+                {% csrf_token %}
+                {% if messages %}
+                    <ul class="messages text-danger fw-bold">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                    <div class="card" style="min-width: 18rem;">
+                        <div class="card-header bg-dark text-light">
+                            Input Nilai Ekskul {{ ekskul.nama }}
+                        </div>
+                        <div class="card-body">
+                            {% if siswa %}
+                                <div class="field">
 
-    <form action="" method="post">
-        {% csrf_token %}
-        <div class="position-absolute top-50 start-50 translate-middle">
-            <div class="card" style="min-width: 18rem;">
-                <div class="card-header bg-dark text-light">
-                    Input Nilai Ekskul {{ ekskul.nama }}
-                </div>
-                <div class="card-body">
-                    {% if siswa %}
-                    <div class="field">
-
-                        <p>
-                            <label for="id_siswa">Siswa:</label>
-                            <select name="siswa" required id="id_siswa">
-                                <option value="" selected>Silahkan pilih nama santrinya</option>
-                                {% for santri in siswa %}
-                                    <option value="{{ santri.id }}">{{ santri }}</option>
-                                {% endfor %}
-                            </select>
-                        </p>
-                        <p>
-                            <label for="id_nilai">Nilai:</label>
-                            {{forms.nilai}}
-                        </p>
+                                    <p>
+                                        <label for="id_siswa">Siswa:</label>
+                                        <select name="siswa" required id="id_siswa">
+                                            <option value="" selected>Silahkan pilih nama santrinya</option>
+                                            {% for santri in siswa %}
+                                                <option value="{{ santri.id }}">{{ santri }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </p>
+                                    <p>
+                                        <label for="id_nilai">Nilai:</label>
+                                        {{forms.nilai}}
+                                    </p>
+                                </div>
+                            {% else %}
+                                <h3 class="text-danger">Maaf, sistem kami mendeteksi anda belum input data anggota ekskul.
+                                    Silahkan input data anggota ekskul terlebih dahulu sebelum input nilai</h3>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer text-center">
+                            {% if siswa %}
+                                <a href="{% url 'nilai:nilai-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
+                                <input type="submit" class="card-link btn btn-success m-1" value="Save Data">
+                            {% else %}
+                                <a href="{% url 'nilai:nilai-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
+                                <a href="{% url 'ekskul:input-anggota' ekskul.slug %}" class="card-link btn btn-primary m-1">Input Anggota {{ ekskul.nama }}</a>
+                            {% endif %}
+                        </div>
                     </div>
-                        {% else %}
-                        <h3 class="text-danger">Maaf, sistem kami mendeteksi anda belum input data anggota ekskul.
-                            Silahkan input data anggota ekskul terlebih dahulu sebelum input nilai</h3>
-                    {% endif %}
-                </div>
-                <div class="card-footer text-center">
-                    {% if siswa %}
-                    <a href="{% url 'nilai:nilai-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
-                    <input type="submit" class="card-link btn btn-success m-1" value="Save Data">
-                        {% else %}
-                    <a href="{% url 'nilai:nilai-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
-                    <a href="{% url 'ekskul:input-anggota' ekskul.slug %}" class="card-link btn btn-primary m-1">Input Anggota {{ ekskul.nama }}</a>
-
-                    {% endif %}
-                </div>
-            </div>
+            </form>
         </div>
-    </form>
-
+    </div>
 {% endblock %}
