@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container text-center my-5 py-4">
+        <div class="d-flex flex-wrap justify-content-center">
+            {% if home_data %}
+                {% for home_datum in home_data %}
+                    <div class="card m-2 text-bg-{{ home_datum.color }}" style="width: 18rem;">
+                        <div class="card-body">
+                            <h3 class="card-title">{{ home_datum.nama_bidang }}</h3>
+                            <p class="card-text">{{ home_datum.deskripsi }}</p>
+                            {% if not home_datum.deskripsiekskul_set.count %}
+                                <a href="{% with home_datum.url as link %}{% url link %}{% endwith %}" class="btn btn-light">Open App</a>
+                            {% endif %}
+                            <div>
+                                {% for app_datum in app_data %}
+                                    {% if app_datum.app == home_datum %}
+                                        <a href="{% with app_datum.url as link %}{% url link %}{% endwith %}" class="m-1 btn btn-sm btn-{{ app_datum.color }}">
+                                            {{ app_datum }}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-danger" role="alert">
+                    <h3 class="alert-heading">Uppss!</h3>
+                    <h5>Maaf yang kamu cari gak ada nih. :( </h5>
+                    <hr>
+                    <p class="mb-2">Mungkin bisa pake kata kunci pencarian yang lain :)</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

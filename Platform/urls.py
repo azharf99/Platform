@@ -21,10 +21,9 @@ from django.shortcuts import render
 
 import deskripsi.views
 import ekskul.views
+import prestasi.views
 
 
-def prestasi(request):
-    return render(request, 'prestasi.html')
 def struktur(request):
     return render(request, 'struktur.html')
 def unduh(request):
@@ -40,6 +39,7 @@ def restricted(request):
 
 urlpatterns = [
     path('', deskripsi.views.home_view, name='app-index'),
+    path('menu', deskripsi.views.menu_view, name='menu'),
     path('admin/', admin.site.urls),
     path('login/', ekskul.views.login_view, name='login'),
     path('profil/', ekskul.views.profil_view, name='profil'),
@@ -52,7 +52,7 @@ urlpatterns = [
     path('ekskul/data/', include('ekskul.urls')),
     path('ekskul/inventaris/', include('inventaris.urls')),
     path('ekskul/timeline/', include('timeline.urls')),
-    path('ekskul/prestasi/', prestasi, name='prestasi-page'),
+    path('ekskul/prestasi/', prestasi.views.index, name='prestasi-page'),
     path('ekskul/struktur/', struktur, name='struktur-page'),
     path('ekskul/unduh/', unduh, name='unduh-page'),
     path('notavailable/', not_available, name='not-available'),

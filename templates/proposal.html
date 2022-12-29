@@ -2,5 +2,48 @@
 
 {% block content %}
 
-<h1>Ini Halaman Proposal</h1>
+    <div class="my-5 pt-5 text-center">
+        <h1>Proposal Ekstrakurikuler SMA IT Al Binaa</h1>
+        <a href="{% url 'proposal:proposal-input' %}" class="btn btn-sm btn-success">Ajukan Proposal Baru</a>
+    </div>
+
+    <div class="container text-center">
+        <form class="d-flex my-4 mx-4" role="search" method="get" action="{% url 'proposal:proposal-index' %}">
+            <input class="form-control me-2" name="q" type="text" placeholder="Cari sesuatu?" aria-label="Search">
+            <input class="btn btn-outline-success" type="submit" value="Cariin dong">
+        </form>
+        <div class="d-flex flex-wrap justify-content-center">
+            {% if proposal %}
+                {% for data in proposal %}
+                    <div class="card border-primary m-2" style="width: 18rem; height: 100%;">
+                        <div class="card-header bg-primary text-light">
+                            {{ data.nama_event }}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">{{ data.nama_event }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ data.tanggal_pendaftaran|date:"j M Y" }} - {{ data.tanggal_final|date:"j M Y" }}</h6>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ data.kota }}, {{ data.provinsi }}</h6>
+                            <p class="card-text p-0 m-0">PJ : {{ data.penanggungjawab }}</p>
+                            <p class="card-text p-0 m-0">Santri : {{ data.santri.count }} orang</p>
+                        </div>
+                        <div class="card-footer border-primary text-light">
+                            <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1">Lihat Detail</a>
+                            <a href="{% url 'proposal:edit-proposal' data.id %}" class="btn btn-sm btn-warning m-1">Edit</a>
+                            <a href="{% url 'proposal:delete-proposal' data.id %}" class="btn btn-sm btn-danger m-1">Hapus</a>
+                            <a href="{% url 'proposal:proposal-approval' data.id %}" class="btn btn-sm btn-success m-1">Approval</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">Uppss!</h4>
+                    <h5>Maaf yang kamu cari gak ada nih. :( </h5>
+                    <hr>
+                    <p class="mb-2">Mungkin bisa pake kata kunci pencarian yang lain :)</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+
 {% endblock %}

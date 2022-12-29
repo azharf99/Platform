@@ -60,7 +60,7 @@ class Extracurricular(models.Model):
     waktu_tambahan = models.CharField(max_length=15, choices=pilihan_waktu, blank=True)
     tipe = models.CharField(max_length=20, choices=jenis, blank=True)
     slug = models.SlugField(blank=True)
-    logo = models.ImageField(upload_to='user', default='no-image.png', blank=True, null=True)
+    logo = models.ImageField(upload_to='ekskul/logo', default='no-image.png', blank=True, null=True)
 
     def __str__(self):
         return self.nama

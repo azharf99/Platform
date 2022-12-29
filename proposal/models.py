@@ -1,5 +1,6 @@
 from django.db import models
-from ekskul.models import Extracurricular, Teacher, Student
+from ekskul.models import Extracurricular, Teacher, StudentOrganization
+
 # Create your models here.
 
 pilihan_tingkat = (
@@ -12,7 +13,7 @@ pilihan_tingkat = (
     ("Internasional", "Internasional"),
 )
 pilihan_pelaksaan = (
-    (None,"Pilih Jenis Pelaksanaan"),
+    (None, "Pilih Jenis Pelaksanaan"),
     ("Offline", "Offline"),
     ("Online", "Online"),
 )
@@ -21,56 +22,87 @@ pilihan_berjenjang = (
     ("Ya", "Ya"),
     ("Tidak", "Tidak"),
 )
-def proposal_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/proposal/<username>/<filename>
-    return 'proposal/{0}/{1}'.format(instance.user.username, filename)
 
-class ProposalSantri(models.Model):
+status_proposal = (
+        ("Accepted", "Menerima"),
+        ("Rejected", "Menolak"),
+        ("Pending", "Menunda"),
+        ("Some Info Required", "Membutuhkan informasi lebih detail"),
+    )
+
+status_proposal_bendahara = (
+        ("Accepted", "Menerima"),
+        ("Pending", "Menunda"),
+        ("Some Info Required", "Membutuhkan informasi lebih detail"),
+    )
+
+class Proposal(models.Model):
     nama_event = models.CharField(max_length=200)
     pembuat_event = models.CharField(max_length=200)
-    tanggal_awal = models.DateField(verbose_name="tanggal_awal_pelaksanaan")
-    tanggal_akhir = models.DateField(verbose_name="tanggal_akhir_pelaksanaan")
-    tingkat_event = models.CharField(max_length=30, choices=pilihan_tingkat)
+    tanggal_pendaftaran = models.DateField()
+    tanggal_penyisihan_1 = models.DateField(blank=True, null=True)
+    tanggal_penyisihan_2 = models.DateField(blank=True, null=True)
+    tanggal_penyisihan_3 = models.DateField(blank=True, null=True)
+    tanggal_semifinal = models.DateField(blank=True, null=True)
+    tanggal_final = models.DateField(blank=True, null=True)
+    pengumuman_pemenang = models.DateField(blank=True, null=True)
     pelaksanaan = models.CharField(max_length=30, choices=pilihan_pelaksaan)
+    tingkat_event = models.CharField(max_length=30, choices=pilihan_tingkat)
     berjenjang = models.CharField(max_length=50, choices=pilihan_berjenjang)
+    lokasi_event = models.CharField(max_length=200, default="")
+    kota = models.CharField(max_length=200, default="", verbose_name="Kota/Kabupaten")
+    provinsi = models.CharField(max_length=200, default="")
     penanggungjawab = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    ekskul = models.ForeignKey(Extracurricular, on_delete=models.SET_NULL, null=True,
-                               verbose_name="ekskul_yang_terlibat")
-    santri = models.ManyToManyField(Student, verbose_name="santri yang terlibat")
+    ekskul = models.ForeignKey(Extracurricular, on_delete=models.CASCADE, null=True, blank=True)
+    santri = models.ManyToManyField(StudentOrganization, verbose_name="Santri yang ikut", blank=True, help_text="Pada PC/Laptop, tekan Ctrl untuk memilih banyak opsi")
     anggaran_biaya = models.FloatField()
-    upload_file = models.FileField(upload_to=proposal_directory_path, verbose_name="Upload File Proposal")
+    upload_brosur = models.FileField(upload_to='proposal/brosur', verbose_name="Upload Brosur Lomba", null=True, blank=True)
+    upload_undangan = models.FileField(upload_to='proposal/undangan', verbose_name="Upload Undangan Lomba", null=True,
+                                     blank=True)
+    upload_file = models.FileField(upload_to='proposal', verbose_name="Upload File Proposal", help_text="Format file dalam bentuk .pdf")
+    Catatan = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.nama_event
 
-    class Meta:
-        verbose_name = "Student Proposal"
 
-class ProposalUstadz(models.Model):
-    nama_event = models.CharField(max_length=200)
-    pembuat_event = models.CharField(max_length=200)
-    tanggal_awal_pelaksanaan = models.DateField()
-    tanggal_akhir_pelaksanaan = models.DateField()
-    tingkat_event = models.CharField(max_length=30, choices=pilihan_tingkat)
-    pelaksanaan = models.CharField(max_length=30, choices=pilihan_pelaksaan)
-    berjenjang = models.CharField(max_length=50, choices=pilihan_berjenjang)
-    ustadz = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    anggaran_biaya = models.FloatField()
-    upload_file = models.FileField(upload_to=proposal_directory_path, verbose_name="Upload File Proposal")
+class ProposalStatus(models.Model):
+    proposal = models.ForeignKey('Proposal', on_delete=models.CASCADE)
+    is_wakasek = models.CharField(max_length=100, choices=status_proposal, default="Pending", verbose_name="Keputusan Wakasek Ekskul")
+    alasan_wakasek = models.CharField(max_length=200, default="")
+    slug = models.SlugField(max_length=20, default='Wakasek')
+    foto_alasan = models.ImageField(upload_to='proposal/koreksi', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.nama_event
+        return self.is_wakasek
 
-    class Meta:
-        verbose_name = "Teacher Proposal"
 
-# class Detail_Proposal(models.Model):
-#     event = models.ForeignKey(Proposal_Santri, Proposal_Ustadz, on_delete=models.CASCADE)
-#     nama_item = models.CharField(max_length=250)
-#     volume = models.FloatField(default=1.0)
-#     satuan = models.CharField(max_length=50, blank=True)
-#     harga_per_item = models.FloatField()
-#     jumlah_harga = models.FloatField(default=(volume * harga_per_item), editable=False)
-#
-#     def __str__(self):
-#         return '%s %s %s' % (self.event, self.nama_item, self.jumlah)
+class ProposalStatusKepsek(models.Model):
+    proposal = models.ForeignKey('Proposal', on_delete=models.CASCADE)
+    status_wakasek = models.ForeignKey('ProposalStatus', on_delete=models.CASCADE)
+    is_kepsek = models.CharField(max_length=100, choices=status_proposal, default="Pending", verbose_name="Keputusan Kepala Sekolah")
+    alasan_kepsek = models.CharField(max_length=200, default="")
+    slug = models.SlugField(max_length=20, default='Kepsek')
+    foto_alasan = models.ImageField(upload_to='proposal/koreksi', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.is_kepsek
+
+class ProposalStatusBendahara(models.Model):
+    proposal = models.ForeignKey('Proposal', on_delete=models.CASCADE)
+    status_kepsek = models.ForeignKey('ProposalStatusKepsek', on_delete=models.CASCADE)
+    is_bendahara = models.CharField(max_length=100, choices=status_proposal_bendahara, default="Pending", verbose_name="Keputusan Bendahara")
+    alasan_bendahara = models.CharField(max_length=200, default="")
+    slug = models.SlugField(max_length=20, default='Bendahara')
+    foto_alasan = models.ImageField(upload_to='proposal/koreksi', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.is_bendahara

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'ekskul.apps.EkskulConfig',
     'inventaris.apps.InventarisConfig',
     'laporan.apps.LaporanConfig',
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'proposal.apps.ProposalConfig',
     'timeline.apps.TimelineConfig',
     'deskripsi.apps.DeskripsiConfig',
+    'prestasi.apps.PrestasiConfig',
 
 ]
 
@@ -115,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'id-ID'
 
 TIME_ZONE = 'Asia/Jakarta'
 

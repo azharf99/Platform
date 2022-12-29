@@ -1,40 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
+    {% load static %}
     <div class="mt-5 pt-4 text-center">
         {% if request.user.is_authenticated %}
-            <p class="my-1">السلام عليكم</p>
-            <p class="my-1">أَهْلًا وَسَهْلًا يا أستاذ  </p>
-            <p class="my-1">{{ request.user.teacher }}</p>
+            <h1 class="mt-4 mb-1">السلام عليكم</h1>
+            <h2 class="my-1">أَهْلًا وَسَهْلًا يا أستاذ  </h2>
+            <h2 class="my-1">{{ request.user.teacher }}</h2>
         {% else %}
-            <p class="my-1">السلام عليكم. كيف حالك؟</p>
+            <h1 class="my-1">السلام عليكم. كيف حالك؟</h1>
         {% endif %}
-        <h2>SMA IT Al Binaa SuperApp</h2>
+
+        <img class="mt-5" src="{% static 'images/Binaaul-Mustaqbal.png' %}" alt="logo-sma" width="84" height="70">
+        <img class="mt-5" src="{% static 'images/albinaa-vision.png' %}" alt="logo-albinaa-vision" width="187" height="70">
+        <h2 class="m-2 py-3 text-bg-primary rounded">SMA IT Al Binaa SuperApp</h2>
+
+
+        {% if request.user.is_authenticated %}
+            <a class="btn btn-warning" href="{% url 'logout' %}">Logout?</a>
+        {% else %}
+            <a class="btn btn-primary" href="{% url 'login' %}">Silahkan Login</a>
+        {% endif %}
+
+
     </div>
 
-    <div class="container text-center">
-        <form class="d-flex my-4 mx-4" role="search" method="get" action="{% url 'app-index' %}">
-            <input class="form-control me-2" name="q" type="text" placeholder="Cari aplikasi apa?" aria-label="Search">
-            <input class="btn btn-success" type="submit" value="Cariin dong">
-        </form>
-        <div class="d-flex flex-wrap justify-content-center">
-            {% if home_data %}
-                {% for home_datum in home_data %}
-                    <div class="card m-2 text-bg-primary" style="width: 18rem;">
-                        <div class="card-body">
-                            <h3 class="card-title">{{ home_datum.nama_bidang }}</h3>
-                            <p class="card-text">{{ home_datum.deskripsi }}</p>
-                            <a href="{% with home_datum.url as link %}{% url link %}{% endwith %}" class="btn btn-light">Open App</a>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <div class="alert alert-danger" role="alert">
-                    <h3 class="alert-heading">Uppss!</h3>
-                    <h5>Maaf yang kamu cari gak ada nih. :( </h5>
-                    <hr>
-                    <p class="mb-2">Mungkin bisa pake kata kunci pencarian yang lain :)</p>
-                </div>
-            {% endif %}
-        </div>
-    </div>
+
 {% endblock %}

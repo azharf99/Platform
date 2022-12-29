@@ -13,6 +13,7 @@ class DeskripsiHome(models.Model):
 
 
 class DeskripsiEkskul(models.Model):
+    app = models.ForeignKey('DeskripsiHome', on_delete=models.CASCADE, null=True, blank=True)
     nama_aplikasi = models.CharField(max_length=100)
     deskripsi = models.CharField(max_length=200)
     url = models.CharField(max_length=100, default="ekskul:data-index")

@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load humanize %}
+    <div class="mt-5 pt-4 text-center">
+        <h1 class="m-3">Detail Proposal {{ data.nama_event }}</h1>
+    </div>
+
+    <div class="container">
+        <table class="table table-hover w-100">
+            <tbody>
+            {% if data %}
+                <tr>
+                    <td>Nama Event</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.nama_event }}</td>
+                </tr>
+                <tr>
+                    <td>Penyelenggara Event</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.pembuat_event }}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Pendaftaran</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.tanggal_pendaftaran|date:"j F Y" }}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Penyisihan ke-1 (jika ada)</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.tanggal_penyisihan_1|date:"j F Y" }}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Penyisihan ke-2 (jika ada)</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.tanggal_penyisihan_2|date:"j F Y" }}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Penyisihan ke-3 (jika ada)</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.tanggal_penyisihan_3|date:"j F Y" }}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Semifinal (jika ada)</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.tanggal_semifinal|date:"j F Y" }}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Final</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.tanggal_final|date:"j F Y" }}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Pengumuman Pemenang</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.pengumuman_pemenang|date:"j F Y" }}</td>
+                </tr>
+                <tr>
+                    <td>Jenis Pelaksanaan Event</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.pelaksanaan }}</td>
+                </tr>
+                <tr>
+                    <td>Tingkat Event</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.tingkat_event }}</td>
+                </tr>
+                <tr>
+                    <td>Apakah Event Berjenjang (mis. seperti OSN)?</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.berjenjang }}</td>
+                </tr>
+                <tr>
+                    <td>Diajukan oleh</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.penanggungjawab }}</td>
+                </tr>
+                <tr>
+                    <td>Ekskul yang terlibat</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.ekskul }}</td>
+                </tr>
+                <tr>
+                    <td>Santri yang terlibat</td>
+                    <td class="text-end">:</td>
+                    <td>
+                    {% if data.santri.count %}
+                        {% for santri in data.santri.all %}
+                            <p>{{ santri.nama_siswa.nama }} | {{ santri.nama_siswa.kelas }}</p>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-danger fw-bold">Tidak ada santri yang dilibatkan</p>
+                    {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Anggaran Biaya</td>
+                    <td class="text-end">:</td>
+                    <td>Rp. {{ data.anggaran_biaya|intcomma }}</td>
+                </tr>
+                <tr>
+                    <td>Lampiran File</td>
+                    <td class="text-end">:</td>
+                    <td>
+                        <a class="btn btn-sm btn-primary m-2" href="{{ data.upload_file.url }}" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-arrow-down-circle" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+                            </svg>
+                            Proposal
+                        </a>
+
+                        {% if data.upload_brosur %}
+                            <a class="btn btn-sm btn-success m-2" href="{{ data.upload_brosur.url }}" target="_blank">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-arrow-down-circle" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+                                </svg>
+                                Brosur
+                            </a>
+                        {% endif %}
+                        {% if data.upload_undangan %}
+                            <a class="btn btn-sm btn-warning m-2" href="{{ data.upload_undangan.url }}" target="_blank">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-arrow-down-circle" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+                                </svg>
+                                Undangan
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center fw-bold text-danger">Maaf, belum ada data nilai :(</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

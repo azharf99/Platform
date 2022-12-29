@@ -126,7 +126,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect('ekskul-page')
+            return redirect('app-index')
         else:
             messages.warning(request, "Username atau Password salah!")
     context = {}
@@ -147,7 +147,6 @@ def profil_view(request):
 def edit_profil_view(request):
     try:
         teacher = Teacher.objects.get(user_id=request.user.id)
-        print(teacher)
         if request.method == "POST":
             form = PembinaEkskulForm(request.POST, instance=teacher)
             if form.is_valid():
@@ -168,4 +167,4 @@ def edit_profil_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('app-index')

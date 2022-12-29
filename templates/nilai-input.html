@@ -21,7 +21,7 @@
 
                                     <p>
                                         <label for="id_siswa">Siswa:</label>
-                                        <select name="siswa" required id="id_siswa">
+                                        <select name="siswa" class="form-select" required id="id_siswa">
                                             <option value="" selected>Silahkan pilih nama santrinya</option>
                                             {% for santri in siswa %}
                                                 <option value="{{ santri.id }}">{{ santri }}</option>

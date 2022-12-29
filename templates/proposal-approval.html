@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container-fluid mt-5 p-5">
+        <div class="w-100 h-100 d-flex justify-content-center">
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if messages %}
+                    <ul class="messages text-danger fw-bold">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <div class="card" style="min-width: 18rem;">
+                    <div class="card-header text-bg-dark text-center">
+                        Form Approval Proposal
+                    </div>
+                    <div class="card-body">
+                        {% if forms %}
+                            <h3 class="text-center">{{ status.nama_event }}</h3>
+                        {% endif %}
+                        {% if data %}
+                            {% for wakasek in status.proposalstatus_set.all %}
+                                {% if wakasek.is_wakasek == "Accepted" %}
+                                    <h4 class="text-center text-bg-primary rounded p-2">Keputusan dari {{ wakasek.slug }} : {{ wakasek.is_wakasek }}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-circle" viewBox="0 0 16 16">
+                                            <path d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z"/>
+                                            <path d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z"/>
+                                        </svg>
+                                    </h4>
+                                {% elif wakasek.is_wakasek == "Rejected" %}
+                                    <h4 class="text-center text-bg-danger rounded p-2">Keputusan dari Wakasek : {{ wakasek.is_wakasek }}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-circle" viewBox="0 0 16 16">
+                                            <path d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z"/>
+                                            <path d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z"/>
+                                        </svg>
+                                    </h4>
+                                {% else %}
+                                    <h4 class="text-center text-bg-warning rounded p-2">Keputusan dari Wakasek : {{ wakasek.is_wakasek }}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-circle" viewBox="0 0 16 16">
+                                            <path d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z"/>
+                                            <path d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z"/>
+                                        </svg>
+                                    </h4>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            {% for kepsek in status.proposalstatuskepsek_set.all %}
+                                {% if kepsek.is_kepsek == "Accepted" %}
+                                    <h4 class="text-center text-bg-primary rounded p-2">Keputusan dari Kepsek : {{ kepsek.is_kepsek }}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-circle" viewBox="0 0 16 16">
+                                            <path d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z"/>
+                                            <path d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z"/>
+                                        </svg>
+                                    </h4>
+                                {% elif kepsek.is_kepsek == "Rejected" %}
+                                    <h4 class="text-center text-bg-danger rounded p-2">Keputusan dari Kepsek : {{ kepsek.is_kepsek }}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-circle" viewBox="0 0 16 16">
+                                            <path d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z"/>
+                                            <path d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z"/>
+                                        </svg>
+                                    </h4>
+                                {% else %}
+                                    <h4 class="text-center text-bg-warning rounded p-2">Keputusan dari Kepsek : {{ kepsek.is_kepsek }}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-circle" viewBox="0 0 16 16">
+                                            <path d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z"/>
+                                            <path d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z"/>
+                                        </svg>
+                                    </h4>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        {{ forms.as_p }}
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="{% url 'proposal:proposal-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
+                        <input type="submit" class="card-link btn btn-success m-1" value="Save Data">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
