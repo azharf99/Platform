@@ -14,7 +14,11 @@
                 {% for pembina in ekskul.pembina.all %}
                     <h6>Ustadz {{ pembina }}</h6>
                     <h6>{{ pembina.email }}</h6>
-                    <h6>+62{{ pembina.no_hp }}</h6>
+                    {% if pembina.no_hp %}
+                        <h6>+62{{ pembina.no_hp }}</h6>
+                    {% else %}
+                        <h6 class="text-danger">No. hp belum ada</h6>
+                    {% endif %}
 
                 {% endfor %}
 
@@ -24,15 +28,17 @@
                 {% endif %}
 
             </div>
-            <div class="col-md-4 mt-2 text-center">
-                <a href="{% url 'ekskul:input-anggota' ekskul.slug %}" class="btn btn-sm btn-primary d-block m-1">Tambah data anggota
-                    {{ ekskul.nama }}</a>
-                <a href="{% url 'ekskul:edit-detail' ekskul.slug %}" class="btn btn-sm btn-primary d-block m-1">Edit data
-                    {{ ekskul.nama }}</a>
-                <a href="{% url 'nilai:nilai-input' ekskul.slug %}" class="btn btn-sm btn-primary d-block m-1">Input Nilai
-                    {{ ekskul.nama }}</a>
-                <a href="{% url 'laporan:laporan-input' ekskul.slug %}" class="btn btn-sm btn-primary d-block m-1">Lapor Kehadiran</a>
-            </div>
+            {% if request.user.is_authenticated %}
+                <div class="col-md-4 mt-2 text-center">
+                    <a href="{% url 'ekskul:input-anggota' ekskul.slug %}" class="btn btn-sm btn-primary d-block m-1">Tambah data anggota
+                        {{ ekskul.nama }}</a>
+                    <a href="{% url 'ekskul:edit-detail' ekskul.slug %}" class="btn btn-sm btn-primary d-block m-1">Edit data
+                        {{ ekskul.nama }}</a>
+                    <a href="{% url 'nilai:nilai-input' ekskul.slug %}" class="btn btn-sm btn-primary d-block m-1">Input Nilai
+                        {{ ekskul.nama }}</a>
+                    <a href="{% url 'laporan:laporan-input' ekskul.slug %}" class="btn btn-sm btn-primary d-block m-1">Lapor Kehadiran</a>
+                </div>
+            {% endif %}
         </div>
         <div class="row align-item-center">
             <div class="col-sm">

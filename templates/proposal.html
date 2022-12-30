@@ -2,9 +2,16 @@
 
 {% block content %}
 
-    <div class="my-5 pt-5 text-center">
+    <div class="my-4 pt-5 text-center">
         <h1>Proposal Ekstrakurikuler SMA IT Al Binaa</h1>
-        <a href="{% url 'proposal:proposal-input' %}" class="btn btn-sm btn-success">Ajukan Proposal Baru</a>
+        <a href="" class="btn btn-sm btn-success">Proposal yang disetujui Wakasek : {{ diterima.count }}</a>
+        <a href="" class="btn btn-sm btn-success">Proposal yang disetujui Kepala Sekolah : {{ diterima_kepsek.count }}</a>
+        <a href="" class="btn btn-sm btn-success">Proposal yang disetujui Kepala Sekolah : {{ diterima_bendahara.count }}</a>
+    </div>
+    <div class="text-center">
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'proposal:proposal-input' %}" class="btn btn-sm btn-primary">Ajukan Proposal Baru</a>
+        {% endif %}
     </div>
 
     <div class="container text-center">
@@ -27,10 +34,24 @@
                             <p class="card-text p-0 m-0">Santri : {{ data.santri.count }} orang</p>
                         </div>
                         <div class="card-footer border-primary text-light">
-                            <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1">Lihat Detail</a>
-                            <a href="{% url 'proposal:edit-proposal' data.id %}" class="btn btn-sm btn-warning m-1">Edit</a>
-                            <a href="{% url 'proposal:delete-proposal' data.id %}" class="btn btn-sm btn-danger m-1">Hapus</a>
-                            <a href="{% url 'proposal:proposal-approval' data.id %}" class="btn btn-sm btn-success m-1">Approval</a>
+                            {% if request.user.is_authenticated %}
+                                {% if request.user.username == 'agung_wa' %}
+                                    <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1">Lihat Detail</a>
+                                    <a href="{% url 'proposal:proposal-approval-kepsek' data.id %}" class="btn btn-sm btn-success m-1">Approval Kepsek</a>
+                                {% elif request.user.username == 'chevi_indrayadi' %}
+                                    <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1">Lihat Detail</a>
+                                    <a href="{% url 'proposal:proposal-approval-bendahara' data.id %}" class="btn btn-sm btn-success m-1">Approval Bendahara</a>
+                                {% elif request.user.username == 'panji_asmara' %}
+                                    <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1">Lihat Detail</a>
+                                    <a href="{% url 'proposal:proposal-approval' data.id %}" class="btn btn-sm btn-success m-1">Approval</a>
+                                {% else %}
+                                    <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1">Lihat Detail</a>
+                                    <a href="{% url 'proposal:edit-proposal' data.id %}" class="btn btn-sm btn-warning m-1">Edit</a>
+                                    <a href="{% url 'proposal:delete-proposal' data.id %}" class="btn btn-sm btn-danger m-1">Hapus</a>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1">Lihat Detail</a>
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}

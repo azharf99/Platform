@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from proposal.models import *
 from proposal.forms import *
 
@@ -8,10 +9,14 @@ from proposal.forms import *
 
 def index(request):
     proposal = Proposal.objects.all()
-    status = ProposalStatus.objects.all()
+    diterima = ProposalStatus.objects.filter(is_wakasek="Accepted")
+    diterima_kepsek = ProposalStatusKepsek.objects.filter(is_kepsek="Accepted")
+    diterima_bendahara = ProposalStatusBendahara.objects.filter(is_bendahara="Accepted")
     context = {
         'proposal': proposal,
-        'status': status,
+        'diterima': diterima,
+        'diterima_kepsek': diterima_kepsek,
+        'diterima_bendahara': diterima_bendahara,
     }
     return render(request, 'proposal.html', context)
 
@@ -24,7 +29,7 @@ def proposal_detail(request, pk):
         'status': status,
     }
     return render(request, 'proposal-detail.html', context)
-
+@login_required(login_url='/login/')
 def proposal_input(request):
     if request.method == "POST":
         nama_event = request.POST.get('nama_event')
@@ -71,6 +76,7 @@ def proposal_input(request):
     }
     return render(request, 'proposal-input.html', context)
 
+@login_required(login_url='/login/')
 def proposal_edit(request, pk):
     data = get_object_or_404(Proposal, id=pk)
 
@@ -91,7 +97,7 @@ def proposal_edit(request, pk):
 
     return render(request, 'proposal-edit.html', context)
 
-
+@login_required(login_url='/login/')
 def proposal_delete(request, pk):
     data = get_object_or_404(Proposal, id=pk)
 
@@ -105,7 +111,7 @@ def proposal_delete(request, pk):
     return render(request, 'proposal-delete.html', context)
 
 
-
+@login_required(login_url='/login/')
 def proposal_approval(request, pk):
     status = Proposal.objects.get(id=pk)
     data = get_object_or_404(ProposalStatus, proposal=status.id)
@@ -120,7 +126,7 @@ def proposal_approval(request, pk):
         'forms': forms,
     }
     return render(request, 'proposal-approval.html', context)
-
+@login_required(login_url='/login/')
 def proposal_approval_kepsek(request, pk):
     status = Proposal.objects.get(id=pk)
     data = ProposalStatusKepsek.objects.get(proposal=status.id)
@@ -144,7 +150,7 @@ def proposal_approval_kepsek(request, pk):
     }
     return render(request, 'proposal-approval.html', context)
 
-
+@login_required(login_url='/login/')
 def proposal_approval_bendahara(request, pk):
     status = Proposal.objects.get(id=pk)
     data = ProposalStatusBendahara.objects.get(proposal=status.id)

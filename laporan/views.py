@@ -105,7 +105,7 @@ def laporan_upload(request, slug):
     }
     return render(request, 'laporan-upload.html', context)
 
-
+@login_required(login_url='/login/')
 def laporan_edit(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     laporan = get_object_or_404(Report, nama_ekskul__slug=slug, id=pk)
@@ -127,7 +127,7 @@ def laporan_edit(request, slug, pk):
     }
     return render(request, 'laporan-edit.html', context)
 
-
+@login_required(login_url='/login/')
 def laporan_delete(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     laporan = get_object_or_404(Report, nama_ekskul__slug=slug, id=pk)

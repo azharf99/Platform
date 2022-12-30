@@ -7,17 +7,15 @@
             <h2 class="my-1">أَهْلًا وَسَهْلًا يا أستاذ  </h2>
             <h2 class="my-1">{{ request.user.teacher }}</h2>
         {% else %}
-            <h1 class="my-1">السلام عليكم. كيف حالك؟</h1>
+            <h1 class="mt-4 mb-1">السلام عليكم. كيف حالك؟</h1>
         {% endif %}
 
         <img class="mt-5" src="{% static 'images/Binaaul-Mustaqbal.png' %}" alt="logo-sma" width="84" height="70">
         <img class="mt-5" src="{% static 'images/albinaa-vision.png' %}" alt="logo-albinaa-vision" width="187" height="70">
-        <h2 class="m-2 py-3 text-bg-primary rounded">SMA IT Al Binaa SuperApp</h2>
+        <h2 class="m-2 py-3 text-primary rounded">SMA IT Al Binaa SuperApp</h2>
 
 
-        {% if request.user.is_authenticated %}
-            <a class="btn btn-warning" href="{% url 'logout' %}">Logout?</a>
-        {% else %}
+        {% if not request.user.is_authenticated %}
             <a class="btn btn-primary" href="{% url 'login' %}">Silahkan Login</a>
         {% endif %}
 

@@ -70,7 +70,7 @@ def nilai_input(request, slug):
     }
     return render(request, 'nilai-input.html', context)
 
-
+@login_required(login_url='/login/')
 def nilai_edit(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     nilai = Penilaian.objects.get(id=pk)
@@ -96,7 +96,7 @@ def nilai_edit(request, slug, pk):
     }
     return render(request, 'nilai-edit.html', context)
 
-
+@login_required(login_url='/login/')
 def nilai_delete(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     data = Penilaian.objects.get(id=pk)

@@ -103,7 +103,7 @@ def edit_ekskul(request, slug):
     }
     return render(request, 'edit-ekskul.html', context)
 
-
+@login_required(login_url='/login/')
 def input_pembina(request):
     form = PembinaEkskulForm().as_p()
     return render(request, 'input-anggota-ekskul.html', {'form': form})
@@ -132,7 +132,7 @@ def login_view(request):
     context = {}
     return render(request, 'login.html', context)
 
-
+@login_required(login_url='/login/')
 def profil_view(request):
     try:
         user = request.user
@@ -143,18 +143,18 @@ def profil_view(request):
     except:
         return redirect('login')
     return render(request, 'profil.html', context)
-
+@login_required(login_url='/login/')
 def edit_profil_view(request):
     try:
         teacher = Teacher.objects.get(user_id=request.user.id)
         if request.method == "POST":
-            form = PembinaEkskulForm(request.POST, instance=teacher)
+            form = PembinaEkskulForm(request.POST, request.FILES, instance=teacher)
             if form.is_valid():
                 form.save()
                 return redirect('profil')
             else:
                 messages.error(request, "Input data dengan benar!")
-                form = PembinaEkskulForm(request.POST, instance=teacher)
+                form = PembinaEkskulForm(request.POST, request.FILES, instance=teacher)
         else:
             form = PembinaEkskulForm(instance=teacher)
         context = {
