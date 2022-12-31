@@ -53,6 +53,7 @@ urlpatterns = [
     path('ekskul/inventaris/', include('inventaris.urls')),
     path('ekskul/timeline/', include('timeline.urls')),
     path('ekskul/prestasi/', prestasi.views.index, name='prestasi-page'),
+    path('ekskul/prestasi/input', prestasi.views.prestasi_input, name='prestasi-input'),
     path('ekskul/struktur/', struktur, name='struktur-page'),
     path('ekskul/unduh/', unduh, name='unduh-page'),
     path('notavailable/', not_available, name='not-available'),

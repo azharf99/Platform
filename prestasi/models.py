@@ -1,7 +1,10 @@
 from django.db import models
 
 # Create your models here.
-
+pilihan = (
+    (1, "Ada"),
+    (0, "Tidak Ada"),
+)
 
 class Prestasi(models.Model):
     kategori = models.CharField(max_length=100)
@@ -14,7 +17,7 @@ class Prestasi(models.Model):
     sekolah = models.CharField(max_length=100, default="SMAS IT AL Binaa")
     bidang_lomba = models.CharField(max_length=100)
     kategori_kemenangan = models.CharField(max_length=100)
-    dokumentasi = models.BooleanField()
+    dokumentasi = models.BooleanField(choices=pilihan)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

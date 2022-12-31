@@ -1,3 +1,4 @@
+from django.db.models import Sum, Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -9,11 +10,17 @@ from proposal.forms import *
 
 def index(request):
     proposal = Proposal.objects.all()
+    jumlah = Proposal.objects.aggregate(Sum('anggaran_biaya'))
+    jumlah_diterima = Proposal.objects.filter(Q(proposalstatus__is_wakasek="Accepted") & Q(proposalstatuskepsek__is_kepsek="Accepted")).aggregate(Sum('anggaran_biaya'))
+    jumlah_ditolak = Proposal.objects.filter(Q(proposalstatus__is_wakasek="Rejected") | Q(proposalstatuskepsek__is_kepsek="Rejected")).aggregate(Sum('anggaran_biaya'))
     diterima = ProposalStatus.objects.filter(is_wakasek="Accepted")
     diterima_kepsek = ProposalStatusKepsek.objects.filter(is_kepsek="Accepted")
     diterima_bendahara = ProposalStatusBendahara.objects.filter(is_bendahara="Accepted")
     context = {
         'proposal': proposal,
+        'jumlah': jumlah,
+        'jumlah_diterima': jumlah_diterima,
+        'jumlah_ditolak': jumlah_ditolak,
         'diterima': diterima,
         'diterima_kepsek': diterima_kepsek,
         'diterima_bendahara': diterima_bendahara,

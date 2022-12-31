@@ -2,7 +2,7 @@
 {% block content %}
     <div class="container-fluid mt-5 p-5">
         <div class="w-100 h-100 d-flex justify-content-center">
-            <form enctype="multipart/form-data" method="post" action="">
+            <form action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% if messages %}
                     <ul class="messages text-danger fw-bold">
@@ -12,18 +12,18 @@
                     </ul>
                 {% endif %}
                 <div class="card" style="min-width: 18rem;">
-                    <div class="card-header bg-dark text-light">
-                        Edit Profil
+                    <div class="card-header text-bg-dark text-center">
+                        Form Input Data Prestasi
                     </div>
                     <div class="card-body">
-                        {{ form.as_p }}
+                        {{ forms.as_p }}
                     </div>
                     <div class="card-footer text-center">
-                        <a href="{% url 'profil' %}" class="btn btn-danger">Back to Profil</a>
-                        <input class="btn btn-success" type="submit" value="Simpan Perubahan">
+                        <a href="{% url 'prestasi-page' %}" class="card-link btn btn-danger m-1">Kembali</a>
+                        <input type="submit" class="card-link btn btn-success m-1" value="Save Data">
                     </div>
                 </div>
+            </form>
         </div>
     </div>
-
 {% endblock %}

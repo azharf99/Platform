@@ -111,7 +111,7 @@ def input_pembina(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect("ekskul-page")
+        return redirect("app-index")
 
     if request.method == "POST":
         username = request.POST.get('username')
