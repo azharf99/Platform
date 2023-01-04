@@ -18,11 +18,13 @@ class Prestasi(models.Model):
     bidang_lomba = models.CharField(max_length=100)
     kategori_kemenangan = models.CharField(max_length=100)
     dokumentasi = models.BooleanField(choices=pilihan)
+    sertifikat_1 = models.ImageField(upload_to='prestasi/sertifikat', null=True, blank=True)
+    sertifikat_2 = models.ImageField(upload_to='prestasi/sertifikat', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "%s %s %s %s" % (self.kategori_kemenangan,self.nama_lomba, self.tahun_lomba, self.peraih_prestasi)
+        return "%s %s %s %s" % (self.kategori_kemenangan, self.nama_lomba, self.tahun_lomba, self.peraih_prestasi)
 
 class DokumentasiPrestasi(models.Model):
     prestasi = models.ForeignKey('Prestasi', on_delete=models.CASCADE)

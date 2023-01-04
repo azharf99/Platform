@@ -40,6 +40,7 @@ class Proposal(models.Model):
     nama_event = models.CharField(max_length=200)
     pembuat_event = models.CharField(max_length=200)
     tanggal_pendaftaran = models.DateField()
+    batas_pendaftaran = models.DateField(default="2022-12-29", blank=True, null=True)
     tanggal_penyisihan_1 = models.DateField(blank=True, null=True)
     tanggal_penyisihan_2 = models.DateField(blank=True, null=True)
     tanggal_penyisihan_3 = models.DateField(blank=True, null=True)
@@ -101,6 +102,8 @@ class ProposalStatusBendahara(models.Model):
     alasan_bendahara = models.CharField(max_length=200, default="")
     slug = models.SlugField(max_length=20, default='Bendahara')
     foto_alasan = models.ImageField(upload_to='proposal/koreksi', blank=True, null=True)
+    bukti_transfer = models.ImageField(upload_to='proposal/transfer', blank=True, null=True)
+    catatan_bendahara = models.TextField(max_length=200, default="Aman")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -12,4 +12,5 @@ urlpatterns = [
     path('approval/<int:pk>', views.proposal_approval, name='proposal-approval'),
     path('approval/kepsek/<int:pk>', views.proposal_approval_kepsek, name='proposal-approval-kepsek'),
     path('approval/bendahara/<int:pk>', views.proposal_approval_bendahara, name='proposal-approval-bendahara'),
+    path('approval/transfer/<int:pk>', views.proposal_bukti_transfer, name='proposal-approval-transfer'),
 ]

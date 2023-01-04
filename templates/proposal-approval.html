@@ -43,6 +43,11 @@
                                         </svg>
                                     </h4>
                                 {% endif %}
+                                {% if wakasek.alasan_wakasek %}
+                                    <p class="text-center text-bg-secondary rounded p-1">Komentar Wakasek: {{ wakasek.alasan_wakasek }}</p>
+                                {% else %}
+                                    <p class="text-center text-bg-danger rounded p-1">Komentar Wakasek: belum mengisi alasan</p>
+                                {% endif %}
                             {% endfor %}
                         {% else %}
                             {% for kepsek in status.proposalstatuskepsek_set.all %}
@@ -67,6 +72,13 @@
                                             <path d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z"/>
                                         </svg>
                                     </h4>
+                                {% endif %}
+                                {% if status.proposalstatus_set.first and kepsek.alasan_kepsek %}
+                                <p class="text-center text-bg-secondary rounded p-1">Komentar Wakasek: {{ status.proposalstatus_set.first.alasan_wakasek }}</p>
+                                <p class="text-center text-bg-secondary rounded p-1">Komentar Kepala Sekolah: {{ kepsek.alasan_kepsek }}</p>
+                                {% else %}
+                                    <p class="text-center text-bg-danger rounded p-1">Komentar Wakasek: belum mengisi alasan</p>
+                                    <p class="text-center text-bg-danger rounded p-1">Komentar Kepala Sekolah: belum mengisi alasan</p>
                                 {% endif %}
                             {% endfor %}
                         {% endif %}

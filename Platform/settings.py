@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os.path
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,6 +25,9 @@ SECRET_KEY = 'django-insecure-qc-ewe(l__6md70^d8f02(8q@u^srl^hee26y3&cols6u*)(z#
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
+TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
 
 ALLOWED_HOSTS = []
 

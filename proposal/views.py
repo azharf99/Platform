@@ -2,9 +2,8 @@ from django.db.models import Sum, Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from proposal.models import *
 from proposal.forms import *
-
+from proposal.models import *
 
 # Create your views here.
 
@@ -71,7 +70,6 @@ def proposal_input(request):
                 status1.save()
                 status2.save()
                 status3.save()
-
                 return redirect('proposal:proposal-index')
             else:
                 forms = ProposalForm(request.POST, request.FILES)
@@ -86,15 +84,17 @@ def proposal_input(request):
 @login_required(login_url='/login/')
 def proposal_edit(request, pk):
     data = get_object_or_404(Proposal, id=pk)
+    if not data.penanggungjawab.user.username == request.user.username:
+        return redirect('restricted')
 
     if request.method == "POST":
         forms = ProposalEditForm(request.POST, request.FILES, instance=data)
         if forms.is_valid():
             forms.save()
             return redirect('proposal:proposal-index')
-        # else:
-        #     forms = ProposalForm(instance=data)
-        #     messages.error(request, "Data yang kamu isi ada yang salah. Silahkan periksa lagi.")
+        else:
+            forms = ProposalForm(instance=data)
+            messages.error(request, "Data yang kamu isi ada yang salah. Silahkan periksa lagi.")
     else:
         forms = ProposalEditForm(instance=data)
 
@@ -107,6 +107,8 @@ def proposal_edit(request, pk):
 @login_required(login_url='/login/')
 def proposal_delete(request, pk):
     data = get_object_or_404(Proposal, id=pk)
+    if not data.penanggungjawab.user.username == request.user.username:
+        return redirect('restricted')
 
     if request.method == "POST":
         data.delete()
@@ -120,6 +122,8 @@ def proposal_delete(request, pk):
 
 @login_required(login_url='/login/')
 def proposal_approval(request, pk):
+    if not request.user.username == "panji_asmara":
+        return redirect('restricted')
     status = Proposal.objects.get(id=pk)
     data = get_object_or_404(ProposalStatus, proposal=status.id)
     if request.method == "POST":
@@ -135,6 +139,8 @@ def proposal_approval(request, pk):
     return render(request, 'proposal-approval.html', context)
 @login_required(login_url='/login/')
 def proposal_approval_kepsek(request, pk):
+    if not request.user.username == "agung_wa":
+        return redirect('restricted')
     status = Proposal.objects.get(id=pk)
     data = ProposalStatusKepsek.objects.get(proposal=status.id)
     if request.method == "POST":
@@ -159,6 +165,8 @@ def proposal_approval_kepsek(request, pk):
 
 @login_required(login_url='/login/')
 def proposal_approval_bendahara(request, pk):
+    if not request.user.username == "chevi_indrayadi":
+        return redirect('restricted')
     status = Proposal.objects.get(id=pk)
     data = ProposalStatusBendahara.objects.get(proposal=status.id)
 
@@ -179,3 +187,11 @@ def proposal_approval_bendahara(request, pk):
         'status': status,
     }
     return render(request, 'proposal-approval.html', context)
+
+
+def proposal_bukti_transfer(request, pk):
+    proposal = get_object_or_404(Proposal, id=pk)
+    context = {
+        'proposal': proposal,
+    }
+    return render(request, 'proposal-approval-transfer.html', context)

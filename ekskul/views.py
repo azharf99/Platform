@@ -6,7 +6,6 @@ from django.contrib import messages
 from ekskul.models import Extracurricular, Student, StudentOrganization, Teacher, User
 from ekskul.forms import InputAnggotaEkskulForm, PembinaEkskulForm, EkskulForm
 
-
 # Create your views here.
 
 def home(request):

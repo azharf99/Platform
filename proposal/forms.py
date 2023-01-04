@@ -10,6 +10,7 @@ class ProposalForm(forms.ModelForm):
             'nama_event': forms.TextInput(attrs={'class': 'form-control'}),
             'pembuat_event': forms.TextInput(attrs={'class': 'form-control'}),
             'tanggal_pendaftaran': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'batas_pendaftaran': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'tanggal_penyisihan_1': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'tanggal_penyisihan_2': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'tanggal_penyisihan_3': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
@@ -41,6 +42,7 @@ class ProposalEditForm(forms.ModelForm):
             'nama_event': forms.TextInput(attrs={'class': 'form-control'}),
             'pembuat_event': forms.TextInput(attrs={'class': 'form-control'}),
             'tanggal_pendaftaran': forms.DateInput(attrs={'class': 'form-control'}),
+            'batas_pendaftaran': forms.DateInput(attrs={'class': 'form-control'}),
             'tanggal_penyisihan_1': forms.DateInput(attrs={'class': 'form-control'}),
             'tanggal_penyisihan_2': forms.DateInput(attrs={'class': 'form-control'}),
             'tanggal_penyisihan_3': forms.DateInput(attrs={'class': 'form-control'}),
@@ -87,11 +89,12 @@ class StatusProposalKepsekForm(forms.ModelForm):
 class StatusProposalBendaharaForm(forms.ModelForm):
     class Meta:
         model = ProposalStatusBendahara
-        fields = ['is_bendahara', 'alasan_bendahara', 'foto_alasan']
+        fields = ['is_bendahara', 'alasan_bendahara', 'bukti_transfer', 'catatan_bendahara']
         widgets = {
             'proposal': forms.Select(attrs={'class': 'form-control', 'disabled': True}),
             'status_kepsek': forms.Select(attrs={'class': 'form-control', 'disabled': True}),
             'is_bendahara': forms.Select(attrs={'class': 'form-select'}),
             'alasan_bendahara': forms.TextInput(attrs={'class': 'form-control'}),
-            'foto_alasan': forms.FileInput(attrs={'class': 'form-control'}),
+            'bukti_transfer': forms.FileInput(attrs={'class': 'form-control'}),
+            'catatan_bendahara': forms.Textarea(attrs={'class': 'form-control'}),
         }

@@ -10,7 +10,7 @@ class PestasiInputForm(forms.ModelForm):
             'kategori': forms.TextInput(attrs={'class': 'form-control'}),
             'jenis_lomba': forms.TextInput(attrs={'class': 'form-control'}),
             'tingkat_lomba': forms.TextInput(attrs={'class': 'form-control'}),
-            'tahun_lomba': forms.DateInput(attrs={'class': 'form-control'}),
+            'tahun_lomba': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'nama_lomba': forms.TextInput(attrs={'class': 'form-control'}),
             'Penyelenggara_lomba': forms.TextInput(attrs={'class': 'form-control'}),
             'peraih_prestasi': forms.TextInput(attrs={'class': 'form-control'}),
