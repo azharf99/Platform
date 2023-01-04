@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+    {% load humanize %}
     <div class="container-fluid mt-5 p-5">
         <div class="w-100 h-100 d-flex justify-content-center">
             <form action="" method="post" enctype="multipart/form-data">
@@ -74,12 +75,13 @@
                                     </h4>
                                 {% endif %}
                                 {% if status.proposalstatus_set.first and kepsek.alasan_kepsek %}
-                                <p class="text-center text-bg-secondary rounded p-1">Komentar Wakasek: {{ status.proposalstatus_set.first.alasan_wakasek }}</p>
-                                <p class="text-center text-bg-secondary rounded p-1">Komentar Kepala Sekolah: {{ kepsek.alasan_kepsek }}</p>
+                                    <p class="text-center text-bg-secondary rounded p-1">Komentar Wakasek: {{ status.proposalstatus_set.first.alasan_wakasek }}</p>
+                                    <p class="text-center text-bg-secondary rounded p-1">Komentar Kepala Sekolah: {{ kepsek.alasan_kepsek }}</p>
                                 {% else %}
                                     <p class="text-center text-bg-danger rounded p-1">Komentar Wakasek: belum mengisi alasan</p>
                                     <p class="text-center text-bg-danger rounded p-1">Komentar Kepala Sekolah: belum mengisi alasan</p>
                                 {% endif %}
+                                <p class="text-center">Jumlah dana yang harus ditransfer: <strong class="text-bg-success rounded p-1">Rp. {{ status.anggaran_biaya|intcomma }}</strong></p>
                             {% endfor %}
                         {% endif %}
                         {{ forms.as_p }}
