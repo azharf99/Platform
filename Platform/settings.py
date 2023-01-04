@@ -29,7 +29,7 @@ DEBUG = True
 TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
 TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
 
-ALLOWED_HOSTS = ['smasitalbinaa.com', 'platform-production-6b92.up.railway.app']
+ALLOWED_HOSTS = ['ekskul.smasitalbinaa.com', 'platform-production-6b92.up.railway.app']
 
 AUTH_USER_MODEL = 'ekskul.User'
 
