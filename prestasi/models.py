@@ -14,7 +14,7 @@ class Prestasi(models.Model):
     nama_lomba = models.CharField(max_length=100)
     Penyelenggara_lomba = models.CharField(max_length=100)
     peraih_prestasi = models.CharField(max_length=100)
-    sekolah = models.CharField(max_length=100, default="SMAS IT AL Binaa")
+    sekolah = models.CharField(max_length=100, default="SMAS IT Al Binaa")
     bidang_lomba = models.CharField(max_length=100)
     kategori_kemenangan = models.CharField(max_length=100)
     dokumentasi = models.BooleanField(choices=pilihan)

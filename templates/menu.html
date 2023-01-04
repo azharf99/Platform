@@ -14,7 +14,7 @@
                             <div>
                                 {% for app_datum in app_data %}
                                     {% if app_datum.app == home_datum %}
-                                        <a href="{% with app_datum.url as link %}{% url link %}{% endwith %}" class="m-1 btn btn-sm btn-{{ app_datum.color }}">
+                                        <a href="{% with app_datum.url as link %}{% url link %}{% endwith %}" class="m-1 btn btn-{{ app_datum.color }}">
                                             {{ app_datum }}
                                         </a>
                                     {% endif %}
