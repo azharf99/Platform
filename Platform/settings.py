@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-qc-ewe(l__6md70^d8f02(8q@u^srl^hee26y3&cols6u*)(z#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
 TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
