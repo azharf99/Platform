@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from ekskul.models import Extracurricular, Student, StudentOrganization, Teacher, User
 from ekskul.forms import InputAnggotaEkskulForm, PembinaEkskulForm, EkskulForm
+from django.views.decorators.csrf import csrf_protect
 
 # Create your views here.
 
@@ -107,7 +108,7 @@ def input_pembina(request):
     form = PembinaEkskulForm().as_p()
     return render(request, 'input-anggota-ekskul.html', {'form': form})
 
-
+@csrf_protect
 def login_view(request):
     if request.user.is_authenticated:
         return redirect("app-index")
