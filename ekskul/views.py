@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from ekskul.models import Extracurricular, Student, StudentOrganization, Teacher, User
+from laporan.models import Report
 from ekskul.forms import InputAnggotaEkskulForm, PembinaEkskulForm, EkskulForm
 from django.views.decorators.csrf import csrf_protect
 
@@ -27,21 +28,39 @@ def data_detail(request, slug):
     teachers = Teacher.objects.filter(extracurricular=ekskul)
     filtered_students = Student.objects.filter(studentorganization__ekskul_siswa__nama=ekskul.nama).order_by('kelas',
                                                                                                              'nama')
+    all = teachers.values_list('user_id', flat=True)
+    if not request.user.id in all and not request.user.is_superuser:
+        context = {
+            'ekskul': ekskul,
+            'teachers': teachers,
+            'filtered_student': filtered_students,
+            'pembina': False,
+        }
+    else:
+        context = {
+            'ekskul': ekskul,
+            'teachers': teachers,
+            'filtered_student': filtered_students,
+            'pembina': True,
+        }
+    return render(request, 'data-detail.html', context)
+
+def dokumentasi(request, slug):
+    ekskul = get_object_or_404(Extracurricular, slug=slug)
+    filtered_report = Report.objects.filter(nama_ekskul__slug=slug).order_by('tanggal_pembinaan')
     context = {
         'ekskul': ekskul,
-        'teachers': teachers,
-        'filtered_student': filtered_students,
-
+        'filtered_report': filtered_report,
     }
-    return render(request, 'data-detail.html', context)
+    return render(request, 'dokumentasi.html', context)
 
 
 @login_required(login_url='/login/')
 def input_anggota(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
-    for guru in ekskul.pembina.all():
-        if not guru.user_id == request.user.id and not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('restricted'))
+    all = ekskul.pembina.all().values_list('user_id', flat=True)
+    if not request.user.id in all and not request.user.is_superuser:
+        return HttpResponseRedirect(reverse('restricted'))
 
     data_ekskul = request.POST.get('ekskul_siswa')
     id_siswa = request.POST.get('nama_siswa')
@@ -71,9 +90,11 @@ def input_anggota(request, slug):
 def delete_anggota(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     deteled_student = get_object_or_404(StudentOrganization, nama_siswa_id=pk, ekskul_siswa_id=ekskul.id)
-    for guru in ekskul.pembina.all():
-        if not guru.user_id == request.user.id and not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('restricted'))
+
+    all = ekskul.pembina.all().values_list('user_id', flat=True)
+    if not request.user.id in all and not request.user.is_superuser:
+        return HttpResponseRedirect(reverse('restricted'))
+
     if request.method == 'POST':
         deteled_student.delete()
         return redirect('ekskul:data-detail', ekskul.slug)
@@ -87,9 +108,11 @@ def delete_anggota(request, slug, pk):
 @login_required(login_url='/login/')
 def edit_ekskul(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
-    for guru in ekskul.pembina.all():
-        if not guru.user_id == request.user.id and not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('restricted'))
+
+    all = ekskul.pembina.all().values_list('user_id', flat=True)
+    if not request.user.id in all and not request.user.is_superuser:
+        return HttpResponseRedirect(reverse('restricted'))
+
     if request.method == 'POST':
         form = EkskulForm(request.POST, instance=ekskul)
         if form.is_valid():

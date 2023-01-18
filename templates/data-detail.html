@@ -29,6 +29,7 @@
 
             </div>
             {% if request.user.is_authenticated %}
+                {% if pembina %}
                 <div class="col-md-4 mt-2 text-center">
                     <a href="{% url 'ekskul:input-anggota' ekskul.slug %}" class="btn btn-sm btn-primary d-block m-1">Tambah data anggota
                         {{ ekskul.nama }}</a>
@@ -38,6 +39,7 @@
                         {{ ekskul.nama }}</a>
                     <a href="{% url 'laporan:laporan-input' ekskul.slug %}" class="btn btn-sm btn-primary d-block m-1">Lapor Kehadiran</a>
                 </div>
+                {% endif %}
             {% endif %}
         </div>
         <div class="row align-item-center">

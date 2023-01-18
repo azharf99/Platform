@@ -11,7 +11,7 @@
     <div class="container">
         <form class="d-flex my-4 mx-4" role="search" method="get" action="{% url 'ekskul:data-index' %}">
             <input class="form-control me-2" name="q" type="text" placeholder="Cari sesuatu?" aria-label="Search">
-            <input class="btn btn-outline-success" type="submit" value="Cariin dong">
+            <input class="btn btn-success" type="submit" value="Cari">
         </form>
         <div class="text-center">
             {% if data %}
@@ -33,7 +33,7 @@
                         </div>
                         <div class="card-footer border-dark text-light">
                             <a href="{% url 'ekskul:data-detail' ekskul.slug %}" class="btn btn-sm btn-outline-primary">Info {{ ekskul.tipe }}</a>
-                            {#                        <a href="#" class="btn btn-sm btn-outline-success">Dokumentasi</a>#}
+                            <a href="{% url 'ekskul:dokumentasi' ekskul.slug %}" class="btn btn-sm btn-outline-success">Dokumentasi</a>
                         </div>
                     </div>
                 {% endfor %}

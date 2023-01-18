@@ -1,19 +1,38 @@
-
-
-/**, ::after, ::before{*/
-/*    box-sizing: border-box;*/
+/*.calendar {*/
+/*  width: 98%;*/
+/*  margin: auto;*/
+/*  font-size: 13px;*/
 /*}*/
 
-/*body{*/
-/*    margin: 0;*/
-/*    display: block;*/
-/*    font-family: Inter, sans-serif;*/
-/*    font-size: 1rem;*/
-/*    font-weight: normal;*/
-/*    line-height: normal;*/
-/*    color: #212529;*/
-/*    text-align: center;*/
-/*    background-color: #fff;*/
-/*    -webkit-text-size-adjust: 100%;*/
-/*    -webkit-tap-highlight-color: transparent;*/
+/*.calendar tr, .calendar td {*/
+/*  border: 1px solid black;*/
+/*}*/
+
+/*.calendar th {*/
+/*  padding: 10px;*/
+/*  text-align: center;*/
+/*  font-size: 18px;*/
+/*}*/
+
+/*.calendar td {*/
+/*  width: 200px;*/
+/*  height: 150px;*/
+/*  padding: 20px 0px 0px 5px;*/
+/*}*/
+
+/*.month {*/
+/*  font-size: 25px;*/
+/*}*/
+
+/*.date {*/
+/*  font-size: 16px;*/
+/*}*/
+
+/*ul {*/
+/*  height: 100%;*/
+/*  padding: 0px 5px 0px 20px;*/
+/*}*/
+
+/*a {*/
+/*  color: #17a2b8;*/
 /*}*/

@@ -84,7 +84,7 @@ def proposal_input(request):
 @login_required(login_url='/login/')
 def proposal_edit(request, pk):
     data = get_object_or_404(Proposal, id=pk)
-    if not data.penanggungjawab.user.username == request.user.username:
+    if not data.penanggungjawab.user.username == request.user.username and not request.user.is_superuser:
         return redirect('restricted')
 
     if request.method == "POST":
@@ -107,7 +107,7 @@ def proposal_edit(request, pk):
 @login_required(login_url='/login/')
 def proposal_delete(request, pk):
     data = get_object_or_404(Proposal, id=pk)
-    if not data.penanggungjawab.user.username == request.user.username:
+    if not data.penanggungjawab.user.username == request.user.username and not request.user.is_superuser:
         return redirect('restricted')
 
     if request.method == "POST":

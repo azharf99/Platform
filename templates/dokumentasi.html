@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="mt-5 pt-4 text-center">
+        <h1>Dokumentasi Ekstrakurikuler {{ ekskul.nama }}</h1>
+    </div>
+
+    <div class="container">
+    {% if filtered_report %}
+        {% for report in filtered_report %}
+            <div class="list-group my-4">
+                <a href="#" class="list-group-item list-group-item-action active text-center" aria-current="true">
+                    {{ report.tanggal_pembinaan|date:"l, j F Y" }}
+                </a>
+                {% for image in report.uploadimage_set.all %}
+                <a href="#" class="list-group-item list-group-item-action text-center"><img src="{{ image.foto_absensi.url }}" alt="Foto Pembinaan" width="50%" height="50%"></a>
+
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <h1 class="text-bg-danger text-center mt-5 rounded p-3">Belum ada dokumentasi, silahkan buat laporan ekskul terlebih dahulu</h1>
+    {% endif %}
+    </div>
+
+{% endblock %}

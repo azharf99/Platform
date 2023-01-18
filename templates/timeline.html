@@ -1,6 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Ini adalah halaman Timeline</h1>
+    <div class="mt-5 pt-4 text-center">
+        <h1>Timeline Kegiatan Ekstrakurikuler dan Prestasi</h1>
+    </div>
+
+    <div class="container">
+        {% for proposal in proposal_list %}
+            <div class="list-group my-4">
+                <a href="#" class="list-group-item list-group-item-action active text-center" aria-current="true">
+                    {% if proposal.tanggal_penyisihan_1 %}
+                        {{ proposal.tanggal_penyisihan_1|date:"l, j F Y" }}
+                    {% elif proposal.tanggal_semifinal %}
+                        {{ proposal.tanggal_semifinal|date:"l, j F Y" }}
+                    {% else %}
+                        {{ proposal.tanggal_final|date:"l, j F Y" }}
+                    {% endif %}
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">{{ proposal.nama_event }}</a>
+                <a href="#" class="list-group-item list-group-item-action">Pendaftaran: {{ proposal.tanggal_pendaftaran|date:"l, j F Y" }} - {{ proposal.batas_pendaftaran|date:"l, j F Y" }}</a>
+                <a href="#" class="list-group-item list-group-item-action">Semifinal: {{ proposal.tanggal_semifinal|date:"l, j F Y" }}</a>
+                <a href="#" class="list-group-item list-group-item-action">Final: {{ proposal.tanggal_final|date:"l, j F Y" }}</a>
+                <a class="list-group-item list-group-item-action disabled">Pengumuman: {{ proposal.pengumuman_pemenang|date:"l, j F Y" }}</a>
+            </div>
+        {% endfor %}
+    </div>
 
 {% endblock %}

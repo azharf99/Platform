@@ -37,7 +37,7 @@
                 {% for data in proposal %}
                     <div class="card border-primary m-2" style="width: 18rem; height: 100%;">
                         <div class="card-header bg-primary text-light">
-                            {{ data.nama_event }}
+                            Proposal ke-{{ forloop.counter }}
                         </div>
                         <div class="card-body">
                             <h5 class="card-title text-primary">{{ data.nama_event }}</h5>
@@ -45,7 +45,7 @@
                             <h6 class="card-subtitle mb-2 text-muted">{{ data.kota }}, {{ data.provinsi }}</h6>
                             <p class="card-text p-0 m-0">PJ : {{ data.penanggungjawab }}</p>
                             <p class="card-text p-0 m-0">Santri : {{ data.santri.count }} orang</p>
-                            <p class="card-text p-0 m-0">Biaya : {{ data.anggaran_biaya }}</p>
+                            <p class="card-text p-0 m-0">Biaya : Rp. {{ data.anggaran_biaya|intcomma }}</p>
                             <p class="card-text p-0 m-0">Status:
                                 {% if data.proposalstatus_set.first.is_wakasek == "Accepted" %}
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
@@ -123,7 +123,7 @@
                                 {% elif request.user.username == 'panji_asmara' %}
                                     <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1">Lihat Detail</a>
                                     <a href="{% url 'proposal:proposal-approval' data.id %}" class="btn btn-sm btn-success m-1">Approval</a>
-                                {% elif data.proposalstatuskepsek_set.first.is_kepsek == "Accepted" or data.proposalstatus_set.first.is_wakasek == "Accepted" %}
+                                {% elif data.proposalstatusbendahara_set.first.is_bendahara == "Accepted" %}
                                     <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1">Lihat Detail</a>
                                     <a href="{% url 'proposal:proposal-approval-transfer' data.id %}" class="btn btn-sm btn-success m-1">Bukti Transfer</a>
                                 {% else %}

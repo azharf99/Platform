@@ -3,5 +3,5 @@ from timeline import views
 
 
 urlpatterns = [
-    path('', views.index, name='timeline-index'),
+    path('', views.CalendarView.as_view(), name='timeline-index'),
 ]

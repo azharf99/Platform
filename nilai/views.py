@@ -46,8 +46,12 @@ def nilai_input(request, slug):
     if request.method == "POST":
         forms = NilaiForm(request.POST)
         id_siswa = request.POST.get('siswa')
-        nilai = get_object_or_404(Penilaian, siswa_id=id_siswa)
-        if not nilai:
+        try:
+            nilai = Penilaian.objects.get(siswa_id=id_siswa)
+            forms = NilaiForm(request.POST)
+            messages.error(request,
+                           "Maaf, nilai siswa tersebut sudah ada. Jika ingin mengubahnya, silahkan gunakan fitur edit nilai")
+        except:
             forms = NilaiForm(request.POST)
             forms.siswa = id_siswa
             if forms.is_valid():
@@ -55,11 +59,6 @@ def nilai_input(request, slug):
                 return redirect('nilai:nilai-detail', ekskul.slug)
             else:
                 messages.error(request, "Isi data dengan benar!")
-
-        else:
-            forms = NilaiForm(request.POST)
-            messages.error(request,
-                           "Maaf, nilai siswa tersebut sudah ada. Jika ingin mengubahnya, silahkan gunakan fitur edit nilai")
 
     else:
         forms = NilaiForm()

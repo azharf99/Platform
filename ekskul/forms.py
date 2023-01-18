@@ -35,7 +35,7 @@ class EkskulForm(forms.ModelForm):
         exclude = ['slug']
         widgets = {
             'nama': forms.TextInput(attrs={'class': 'form-control'}),
-            'pembina': forms.Select(attrs={'class': 'form-select'}),
+            'pembina': forms.SelectMultiple(attrs={'class': 'form-select'}),
             'jadwal': forms.Select(attrs={'class': 'form-select'}),
             'waktu': forms.Select(attrs={'class': 'form-select'}),
             'jadwal_tambahan': forms.Select(attrs={'class': 'form-select'}),
