@@ -17,7 +17,7 @@ class Prestasi(models.Model):
     sekolah = models.CharField(max_length=100, default="SMAS IT Al Binaa")
     bidang_lomba = models.CharField(max_length=100)
     kategori_kemenangan = models.CharField(max_length=100)
-    dokumentasi = models.BooleanField(choices=pilihan)
+    dokumentasi = models.BooleanField(choices=pilihan, default=0)
     sertifikat_1 = models.ImageField(upload_to='prestasi/sertifikat', null=True, blank=True)
     sertifikat_2 = models.ImageField(upload_to='prestasi/sertifikat', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -28,7 +28,9 @@ class Prestasi(models.Model):
 
 class DokumentasiPrestasi(models.Model):
     prestasi = models.ForeignKey('Prestasi', on_delete=models.CASCADE)
-    foto = models.ImageField(upload_to='prestasi', blank=True, null=True)
+    foto = models.ImageField(upload_to='prestasi', blank=True, null=True, default='no-image.png')
+    created_at = models.DateTimeField(default='2023-01-19')
+    updated_at = models.DateTimeField(default='2023-01-19')
 
     def __str__(self):
         return self.prestasi

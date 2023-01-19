@@ -4,8 +4,8 @@ from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, reverse
 
 from ekskul.models import Extracurricular
-from nilai.forms import *
-from nilai.models import *
+from nilai.forms import NilaiForm, NilaiEditForm
+from nilai.models import Penilaian
 
 
 # Create your views here.
@@ -35,19 +35,27 @@ def nilai_detail(request, slug):
     return render(request, 'nilai-detail.html', context)
 
 
+def nilai_kelas_view(request):
+    nilai = Penilaian.objects.all().order_by('siswa__nama_siswa__kelas',
+                                             'siswa__ekskul_siswa__nama')
+    context = {
+        'nilai': nilai,
+    }
+    return render(request, 'nilai-berdasarkan-kelas.html', context)
+
+
 @login_required(login_url='/login/')
 def nilai_input(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     siswa = StudentOrganization.objects.filter(ekskul_siswa__slug=slug)
-    for guru in ekskul.pembina.all():
-        if not guru.user_id == request.user.id and not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('restricted'))
+    all = ekskul.pembina.all().values_list('user_id', flat=True)
+    if not request.user.id in all and not request.user.is_superuser:
+        return HttpResponseRedirect(reverse('restricted'))
 
     if request.method == "POST":
-        forms = NilaiForm(request.POST)
         id_siswa = request.POST.get('siswa')
         try:
-            nilai = Penilaian.objects.get(siswa_id=id_siswa)
+            Penilaian.objects.get(siswa_id=id_siswa)
             forms = NilaiForm(request.POST)
             messages.error(request,
                            "Maaf, nilai siswa tersebut sudah ada. Jika ingin mengubahnya, silahkan gunakan fitur edit nilai")
@@ -69,13 +77,14 @@ def nilai_input(request, slug):
     }
     return render(request, 'nilai-input.html', context)
 
+
 @login_required(login_url='/login/')
 def nilai_edit(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     nilai = Penilaian.objects.get(id=pk)
-    for guru in ekskul.pembina.all():
-        if not guru.user_id == request.user.id and not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('restricted'))
+    all = ekskul.pembina.all().values_list('user_id', flat=True)
+    if not request.user.id in all and not request.user.is_superuser:
+        return HttpResponseRedirect(reverse('restricted'))
 
     if request.method == "POST":
         forms = NilaiEditForm(request.POST, instance=nilai)
@@ -95,9 +104,13 @@ def nilai_edit(request, slug, pk):
     }
     return render(request, 'nilai-edit.html', context)
 
+
 @login_required(login_url='/login/')
 def nilai_delete(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
+    all = ekskul.pembina.all().values_list('user_id', flat=True)
+    if not request.user.id in all and not request.user.is_superuser:
+        return HttpResponseRedirect(reverse('restricted'))
     data = Penilaian.objects.get(id=pk)
     if request.method == "POST":
         data.delete()
@@ -108,11 +121,3 @@ def nilai_delete(request, slug, pk):
     }
     return render(request, 'nilai-delete.html', context)
 
-
-def nilai_kelas_view(request):
-    nilai = Penilaian.objects.all().order_by('siswa__nama_siswa__kelas', 'siswa__nama_siswa',
-                                             'siswa__ekskul_siswa__nama')
-    context = {
-        'nilai': nilai,
-    }
-    return render(request, 'nilai-berdasarkan-kelas.html', context)
