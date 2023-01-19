@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from laporan.models import Report, UploadImage
-from laporan.forms import FormLaporanKehadiran, FormUploadLaporanKehadiran
+from laporan.forms import FormLaporanKehadiran, FormUploadLaporanKehadiran, FormEditUploadLaporanKehadiran
 from ekskul.models import Extracurricular, StudentOrganization
 from userlog.models import UserLog
 
@@ -18,6 +18,7 @@ def index(request):
             Q(nama__icontains=q) | Q(pembina__nama_lengkap__icontains=q)).order_by('tipe', 'nama')
     else:
         ekskul = Extracurricular.objects.all().order_by('tipe', 'nama')
+
     context = {
         'ekskul': ekskul,
     }
@@ -29,11 +30,29 @@ def laporan_ekskul(request, slug):
     bulan_ini = datetime.date.today().__format__("%B %Y")
     filtered_report = Report.objects.filter(nama_ekskul__slug=slug).filter(
         tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
-    context = {
-        'ekskul': ekskul,
-        'filtered_report': filtered_report,
-        'bulan_ini': bulan_ini,
-    }
+
+    if request.user.is_authenticated:
+        if not request.user.teacher == ekskul.pembina and not request.user.is_superuser:
+            context = {
+                'ekskul': ekskul,
+                'filtered_report': filtered_report,
+                'bulan_ini': bulan_ini,
+                'display': None
+            }
+        else:
+            context = {
+                'ekskul': ekskul,
+                'filtered_report': filtered_report,
+                'bulan_ini': bulan_ini,
+                'display': True,
+            }
+    else:
+        context = {
+            'ekskul': ekskul,
+            'filtered_report': filtered_report,
+            'bulan_ini': bulan_ini,
+            'display': None
+        }
     return render(request, 'laporan-ekskul.html', context)
 
 def laporan_detail(request, slug, pk):
@@ -50,9 +69,9 @@ def laporan_detail(request, slug, pk):
 def laporan_input(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     filtered_student = StudentOrganization.objects.filter(ekskul_siswa__slug=slug)
-    for guru in ekskul.pembina.all():
-        if not guru.user_id == request.user.id and not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('restricted'))
+    all = ekskul.pembina.all().values_list('user_id', flat=True)
+    if not request.user.id in all and not request.user.is_superuser:
+        return HttpResponseRedirect(reverse('restricted'))
 
     nama_ekskul = request.POST.get('nama_ekskul')
     tanggal_pembinaan = request.POST.get('tanggal_pembinaan')
@@ -95,10 +114,11 @@ def laporan_input(request, slug):
 @login_required(login_url='/login/')
 def laporan_upload(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
-    filtered_report = Report.objects.filter(nama_ekskul__slug=slug)
-    for guru in ekskul.pembina.all():
-        if not guru.user_id == request.user.id and not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('restricted'))
+    filtered_report = Report.objects.filter(nama_ekskul__slug=slug).order_by('-tanggal_pembinaan')
+    all = ekskul.pembina.all().values_list('user_id', flat=True)
+    if not request.user.id in all and not request.user.is_superuser:
+        return HttpResponseRedirect(reverse('restricted'))
+
     if request.method == 'POST':
         forms = FormUploadLaporanKehadiran(request.POST)
         id_laporan = request.POST.get('laporan')
@@ -132,9 +152,10 @@ def laporan_upload(request, slug):
 def laporan_edit(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     laporan = get_object_or_404(Report, nama_ekskul__slug=slug, id=pk)
-    for guru in ekskul.pembina.all():
-        if not guru.user_id == request.user.id and not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('restricted'))
+    all = ekskul.pembina.all().values_list('user_id', flat=True)
+    if not request.user.id in all and not request.user.is_superuser:
+        return HttpResponseRedirect(reverse('restricted'))
+
     if request.method == 'POST':
         form = FormLaporanKehadiran(request.POST, instance=laporan)
         if form.is_valid():
@@ -163,9 +184,10 @@ def laporan_edit(request, slug, pk):
 def laporan_delete(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     laporan = get_object_or_404(Report, nama_ekskul__slug=slug, id=pk)
-    for guru in ekskul.pembina.all():
-        if not guru.user_id == request.user.id and not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('restricted'))
+    all = ekskul.pembina.all().values_list('user_id', flat=True)
+    if not request.user.id in all and not request.user.is_superuser:
+        return HttpResponseRedirect(reverse('restricted'))
+
     if request.method == 'POST':
         UserLog.objects.create(
             user=request.user.teacher,
@@ -189,11 +211,12 @@ def laporan_upload_edit(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     laporan = get_object_or_404(Report, id=pk)
     foto = UploadImage.objects.get(laporan_id=laporan.id)
-    for guru in ekskul.pembina.all():
-        if not guru.user_id == request.user.id and not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('restricted'))
+    all = ekskul.pembina.all().values_list('user_id', flat=True)
+    if not request.user.id in all and not request.user.is_superuser:
+        return HttpResponseRedirect(reverse('restricted'))
+
     if request.method == 'POST':
-        form_upload_edit = FormUploadLaporanKehadiran(request.POST, request.FILES, instance=foto)
+        form_upload_edit = FormEditUploadLaporanKehadiran(request.POST, request.FILES, instance=foto)
         if form_upload_edit.is_valid():
             form_upload_edit.save()
             UserLog.objects.create(
@@ -206,9 +229,9 @@ def laporan_upload_edit(request, slug, pk):
             return redirect('laporan:laporan-ekskul', ekskul.slug)
         else:
             messages.error(request, "Mohon input data dengan benar!")
-            form_upload_edit = FormUploadLaporanKehadiran(request.POST, request.FILES, instance=foto)
+            form_upload_edit = FormEditUploadLaporanKehadiran(request.POST, request.FILES, instance=foto)
     else:
-        form_upload_edit = FormUploadLaporanKehadiran(instance=foto)
+        form_upload_edit = FormEditUploadLaporanKehadiran(instance=foto)
 
     context = {
         'ekskul': ekskul,
@@ -222,6 +245,10 @@ def laporan_upload_delete(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     laporan = get_object_or_404(Report, id=pk)
     foto = UploadImage.objects.get(laporan_id=laporan.id)
+    all = ekskul.pembina.all().values_list('user_id', flat=True)
+    if not request.user.id in all and not request.user.is_superuser:
+        return HttpResponseRedirect(reverse('restricted'))
+
     if request.method == 'POST':
         UserLog.objects.create(
             user=request.user.teacher,

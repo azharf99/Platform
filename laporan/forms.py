@@ -20,3 +20,11 @@ class FormUploadLaporanKehadiran(forms.ModelForm):
         widgets = {
             'foto_absensi': forms.FileInput(attrs={'class': 'form-control'}),
         }
+
+class FormEditUploadLaporanKehadiran(forms.ModelForm):
+    class Meta:
+        model = UploadImage
+        fields = '__all__'
+        widgets = {
+            'laporan': forms.Select(attrs={'class': 'form-select', 'disabled': True}),
+        }
