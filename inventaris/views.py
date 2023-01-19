@@ -151,7 +151,7 @@ def inventaris_status_edit(request, pk):
                 user=request.user.teacher,
                 action_flag="CHANGE",
                 app="INVENTARIS_STATUS",
-                message="Berhasil mengubah data status inventaris {}".format(inventory.nama_barang)
+                message="Berhasil mengubah data status inventaris {}".format(inventory.barang)
             )
             return redirect('inventaris:inventaris-index')
     else:
@@ -230,7 +230,7 @@ def inventaris_invoice_edit(request, pk):
                 user=request.user.teacher,
                 action_flag="CHANGE",
                 app="INVENTARIS_STATUS",
-                message="Berhasil mengubah data status inventaris {}".format(inventory.nama_barang)
+                message="Berhasil mengubah data status inventaris {}".format(inventory.barang)
             )
             return redirect('inventaris:inventaris-index')
     else:

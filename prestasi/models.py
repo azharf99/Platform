@@ -29,8 +29,8 @@ class Prestasi(models.Model):
 class DokumentasiPrestasi(models.Model):
     prestasi = models.ForeignKey('Prestasi', on_delete=models.CASCADE)
     foto = models.ImageField(upload_to='prestasi', blank=True, null=True, default='no-image.png')
-    created_at = models.DateTimeField(default='2023-01-19')
-    updated_at = models.DateTimeField(default='2023-01-19')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.prestasi

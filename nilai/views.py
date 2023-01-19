@@ -3,9 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, reverse
 
-from ekskul.models import Extracurricular
+from ekskul.models import Extracurricular, StudentOrganization
 from nilai.forms import NilaiForm, NilaiEditForm
 from nilai.models import Penilaian
+from userlog.models import UserLog
 
 
 # Create your views here.
@@ -49,7 +50,7 @@ def nilai_input(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     siswa = StudentOrganization.objects.filter(ekskul_siswa__slug=slug)
     all = ekskul.pembina.all().values_list('user_id', flat=True)
-    if not request.user.id in all and not request.user.is_superuser:
+    if request.user.id not in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
 
     if request.method == "POST":
@@ -64,6 +65,13 @@ def nilai_input(request, slug):
             forms.siswa = id_siswa
             if forms.is_valid():
                 forms.save()
+                data = Penilaian.objects.get(siswa_id=id_siswa)
+                UserLog.objects.create(
+                    user=request.user.teacher,
+                    action_flag="ADD",
+                    app="NILAI",
+                    message="Berhasil menambahkan data nilai ekskul {} atas nama {}".format(ekskul, data.siswa.nama_siswa.nama)
+                )
                 return redirect('nilai:nilai-detail', ekskul.slug)
             else:
                 messages.error(request, "Isi data dengan benar!")
@@ -83,13 +91,19 @@ def nilai_edit(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     nilai = Penilaian.objects.get(id=pk)
     all = ekskul.pembina.all().values_list('user_id', flat=True)
-    if not request.user.id in all and not request.user.is_superuser:
+    if request.user.id not in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
 
     if request.method == "POST":
         forms = NilaiEditForm(request.POST, instance=nilai)
         if forms.is_valid():
             forms.save()
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="CHANGE",
+                app="NILAI",
+                message="Berhasil mengubah data nilai ekskul {} atas nama {}".format(ekskul, nilai.siswa.nama_siswa.nama)
+            )
             return redirect('nilai:nilai-detail', ekskul.slug)
         else:
             forms = NilaiEditForm(instance=nilai)
@@ -109,10 +123,16 @@ def nilai_edit(request, slug, pk):
 def nilai_delete(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     all = ekskul.pembina.all().values_list('user_id', flat=True)
-    if not request.user.id in all and not request.user.is_superuser:
+    if request.user.id not in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
     data = Penilaian.objects.get(id=pk)
     if request.method == "POST":
+        UserLog.objects.create(
+            user=request.user.teacher,
+            action_flag="DELETE",
+            app="NILAI",
+            message="Berhasil menghapus data nilai ekskul {} atas nama {}".format(ekskul, data.siswa.nama_siswa.nama)
+        )
         data.delete()
         return redirect('nilai:nilai-detail', ekskul.slug)
     context = {

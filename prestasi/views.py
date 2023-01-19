@@ -7,6 +7,8 @@ from prestasi.forms import PrestasiInputForm, PrestasiEditForm, DokumentasiPrest
 from prestasi.models import Prestasi, DokumentasiPrestasi
 from django.contrib import messages
 
+from userlog.models import UserLog
+
 
 # Create your views here.
 
@@ -31,11 +33,18 @@ def prestasi_input(request):
     if not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
     if request.method == 'POST':
+        data = request.POST.get('nama_lomba')
         forms = PrestasiInputForm(request.POST, request.FILES)
         if forms.is_valid():
             f = forms.save()
             DokumentasiPrestasi.objects.create(
                 prestasi=f,
+            )
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="ADD",
+                app="PRESTASI",
+                message="Berhasil menambahkan data prestasi {}".format(data)
             )
             return redirect('prestasi:prestasi-index')
         else:
@@ -59,6 +68,12 @@ def prestasi_edit(request, pk):
         forms = PrestasiEditForm(request.POST, request.FILES, instance=data)
         if forms.is_valid():
             forms.save()
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="CHANGE",
+                app="PRESTASI",
+                message="Berhasil mengubah data prestasi {}".format(data)
+            )
             return redirect('prestasi:prestasi-index')
         else:
             forms = PrestasiEditForm(request.POST)
@@ -78,6 +93,12 @@ def prestasi_delete(request, pk):
         return HttpResponseRedirect(reverse('restricted'))
     data = get_object_or_404(Prestasi, id=pk)
     if request.method == 'POST':
+        UserLog.objects.create(
+            user=request.user.teacher,
+            action_flag="DELETE",
+            app="PRESTASI",
+            message="Berhasil menghapus data prestasi {}".format(data)
+        )
         data.delete()
         return redirect('prestasi:prestasi-index')
 
@@ -99,9 +120,16 @@ def dokumentasi_prestasi_input(request):
     if not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
     if request.method == 'POST':
+        data = request.POST.get('prestasi')
         forms = DokumentasiPrestasiInputForm(request.POST, request.FILES)
         if forms.is_valid():
             forms.save()
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="ADD",
+                app="PRESTASI_DOKUMENTASI",
+                message="Berhasil menambahkan foto/dokumentasi prestasi dengan id {}".format(data)
+            )
             return redirect('prestasi:prestasi-index')
         else:
             forms = DokumentasiPrestasiInputForm(request.POST, request.FILES)
@@ -124,6 +152,12 @@ def dokumentasi_prestasi_edit(request, pk):
         forms = DokumentasiPrestasiEditForm(request.POST, request.FILES, instance=data)
         if forms.is_valid():
             forms.save()
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="CHANGE",
+                app="PRESTASI_DOKUMENTASI",
+                message="Berhasil mengubah foto/dokumentasi prestasi {}".format(data)
+            )
             return redirect('prestasi:prestasi-index')
         else:
             forms = DokumentasiPrestasiEditForm(request.POST, request.FILES)
@@ -143,6 +177,12 @@ def dokumentasi_prestasi_delete(request, pk):
         return HttpResponseRedirect(reverse('restricted'))
     data = get_object_or_404(DokumentasiPrestasi, id=pk)
     if request.method == 'POST':
+        UserLog.objects.create(
+            user=request.user.teacher,
+            action_flag="DELETE",
+            app="PRESTASI_DOKUMENTASI",
+            message="Berhasil menghapus foto/dokumentasi prestasi {}".format(data)
+        )
         data.delete()
         return redirect('prestasi:prestasi-index')
 

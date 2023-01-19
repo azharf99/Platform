@@ -70,7 +70,7 @@ def laporan_input(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     filtered_student = StudentOrganization.objects.filter(ekskul_siswa__slug=slug)
     all = ekskul.pembina.all().values_list('user_id', flat=True)
-    if not request.user.id in all and not request.user.is_superuser:
+    if request.user.id not in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
 
     nama_ekskul = request.POST.get('nama_ekskul')
@@ -80,7 +80,7 @@ def laporan_input(request, slug):
 
     if request.method == 'POST':
         try:
-            laporan = Report.objects.get(tanggal_pembinaan=tanggal_pembinaan)
+            Report.objects.get(tanggal_pembinaan=tanggal_pembinaan)
             form = FormLaporanKehadiran(request.POST)
             messages.error(request, "Laporan untuk tanggal ini sudah ada. Silahkan pilih tanggal lain")
         except:
@@ -116,7 +116,7 @@ def laporan_upload(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     filtered_report = Report.objects.filter(nama_ekskul__slug=slug).order_by('-tanggal_pembinaan')
     all = ekskul.pembina.all().values_list('user_id', flat=True)
-    if not request.user.id in all and not request.user.is_superuser:
+    if request.user.id not in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
 
     if request.method == 'POST':
@@ -153,7 +153,7 @@ def laporan_edit(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     laporan = get_object_or_404(Report, nama_ekskul__slug=slug, id=pk)
     all = ekskul.pembina.all().values_list('user_id', flat=True)
-    if not request.user.id in all and not request.user.is_superuser:
+    if request.user.id not in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
 
     if request.method == 'POST':
@@ -185,7 +185,7 @@ def laporan_delete(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     laporan = get_object_or_404(Report, nama_ekskul__slug=slug, id=pk)
     all = ekskul.pembina.all().values_list('user_id', flat=True)
-    if not request.user.id in all and not request.user.is_superuser:
+    if request.user.id not in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
 
     if request.method == 'POST':
@@ -246,7 +246,7 @@ def laporan_upload_delete(request, slug, pk):
     laporan = get_object_or_404(Report, id=pk)
     foto = UploadImage.objects.get(laporan_id=laporan.id)
     all = ekskul.pembina.all().values_list('user_id', flat=True)
-    if not request.user.id in all and not request.user.is_superuser:
+    if request.user.id not in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
 
     if request.method == 'POST':

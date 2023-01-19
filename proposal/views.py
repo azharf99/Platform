@@ -2,8 +2,10 @@ from django.db.models import Sum, Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from proposal.forms import *
-from proposal.models import *
+from proposal.forms import ProposalForm, ProposalEditForm, StatusProposalForm, StatusProposalKepsekForm, StatusProposalBendaharaForm
+from proposal.models import Proposal, ProposalStatus, ProposalStatusBendahara, ProposalStatusKepsek
+from userlog.models import UserLog
+
 
 # Create your views here.
 
@@ -48,28 +50,31 @@ def proposal_input(request):
             if forms.is_valid():
                 forms.save()
                 p = get_object_or_404(Proposal, nama_event=nama_event)
-                status1 = ProposalStatus.objects.create(
+                ProposalStatus.objects.create(
                     proposal=p,
                     is_wakasek="Pending",
                     alasan_wakasek="",
                 )
                 p_status1 = get_object_or_404(ProposalStatus, proposal=p.id)
-                status2 = ProposalStatusKepsek.objects.create(
+                ProposalStatusKepsek.objects.create(
                     proposal=p,
                     status_wakasek=p_status1,
                     is_kepsek="Pending",
                     alasan_kepsek=""
                 )
                 p_status2 = get_object_or_404(ProposalStatusKepsek, proposal=p.id)
-                status3 = ProposalStatusBendahara.objects.create(
+                ProposalStatusBendahara.objects.create(
                     proposal=p,
                     status_kepsek=p_status2,
                     is_bendahara="Pending",
                     alasan_bendahara=""
                 )
-                status1.save()
-                status2.save()
-                status3.save()
+                UserLog.objects.create(
+                    user=request.user.teacher,
+                    action_flag="ADD",
+                    app="PROPOSAL",
+                    message="Berhasil menambahkan data proposal {} dengan anggaran sebesar {} dan penanggung jawab {}".format(p.nama_event, p.anggaran_biaya, p.penanggungjawab)
+                )
                 return redirect('proposal:proposal-index')
             else:
                 forms = ProposalForm(request.POST, request.FILES)
@@ -91,6 +96,12 @@ def proposal_edit(request, pk):
         forms = ProposalEditForm(request.POST, request.FILES, instance=data)
         if forms.is_valid():
             forms.save()
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="CHANGE",
+                app="PROPOSAL",
+                message="Berhasil mengubah data proposal {}".format(data)
+            )
             return redirect('proposal:proposal-index')
         else:
             forms = ProposalForm(instance=data)
@@ -111,6 +122,12 @@ def proposal_delete(request, pk):
         return redirect('restricted')
 
     if request.method == "POST":
+        UserLog.objects.create(
+            user=request.user.teacher,
+            action_flag="CHANGE",
+            app="PROPOSAL",
+            message="Berhasil menghapus data proposal {}".format(data)
+        )
         data.delete()
         return redirect('proposal:proposal-index')
 
@@ -130,6 +147,12 @@ def proposal_approval(request, pk):
         forms = StatusProposalForm(request.POST, request.FILES, instance=data)
         if forms.is_valid():
             forms.save()
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="APPROVAL",
+                app="PROPOSAL_WAKASEK",
+                message="Wakasek berhasil melakukan approval pada proposal {} dengan status {}".format(status, data.is_wakasek)
+            )
             return redirect('proposal:proposal-index')
     else:
         forms = StatusProposalForm(instance=data)
@@ -148,6 +171,12 @@ def proposal_approval_kepsek(request, pk):
             forms = StatusProposalKepsekForm(request.POST, request.FILES, instance=data)
             if forms.is_valid():
                 forms.save()
+                UserLog.objects.create(
+                    user=request.user.teacher,
+                    action_flag="APPROVAL",
+                    app="PROPOSAL_KEPSEK",
+                    message="Kepala Sekolah berhasil melakukan approval pada proposal {} dengan status {}".format(status, data.is_kepsek)
+                )
                 return redirect('proposal:proposal-index')
         else:
             forms = StatusProposalKepsekForm(instance=data)
@@ -175,6 +204,12 @@ def proposal_approval_bendahara(request, pk):
             forms = StatusProposalBendaharaForm(request.POST, request.FILES, instance=data)
             if forms.is_valid():
                 forms.save()
+                UserLog.objects.create(
+                    user=request.user.teacher,
+                    action_flag="APPROVAL",
+                    app="PROPOSAL_BENDAHARA",
+                    message="Bendahara berhasil melakukan approval pada proposal {} dengan status {}".format(status, data.is_bendahara)
+                )
                 return redirect('proposal:proposal-index')
         else:
             forms = StatusProposalBendaharaForm(instance=data)
