@@ -16,8 +16,8 @@ class Inventory(models.Model):
     pemilik = models.ForeignKey(Extracurricular, on_delete=models.SET_NULL, null=True)
     hibah = models.CharField(max_length=30, choices=pilihan_hibah)
     pemberi_hibah = models.CharField(max_length=100, blank=True)
-    tanggal_hibah = models.DateField(blank=True)
-    tanggal_dibeli = models.DateField(blank=True)
+    tanggal_hibah = models.DateField(blank=True, null=True)
+    tanggal_dibeli = models.DateField(blank=True, null=True)
     anggaran_dana = models.FloatField(blank=True)
     nama_toko = models.CharField(max_length=100, blank=True)
     alamat_toko = models.TextField(max_length=250, blank=True)
@@ -38,7 +38,7 @@ class InventoryStatus(models.Model):
         ("Dipinjam", "Dipinjam"),
     )
     barang = models.ForeignKey(Inventory, on_delete=models.CASCADE)
-    status = models.CharField(max_length=100, choices=pilihan_status)
+    status = models.CharField(max_length=100, choices=pilihan_status, default="Tersedia")
     peminjam = models.CharField(max_length=200, blank=True)
     keterangan = models.TextField(max_length=250, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -50,11 +50,6 @@ class InventoryStatus(models.Model):
     class Meta:
         verbose_name = "Inventory Status"
         verbose_name_plural = "Inventory Status"
-
-
-# def ekskul_directory_path(instance, filename):
-#     return 'inventaris/nota/{0}/{1}'.format(instance, filename)
-#
 
 class Invoice(models.Model):
     barang = models.ForeignKey(Inventory, on_delete=models.CASCADE)
