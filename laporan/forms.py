@@ -16,7 +16,7 @@ class FormLaporanKehadiran(forms.ModelForm):
 class FormUploadLaporanKehadiran(forms.ModelForm):
     class Meta:
         model = UploadImage
-        fields = '__all__'
+        fields = ['foto_absensi']
         widgets = {
-            'laporan': forms.Select(attrs={'class': 'form-select'}),
+            'foto_absensi': forms.FileInput(attrs={'class': 'form-control'}),
         }

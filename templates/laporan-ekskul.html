@@ -17,7 +17,9 @@
             {% endfor %}
             <h6 class="m-0"> Jadwal Bimbingan : {{ ekskul.jadwal }} {{ ekskul.waktu }}</h6>
 
-            <a href="{% url 'laporan:laporan-index' %}" class="btn btn-danger m-3">Kembali</a>
+            <a href="{% url 'laporan:laporan-input' ekskul.slug %}" class="btn btn-primary mb-1 mt-3">Input Laporan</a>
+            <a href="{% url 'laporan:laporan-upload' ekskul.slug %}" class="btn btn-success m-1">Upload Foto</a>
+            <a href="{% url 'laporan:laporan-index' %}" class="btn btn-danger mt-1 mb-3">Kembali</a>
 
             <div class="col-sm mt-3">
 

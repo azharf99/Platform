@@ -13,15 +13,14 @@
 
                         <div class="row-sm m-2">
                             <label for="id_laporan">Pilih Laporan:</label>
-                            <select name="laporan" required id="id_laporan">
+                            <select name="laporan" required id="id_laporan" class="form-select">
                                 {% for report in filtered_report %}
                                     <option value={{ report.id }}>{{ report }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="row-sm m-2">
-                            <label for="id_images">Upload Foto:</label>
-                            <input type="file" multiple name="images" accept="image/*" id="id_images">
+                            {{ forms.as_p }}
                         </div>
                     {% else %}
                         <p class="h3 text-danger">Maaf, laporan kehadiran anda kosong. Silahkan input laporan kehadiran terlebih dahulu sebelum upload gambar. :(</p>

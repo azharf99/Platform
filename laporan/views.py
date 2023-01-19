@@ -103,13 +103,12 @@ def laporan_upload(request, slug):
         forms = FormUploadLaporanKehadiran(request.POST)
         id_laporan = request.POST.get('laporan')
         laporan = get_object_or_404(Report, id=id_laporan)
-        images = request.FILES.getlist('images')
+        image = request.FILES.get('foto_absensi')
 
-        for i in images:
-            photo = UploadImage.objects.create(
+        UploadImage.objects.create(
                 laporan=laporan,
-                foto_absensi=i
-            )
+                foto_absensi=image
+        )
         UserLog.objects.create(
             user=request.user.teacher,
             action_flag="ADD",
@@ -117,7 +116,7 @@ def laporan_upload(request, slug):
             message="Berhasil mengupload foto pertemuan ekskul {} untuk tanggal {}".format(ekskul,
                                                                                            laporan.tanggal_pembinaan)
         )
-        return redirect('laporan-ekskul', ekskul.slug)
+        return redirect('laporan:laporan-ekskul', ekskul.slug)
     else:
         forms = FormUploadLaporanKehadiran()
 
@@ -147,7 +146,7 @@ def laporan_edit(request, slug, pk):
                 message="Berhasil mengubah data laporan pertemuan ekskul {} untuk tanggal {}".format(ekskul,
                                                                                                      laporan.tanggal_pembinaan)
             )
-            return redirect('laporan-ekskul', ekskul.slug)
+            return redirect('laporan:laporan-ekskul', ekskul.slug)
         else:
             messages.error(request, "Mohon input data dengan benar!")
             form = FormLaporanKehadiran(request.POST, instance=laporan)
@@ -176,7 +175,7 @@ def laporan_delete(request, slug, pk):
                                                                                                   laporan.tanggal_pembinaan)
         )
         laporan.delete()
-        return redirect('laporan-ekskul', ekskul.slug)
+        return redirect('laporan:laporan-ekskul', ekskul.slug)
     context = {
         'ekskul': ekskul,
         'laporan': laporan,
@@ -204,7 +203,7 @@ def laporan_upload_edit(request, slug, pk):
                 message="Berhasil mengubah foto laporan pertemuan ekskul {} untuk tanggal {}".format(ekskul,
                                                                                                      laporan.tanggal_pembinaan)
             )
-            return redirect('laporan-ekskul', ekskul.slug)
+            return redirect('laporan:laporan-ekskul', ekskul.slug)
         else:
             messages.error(request, "Mohon input data dengan benar!")
             form_upload_edit = FormUploadLaporanKehadiran(request.POST, request.FILES, instance=foto)
@@ -221,7 +220,7 @@ def laporan_upload_edit(request, slug, pk):
 @login_required(login_url='/login/')
 def laporan_upload_delete(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
-    laporan = get_object_or_404(UploadImage, id=pk)
+    laporan = get_object_or_404(Report, id=pk)
     foto = UploadImage.objects.get(laporan_id=laporan.id)
     if request.method == 'POST':
         UserLog.objects.create(
@@ -232,7 +231,7 @@ def laporan_upload_delete(request, slug, pk):
                                                                                                      laporan.tanggal_pembinaan)
         )
         foto.delete()
-        return redirect('laporan-ekskul', ekskul.slug)
+        return redirect('laporan:laporan-ekskul', ekskul.slug)
 
     context = {
         'ekskul': ekskul,
