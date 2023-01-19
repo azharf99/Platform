@@ -12,12 +12,13 @@
                             <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
                         </svg>
                         <h5 class="card-title">Konfirmasi penghapusan</h5>
-                        <p class="card-text">Kamu yakin ingin menghapus data laporan tanggal <b>{{ laporan.tanggal_pembinaan|date:"j F Y" }}</b> dari ekstrakurikuler <b>{{ ekskul.nama.upper }}</b> ?</p>
+                        <p class="card-text">Kamu yakin ingin menghapus data foto pertemuan <b>{{ foto }}</b> ?</p>
                         </div>
                         <hr>
-                        <p class="card-text text-danger fw-bold">Hal-hal yang akan terdampak yaitu : </p>
+                        <p class="card-text text-danger fw-bold">Hal-hal yang harus diperhatikan yaitu : </p>
                         <ol>
-                            <li>Data semua gambar/dokumentasi pada tanggal {{ laporan.tanggal_pembinaan|date:"j F Y" }} di {{ ekskul.nama }} akan <strong CLASS="text-danger">HILANG SECARA PERMANEN</strong></li>
+                            <li><strong CLASS="text-danger">Tindakan ini tidak dapat dipulihkan!</strong></li>
+                            <li>Data beberapa foto {{ foto }} akan <strong CLASS="text-danger">HILANG SECARA PERMANEN</strong></li>
                         </ol>
                     </div>
                     <div class="card-footer text-center">

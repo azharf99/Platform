@@ -6,6 +6,7 @@ from django.contrib import messages
 from ekskul.models import Extracurricular, Student, StudentOrganization, Teacher, User
 from laporan.models import Report
 from ekskul.forms import InputAnggotaEkskulForm, PembinaEkskulForm, EkskulForm
+from userlog.models import UserLog
 from django.views.decorators.csrf import csrf_protect
 
 # Create your views here.
@@ -71,10 +72,17 @@ def input_anggota(request, slug):
             form = InputAnggotaEkskulForm(request.POST)
             messages.error(request, "Santri sudah ada di dalam anggota ekskul. Silahkan pilih santri lain")
         except:
+            siswa = get_object_or_404(Student, id=id_siswa)
             form = InputAnggotaEkskulForm(request.POST)
             InputAnggotaEkskulForm.ekskul_siswa = data_ekskul
             if form.is_valid():
                 form.save()
+                UserLog.objects.create(
+                    user=request.user.teacher,
+                    action_flag="ADD",
+                    app="EKSKUL",
+                    message="Berhasil menambahkan anggota baru ekskul {} atas nama {} kelas {}".format(ekskul, siswa.nama, siswa.kelas)
+                )
                 return redirect('ekskul:data-detail', ekskul.slug)
     else:
         form = InputAnggotaEkskulForm()
@@ -97,6 +105,12 @@ def delete_anggota(request, slug, pk):
 
     if request.method == 'POST':
         deteled_student.delete()
+        UserLog.objects.create(
+            user=request.user.teacher,
+            action_flag="DELETE",
+            app="EKSKUL",
+            message="Berhasil menghapus anggota ekskul {} atas nama {} kelas {}".format(ekskul, deteled_student.nama_siswa.nama, deteled_student.nama_siswa.kelas)
+        )
         return redirect('ekskul:data-detail', ekskul.slug)
     context = {
         'ekskul': ekskul,
@@ -117,6 +131,12 @@ def edit_ekskul(request, slug):
         form = EkskulForm(request.POST, instance=ekskul)
         if form.is_valid():
             form.save()
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="CHANGE",
+                app="EKSKUL",
+                message="Berhasil mengedit data ekskul {}".format(ekskul)
+            )
             return redirect('ekskul:data-detail', ekskul.slug)
     else:
         form = EkskulForm(instance=ekskul)
@@ -149,6 +169,12 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="LOGIN",
+                app="EKSKUL",
+                message="Berhasil melakukan login ke aplikasi"
+            )
             return redirect('app-index')
         else:
             messages.warning(request, "Username atau Password salah!")
@@ -174,6 +200,12 @@ def edit_profil_view(request):
             form = PembinaEkskulForm(request.POST, request.FILES, instance=teacher)
             if form.is_valid():
                 form.save()
+                UserLog.objects.create(
+                    user=request.user.teacher,
+                    action_flag="CHANGE",
+                    app="PROFILE",
+                    message="Berhasil mengubah data diri di halaman profil",
+                )
                 return redirect('profil')
             else:
                 messages.error(request, "Input data dengan benar!")
@@ -189,5 +221,11 @@ def edit_profil_view(request):
 
 
 def logout_view(request):
+    UserLog.objects.create(
+        user=request.user.teacher,
+        action_flag="LOGOUT",
+        app="EKSKUL",
+        message="Berhasil logout dari aplikasi",
+    )
     logout(request)
     return redirect('app-index')

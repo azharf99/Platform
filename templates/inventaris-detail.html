@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load humanize %}
+    <div class="mt-5 pt-4 text-center">
+        <h1 class="m-3">Detail Inventaris {{ data.nama_barang }}</h1>
+        <a href="{% url 'inventaris:inventaris-index' %}" class="btn btn-danger">Kembali</a>
+    </div>
+
+    <div class="container">
+        <table class="table table-hover w-100">
+            <tbody>
+            {% if data %}
+                <tr>
+                    <td>Nama Barang</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.nama_barang }}</td>
+                </tr>
+                <tr>
+                    <td>Jumlah Barang</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.jumlah }}</td>
+                </tr>
+                <tr>
+                    <td>Pemilik Barang</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.pemilik }}</td>
+                </tr>
+                <tr>
+                    <td>Apakah ini barang hibah?</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.hibah }}</td>
+                </tr>
+                <tr>
+                    <td>Pemberi Hibah (jika barang hibah)</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.pemberi_hibah }}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Hibah (jika barang hibah)</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.tanggal_hibah|date:"j F Y" }}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Pembelian Barang (non hibah)</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.tanggal_dibeli|date:"j F Y" }}</td>
+                </tr>
+                <tr>
+                    <td>Anggaran Dana</td>
+                    <td class="text-end">:</td>
+                    <td>Rp. {{ data.anggaran_dana|intcomma }}</td>
+                </tr>
+                <tr>
+                    <td>Nama Toko</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.nama_toko }}</td>
+                </tr>
+                <tr>
+                    <td>Alamat Toko</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.alamat_toko }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center fw-bold text-danger">Maaf, belum ada data inventaris :(</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

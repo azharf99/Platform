@@ -20,13 +20,13 @@
 
                             <p class="field">
                                 <label for="id_nama_ekskul">Nama ekskul:</label>
-                                <select name="nama_ekskul" required id="id_nama_ekskul">
+                                <select name="nama_ekskul" required id="id_nama_ekskul" class="form-control">
                                     <option value="{{ ekskul.id }}">{{ ekskul.nama }}</option>
                                 </select>
                             </p>
                             <p class="field">
                                 <label for="id_pembina_ekskul">Pembina Ekskul:</label>
-                                <select name="pembina_ekskul" required id="id_pembina_ekskul">
+                                <select name="pembina_ekskul" required id="id_pembina_ekskul" class="form-select">
                                     {% for guru in ekskul.pembina.all %}
                                         <option value="{{ guru.id }}">{{ guru }}</option>
                                     {% endfor %}
@@ -34,11 +34,11 @@
                             </p>
                             <p class="field">
                                 <label for="id_tanggal_pembinaan">Tanggal Pembinaan:</label>
-                                <input type="date" name="tanggal_pembinaan" required id="id_tanggal_pembinaan">
+                                <input type="date" name="tanggal_pembinaan" required id="id_tanggal_pembinaan" class="form-control">
                             </p>
                             <p class="field">
                                 <label for="id_kehadiran_santri">Kehadiran santri:</label>
-                                <select name="kehadiran_santri" required id="id_kehadiran_santri" multiple>
+                                <select name="kehadiran_santri" required id="id_kehadiran_santri" multiple class="form-control">
                                     {% for student in filtered_student %}
                                         <option value="{{ student.id }}">{{ student.nama_siswa }}</option>
                                     {% endfor %}

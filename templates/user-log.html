@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="list-group mt-5 p-2 mx-2">
+        {% for log in logs %}
+            <a href="#" class="list-group-item list-group-item-action" aria-current="true">
+                <h6 class="mb-1">{{ log.user }}</h6>
+                <small>{{ log.created_at }}</small>
+                <p class="mb-1">{{ log.message }}</p>
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}

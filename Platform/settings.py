@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'timeline.apps.TimelineConfig',
     'deskripsi.apps.DeskripsiConfig',
     'prestasi.apps.PrestasiConfig',
+    'userlog.apps.UserlogConfig',
 
 ]
 

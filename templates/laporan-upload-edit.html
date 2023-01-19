@@ -13,14 +13,15 @@
                 {% endif %}
                 <div class="card" style="min-width: 18rem;">
                     <div class="card-header text-bg-dark text-center">
-                        Form Input/Edit Data Inventaris Ekskul
+                        Edit Upload Foto Kehadiran Ekskul {{ ekskul.nama }}
                     </div>
                     <div class="card-body">
-                        {{ forms.as_p }}
+                        {{ form_upload_edit.as_p }}
+
                     </div>
                     <div class="card-footer text-center">
-                        <a href="{% url 'inventaris:inventaris-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
-                        <input type="submit" class="card-link btn btn-success m-1" value="Save Data">
+                            <a href="{% url 'laporan:laporan-ekskul' ekskul.slug %}" class="card-link btn btn-danger m-1">Kembali</a>
+                            <input type="submit" class="card-link btn btn-success m-1" value="Save Data">
                     </div>
                 </div>
             </form>

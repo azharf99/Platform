@@ -16,6 +16,7 @@ pilihan_pelaksaan = (
     (None, "Pilih Jenis Pelaksanaan"),
     ("Offline", "Offline"),
     ("Online", "Online"),
+    ("Hybrid", "Hybrid"),
 )
 pilihan_berjenjang = (
     (None, "Apakah Lomba Berjenjang?"),

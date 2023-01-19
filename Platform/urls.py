@@ -22,6 +22,7 @@ from django.shortcuts import render
 import deskripsi.views
 import ekskul.views
 import prestasi.views
+import userlog.views
 
 
 def struktur(request):
@@ -40,6 +41,7 @@ def restricted(request):
 urlpatterns = [
     path('', deskripsi.views.home_view, name='app-index'),
     path('menu', deskripsi.views.menu_view, name='menu'),
+    path('log/', userlog.views.index, name='log-index'),
     path('admin/', admin.site.urls),
     path('login/', ekskul.views.login_view, name='login'),
     path('profil/', ekskul.views.profil_view, name='profil'),

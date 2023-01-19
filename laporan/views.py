@@ -4,8 +4,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from laporan.models import Report, UploadImage
-from laporan.forms import LaporanKehadiran, UploadLaporanKehadiran
+from laporan.forms import FormLaporanKehadiran, FormUploadLaporanKehadiran
 from ekskul.models import Extracurricular, StudentOrganization
+from userlog.models import UserLog
 
 
 # Create your views here.
@@ -23,15 +24,24 @@ def index(request):
     return render(request, 'laporan.html', context)
 
 
-def laporan_detail(request, slug):
+def laporan_ekskul(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
-    bulan_ini = datetime.date.today().__format__("%B")
+    bulan_ini = datetime.date.today().__format__("%B %Y")
     filtered_report = Report.objects.filter(nama_ekskul__slug=slug).filter(
         tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
     context = {
         'ekskul': ekskul,
         'filtered_report': filtered_report,
         'bulan_ini': bulan_ini,
+    }
+    return render(request, 'laporan-ekskul.html', context)
+
+def laporan_detail(request, slug, pk):
+    ekskul = get_object_or_404(Extracurricular, slug=slug)
+    data = get_object_or_404(Report, nama_ekskul__slug=slug, id=pk)
+    context = {
+        'ekskul': ekskul,
+        'data': data,
     }
     return render(request, 'laporan-detail.html', context)
 
@@ -52,20 +62,27 @@ def laporan_input(request, slug):
     if request.method == 'POST':
         try:
             laporan = Report.objects.get(tanggal_pembinaan=tanggal_pembinaan)
-            form = LaporanKehadiran(request.POST)
+            form = FormLaporanKehadiran(request.POST)
             messages.error(request, "Laporan untuk tanggal ini sudah ada. Silahkan pilih tanggal lain")
         except:
-            form = LaporanKehadiran(request.POST)
-            LaporanKehadiran.nama_ekskul = nama_ekskul
-            LaporanKehadiran.tanggal_pembinaan = tanggal_pembinaan
-            LaporanKehadiran.kehadiran_santri = kehadiran_santri
-            LaporanKehadiran.pembina_ekskul = pembina
+            form = FormLaporanKehadiran(request.POST)
+            FormLaporanKehadiran.nama_ekskul = nama_ekskul
+            FormLaporanKehadiran.tanggal_pembinaan = tanggal_pembinaan
+            FormLaporanKehadiran.kehadiran_santri = kehadiran_santri
+            FormLaporanKehadiran.pembina_ekskul = pembina
             if form.is_valid():
                 form.save()
+                UserLog.objects.create(
+                    user=request.user.teacher,
+                    action_flag="ADD",
+                    app="LAPORAN",
+                    message="Berhasil menambahkan data laporan pertemuan ekskul {} untuk tanggal {}".format(ekskul,
+                                                                                                            tanggal_pembinaan)
+                )
                 return redirect('laporan:laporan-upload', ekskul.slug)
 
     else:
-        form = LaporanKehadiran()
+        form = FormLaporanKehadiran()
 
     context = {
         'ekskul': ekskul,
@@ -83,7 +100,7 @@ def laporan_upload(request, slug):
         if not guru.user_id == request.user.id and not request.user.is_superuser:
             return HttpResponseRedirect(reverse('restricted'))
     if request.method == 'POST':
-        forms = UploadLaporanKehadiran(request.POST)
+        forms = FormUploadLaporanKehadiran(request.POST)
         id_laporan = request.POST.get('laporan')
         laporan = get_object_or_404(Report, id=id_laporan)
         images = request.FILES.getlist('images')
@@ -93,10 +110,16 @@ def laporan_upload(request, slug):
                 laporan=laporan,
                 foto_absensi=i
             )
-
-        return redirect('laporan:laporan-detail', ekskul.slug)
+        UserLog.objects.create(
+            user=request.user.teacher,
+            action_flag="ADD",
+            app="LAPORAN_FOTO",
+            message="Berhasil mengupload foto pertemuan ekskul {} untuk tanggal {}".format(ekskul,
+                                                                                           laporan.tanggal_pembinaan)
+        )
+        return redirect('laporan-ekskul', ekskul.slug)
     else:
-        forms = UploadLaporanKehadiran()
+        forms = FormUploadLaporanKehadiran()
 
     context = {
         'ekskul': ekskul,
@@ -104,6 +127,7 @@ def laporan_upload(request, slug):
         'forms': forms,
     }
     return render(request, 'laporan-upload.html', context)
+
 
 @login_required(login_url='/login/')
 def laporan_edit(request, slug, pk):
@@ -113,19 +137,28 @@ def laporan_edit(request, slug, pk):
         if not guru.user_id == request.user.id and not request.user.is_superuser:
             return HttpResponseRedirect(reverse('restricted'))
     if request.method == 'POST':
-        form = LaporanKehadiran(request.POST, instance=laporan)
+        form = FormLaporanKehadiran(request.POST, instance=laporan)
         if form.is_valid():
             form.save()
-            return redirect('laporan:laporan-detail', ekskul.slug)
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="CHANGE",
+                app="LAPORAN",
+                message="Berhasil mengubah data laporan pertemuan ekskul {} untuk tanggal {}".format(ekskul,
+                                                                                                     laporan.tanggal_pembinaan)
+            )
+            return redirect('laporan-ekskul', ekskul.slug)
         else:
             messages.error(request, "Mohon input data dengan benar!")
+            form = FormLaporanKehadiran(request.POST, instance=laporan)
     else:
-        form = LaporanKehadiran(instance=laporan)
+        form = FormLaporanKehadiran(instance=laporan)
     context = {
         'ekskul': ekskul,
         'form': form,
     }
     return render(request, 'laporan-edit.html', context)
+
 
 @login_required(login_url='/login/')
 def laporan_delete(request, slug, pk):
@@ -135,8 +168,15 @@ def laporan_delete(request, slug, pk):
         if not guru.user_id == request.user.id and not request.user.is_superuser:
             return HttpResponseRedirect(reverse('restricted'))
     if request.method == 'POST':
+        UserLog.objects.create(
+            user=request.user.teacher,
+            action_flag="DELETE",
+            app="LAPORAN",
+            message="Berhasil menghapus data laporan pertemuan ekskul {} untuk tanggal {}".format(ekskul,
+                                                                                                  laporan.tanggal_pembinaan)
+        )
         laporan.delete()
-        return redirect('laporan:laporan-detail', ekskul.slug)
+        return redirect('laporan-ekskul', ekskul.slug)
     context = {
         'ekskul': ekskul,
         'laporan': laporan,
@@ -145,9 +185,58 @@ def laporan_delete(request, slug, pk):
     return render(request, 'laporan-delete.html', context)
 
 
-def laporan_upload_edit(request):
-    return render(request)
+@login_required(login_url='/login/')
+def laporan_upload_edit(request, slug, pk):
+    ekskul = get_object_or_404(Extracurricular, slug=slug)
+    laporan = get_object_or_404(Report, id=pk)
+    foto = UploadImage.objects.get(laporan_id=laporan.id)
+    for guru in ekskul.pembina.all():
+        if not guru.user_id == request.user.id and not request.user.is_superuser:
+            return HttpResponseRedirect(reverse('restricted'))
+    if request.method == 'POST':
+        form_upload_edit = FormUploadLaporanKehadiran(request.POST, request.FILES, instance=foto)
+        if form_upload_edit.is_valid():
+            form_upload_edit.save()
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="CHANGE",
+                app="LAPORAN_FOTO",
+                message="Berhasil mengubah foto laporan pertemuan ekskul {} untuk tanggal {}".format(ekskul,
+                                                                                                     laporan.tanggal_pembinaan)
+            )
+            return redirect('laporan-ekskul', ekskul.slug)
+        else:
+            messages.error(request, "Mohon input data dengan benar!")
+            form_upload_edit = FormUploadLaporanKehadiran(request.POST, request.FILES, instance=foto)
+    else:
+        form_upload_edit = FormUploadLaporanKehadiran(instance=foto)
+
+    context = {
+        'ekskul': ekskul,
+        'form_upload_edit': form_upload_edit,
+    }
+    return render(request, 'laporan-upload-edit.html', context)
 
 
-def laporan_upload_delete(request):
-    return render(request)
+@login_required(login_url='/login/')
+def laporan_upload_delete(request, slug, pk):
+    ekskul = get_object_or_404(Extracurricular, slug=slug)
+    laporan = get_object_or_404(UploadImage, id=pk)
+    foto = UploadImage.objects.get(laporan_id=laporan.id)
+    if request.method == 'POST':
+        UserLog.objects.create(
+            user=request.user.teacher,
+            action_flag="DELETE",
+            app="LAPORAN_FOTO",
+            message="Berhasil menghapus foto laporan pertemuan ekskul {} untuk tanggal {}".format(ekskul,
+                                                                                                     laporan.tanggal_pembinaan)
+        )
+        foto.delete()
+        return redirect('laporan-ekskul', ekskul.slug)
+
+    context = {
+        'ekskul': ekskul,
+        'foto': foto,
+    }
+
+    return render(request, 'laporan-upload-delete.html', context)

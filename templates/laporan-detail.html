@@ -1,72 +1,62 @@
 {% extends 'base.html' %}
+
 {% block content %}
-    <div class="container mt-5 pt-4">
-        <div class="row justify-content-center align-items-center">
-            <h3 class="text-center">Laporan Kehadiran Ekskul</h3>
-            <h4 class="text-center">{{ ekskul.nama }}</h4>
-            {% for pembina in ekskul.pembina.all %}
-                {% if ekskul.pembina.count > 1 %}
-                    <h6 class="m-0">Pembina {{ forloop.counter }} :
-                    {{ pembina }}
-                {% else %}
-                    <h6 class="m-0">Pembina :
-                    {{ pembina }}
-                {% endif %}
-            </h6>
-            {% endfor %}
-            <h6 class="m-0"> Jadwal Bimbingan : {{ ekskul.jadwal }} {{ ekskul.waktu }}</h6>
-            <h6 class="m-0"> Bulan : {{ bulan_ini}}</h6>
+    {% load humanize %}
+    <div class="mt-5 pt-4 text-center">
+        <h1 class="m-3">Detail Laporan {{ ekskul.nama }}</h1>
+        <a href="{% url 'laporan:laporan-ekskul' ekskul.slug %}" class="btn btn-danger">Kembali</a>
+    </div>
 
-            <div class="col-sm mt-3">
-
-                <table class="table table-hover w-100">
-                    <thead>
-                    <tr>
-                        <th scope="col">No.</th>
-                        <th scope="col">Tgl</th>
-                        <th scope="col">Kehadiran anggota</th>
-                        <th scope="col">Foto</th>
-                        <th scope="col">Aksi</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% if filtered_report %}
-                        {% for report in filtered_report %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ report.tanggal_pembinaan|date:"j"}}</td>
-                                <td><strong>{{ report.kehadiran_santri.count }} SANTRI</strong>
-                                    {% for santri in report.kehadiran_santri.all %}
-                                        <p class="m-0">{{ santri.nama_siswa.nama }} | {{ santri.nama_siswa.kelas }}</p>
-                                    {% endfor %}
-                                </td>
-                                <td>
-                                    {% for image in report.uploadimage_set.all %}
-                                        <img class="m-1" src="{{ image.foto_absensi.url }}" height="100px" width="100px">
-                                    {% endfor %}
-                                </td>
-                                <td>
-                                    <a href="{% url 'laporan:laporan-edit' ekskul.slug report.id %}" class="btn btn-sm btn-warning my-2" title="Edit">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-                                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                                        </svg></a>
-                                    <a href="{% url 'laporan:laporan-delete' ekskul.slug report.id %}" class="btn btn-sm btn-danger my-2" title="Edit">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                                        </svg></a>
-                                </td>
-                            </tr>
+    <div class="container">
+        <table class="table table-hover w-100">
+            <tbody>
+            {% if data %}
+                <tr>
+                    <td>Nama Ekskul</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.nama_ekskul }}</td>
+                </tr>
+                <tr>
+                    <td>Pembina {{ data.nama_ekskul.tipe }}</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.pembina_ekskul }}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Pembinaan</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.tanggal_pembinaan|date:"j F Y" }}</td>
+                </tr>
+                <tr>
+                    <td>Santri yang hadir</td>
+                    <td class="text-end">:</td>
+                    <td>
+                        {% for santri in data.kehadiran_santri.all %}
+                            <p>{{ santri.nama_siswa.nama }} | {{ santri.nama_siswa.kelas }}</p>
                         {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="5" class="text-center fw-bold text-danger">Maaf, belum ada laporan kehadiran :(</td>
-                        </tr>
-                    {% endif %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>Catatan Pembinaan</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.catatan_pembinaan }}</td>
+                </tr>
+                <tr>
+                    <td>Foto pembinaan</td>
+                    <td class="text-end">:</td>
+                    <td>
+                        {% for image in data.uploadimage_set.all %}
+                            <img class="m-1" src="{{ image.foto_absensi.url }}" height="100%" width="100%">
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center fw-bold text-danger">Maaf, belum ada data inventaris :(</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
     </div>
 
 {% endblock %}
