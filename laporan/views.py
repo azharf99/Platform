@@ -27,10 +27,11 @@ def index(request):
 
 
 def print_to_pdf(request):
-    reports = Report.objects.all().order_by('tipe', 'nama')
-
+    reports = Report.objects.all()
+    angka = [x for x in range(15)]
     context = {
         'reports': reports,
+        'angka': angka,
     }
     return render(request, 'laporan-print.html', context)
 

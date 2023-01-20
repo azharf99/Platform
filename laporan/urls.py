@@ -4,6 +4,7 @@ from laporan import views
 app_name = 'laporan'
 urlpatterns = [
     path('', views.index, name='laporan-index'),
+    path('print', views.print_to_pdf, name='laporan-print'),
     path('<slug:slug>', views.laporan_ekskul, name='laporan-ekskul'),
     path('<slug:slug>/input', views.laporan_input, name='laporan-input'),
     path('<slug:slug>/detail/<int:pk>', views.laporan_detail, name='laporan-detail'),
