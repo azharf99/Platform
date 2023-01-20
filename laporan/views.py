@@ -25,6 +25,16 @@ def index(request):
     return render(request, 'laporan.html', context)
 
 
+
+def print_to_pdf(request):
+    reports = Report.objects.all().order_by('tipe', 'nama')
+
+    context = {
+        'reports': reports,
+    }
+    return render(request, 'laporan-print.html', context)
+
+
 def laporan_ekskul(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     bulan_ini = datetime.date.today().__format__("%B %Y")

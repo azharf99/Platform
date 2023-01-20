@@ -31,14 +31,16 @@
                         </div>
                         <div class="card-footer border-primary text-light">
                             {% if request.user.is_authenticated %}
-                                {% for pembina in data.pembina.all %}
-                                    {% if not request.user.teacher == pembina and not request.user.is_superuser %}
-                                    {% else %}
-                                        <a href="{% url 'laporan:laporan-input' data.slug %}" class="btn btn-sm btn-outline-dark">Input</a>
-                                        <a href="{% url 'laporan:laporan-upload' data.slug %}" class="btn btn-sm btn-outline-primary">Upload</a>
-                                    {% endif %}
-                                {% endfor %}
-
+                                {% if request.user.is_superuser %}
+                                    <a href="{% url 'laporan:laporan-input' data.slug %}" class="btn btn-sm btn-outline-dark">Input</a>
+                                    <a href="{% url 'laporan:laporan-upload' data.slug %}" class="btn btn-sm btn-outline-primary">Upload</a>
+                                {% elif request.user.teacher == data.pembina.first %}
+                                    <a href="{% url 'laporan:laporan-input' data.slug %}" class="btn btn-sm btn-outline-dark">Input</a>
+                                    <a href="{% url 'laporan:laporan-upload' data.slug %}" class="btn btn-sm btn-outline-primary">Upload</a>
+                                {% elif request.user.teacher == data.pembina.last %}
+                                    <a href="{% url 'laporan:laporan-input' data.slug %}" class="btn btn-sm btn-outline-dark">Input</a>
+                                    <a href="{% url 'laporan:laporan-upload' data.slug %}" class="btn btn-sm btn-outline-primary">Upload</a>
+                                {% endif %}
                                 <a href="{% url 'laporan:laporan-ekskul' data.slug %}" class="btn btn-sm btn-outline-success">Rekap Laporan</a>
                             {% else %}
                                 <a href="{% url 'laporan:laporan-ekskul' data.slug %}" class="btn btn-sm btn-outline-success">Rekap Laporan</a>
