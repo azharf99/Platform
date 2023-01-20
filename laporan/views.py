@@ -1,4 +1,7 @@
 import datetime
+import locale
+
+import pytz
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -25,13 +28,27 @@ def index(request):
     return render(request, 'laporan.html', context)
 
 
-
-def print_to_pdf(request):
-    reports = Report.objects.all()
+@login_required(login_url='/login/')
+def print_to_pdf(request, slug):
+    locale.setlocale(locale.LC_ALL, 'id_ID')
+    tanggal = datetime.datetime.now(pytz.timezone('Asia/Jakarta'))
+    reports = Report.objects.filter(nama_ekskul__slug=slug, tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
+    students = StudentOrganization.objects.filter(ekskul_siswa__slug=slug)
+    ekskul = get_object_or_404(Extracurricular, slug=slug)
     angka = [x for x in range(15)]
+    UserLog.objects.create(
+        user=request.user.teacher,
+        action_flag="ADD",
+        app="LAPORAN",
+        message="Berhasil mengunduh/mencetak data laporan bulanan ekskul {} untuk bulan {}".format(slug,
+                                                                                                tanggal.__format__("%B"))
+    )
     context = {
         'reports': reports,
         'angka': angka,
+        'students': students,
+        'ekskul': ekskul,
+        'tanggal': tanggal,
     }
     return render(request, 'laporan-print.html', context)
 
