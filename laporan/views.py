@@ -1,11 +1,20 @@
 import datetime
 import locale
+import os
+
+from laporan.print import render_to_pdf, render_ke_pdf
 
 import pytz
+from django.conf import settings
+from django.contrib.staticfiles import finders
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
 from laporan.models import Report, UploadImage
 from laporan.forms import FormLaporanKehadiran, FormUploadLaporanKehadiran, FormEditUploadLaporanKehadiran
 from ekskul.models import Extracurricular, StudentOrganization
@@ -50,6 +59,7 @@ def print_to_pdf(request, slug):
         'ekskul': ekskul,
         'tanggal': tanggal,
     }
+
     return render(request, 'laporan-print.html', context)
 
 

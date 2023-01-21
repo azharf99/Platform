@@ -26,9 +26,9 @@ SECRET_KEY = '-61rkkckbdp4^zaqtjor&$^ewvchghohhzad@bmo%#5sloq)_m'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
-TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
-TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
+# Untuk kirim pesan otomatis via Whatsapp
+ID_DEVICE = '4361'
+API_KEY = '2af54c86b60b5027ac1e13945705ece7c1f78893'
 
 ALLOWED_HOSTS = ['ekskul.smasitalbinaa.com', 'platform-production-6b92.up.railway.app', '127.0.0.1']
 
@@ -158,4 +158,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
 

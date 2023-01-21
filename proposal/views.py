@@ -1,3 +1,5 @@
+import requests
+from django.conf import settings
 from django.db.models import Sum, Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
@@ -75,6 +77,40 @@ def proposal_input(request):
                     app="PROPOSAL",
                     message="Berhasil menambahkan data proposal {} dengan anggaran sebesar {} dan penanggung jawab {}".format(p.nama_event, p.anggaran_biaya, p.penanggungjawab)
                 )
+                url = 'https://api.watsap.id/send-message'
+                data_post = {
+                    'id_device': settings.ID_DEVICE,
+                    'api-key': settings.API_KEY,
+                    'no_hp': '0%s' % request.user.teacher.no_hp,
+                    'pesan': '''*[NOTIFIKASI]*
+Assalamu'alaikum %s, berhasil mengajukan proposal *%s* dengan anggaran dana *%s* dan penanggung jawab *%s*.
+Syukron.
+
+_Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, p.nama_event, p.anggaran_biaya, p.penanggungjawab)
+                }
+                headers = {'Content-Type': 'application/json'}
+                requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
+
+                data_post = {
+                    'id_device': settings.ID_DEVICE,
+                    'api-key': settings.API_KEY,
+                    # 'no_hp': '081293034867',
+                    'no_hp': '085701570100',
+                    'pesan': '''*[NOTIFIKASI]*
+Assalamu'alaikum %s, Ada mengajukan proposal baru yang masuk dengan rincian
+
+*Nama proposal : %s*
+*Anggaran dana : %s*
+*Penanggung jawab : %s.*
+
+Mohon sekiranya ustadz dapat meninjau proposal tersebut pada aplikasi.
+https://ekskul.smasitalbinaa.com/proposal/approval/%s
+Syukron.
+
+_Ini adalah pesan otomatis, jangan dibalas._''' % ("Ustadz Panji Asmara, S.Pd.", p.nama_event, p.anggaran_biaya, p.penanggungjawab, p.id)
+                }
+                headers = {'Content-Type': 'application/json'}
+                requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
                 return redirect('proposal:proposal-index')
             else:
                 forms = ProposalForm(request.POST, request.FILES)
@@ -153,6 +189,59 @@ def proposal_approval(request, pk):
                 app="PROPOSAL_WAKASEK",
                 message="Wakasek berhasil melakukan approval pada proposal {} dengan status {}".format(status, data.is_wakasek)
             )
+
+            url = 'https://api.watsap.id/send-message'
+            data_post = {
+                'id_device': settings.ID_DEVICE,
+                'api-key': settings.API_KEY,
+                'no_hp': '0%s' % request.user.teacher.no_hp,
+                'pesan': '''*[NOTIFIKASI]*
+Assalamu'alaikum %s, berhasil melakukan approval proposal *%s* dengan status *%s* dan komentar *%s*.
+Syukron.
+
+_Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, status.nama_event, data.is_wakasek, data.alasan_wakasek)
+            }
+            headers = {'Content-Type': 'application/json'}
+            requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
+
+            data_post = {
+                'id_device': settings.ID_DEVICE,
+                'api-key': settings.API_KEY,
+                # 'no_hp': '081398176123',
+                'no_hp': '085701570100',
+                'pesan': '''*[NOTIFIKASI]*
+Assalamu'alaikum %s, Ada proposal baru yang masuk dengan rincian:
+
+*Nama proposal : %s*
+*Anggaran dana : %s*
+*Penanggung jawab : %s.*
+*Keputusan Wakasek saat ini: %s*
+*Komentar dari Wakasek: %s*
+
+Mohon sekiranya ustadz dapat meninjau proposal tersebut pada aplikasi.
+https://ekskul.smasitalbinaa.com/proposal/approval/kepsek/%s
+Syukron.
+
+_Ini adalah pesan otomatis, jangan dibalas._''' % ("Ustadz Agung Wahyu Adhy, Lc.", status.nama_event, status.anggaran_biaya, status.penanggungjawab, data.is_wakasek, data.alasan_wakasek, status.id)
+            }
+            headers = {'Content-Type': 'application/json'}
+            requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
+
+            data_post = {
+                'id_device': settings.ID_DEVICE,
+                'api-key': settings.API_KEY,
+                # 'no_hp': '0%s' % status.penanggungjawab.no_hp,
+                'no_hp': '085701570100',
+                'pesan': '''*[NOTIFIKASI]*
+Assalamu'alaikum %s, Proposal anda dengan judul *%s* telah *ditinjau oleh Wakasek Ekstrakurikuler*.
+Mohon sekiranya Anda dapat meninjau status proposal tersebut pada aplikasi.
+https://ekskul.smasitalbinaa.com/proposal
+Syukron.
+
+_Ini adalah pesan otomatis, jangan dibalas._''' % (status.penanggungjawab, status.nama_event)
+            }
+            headers = {'Content-Type': 'application/json'}
+            requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
             return redirect('proposal:proposal-index')
     else:
         forms = StatusProposalForm(instance=data)
@@ -177,6 +266,62 @@ def proposal_approval_kepsek(request, pk):
                     app="PROPOSAL_KEPSEK",
                     message="Kepala Sekolah berhasil melakukan approval pada proposal {} dengan status {}".format(status, data.is_kepsek)
                 )
+
+                url = 'https://api.watsap.id/send-message'
+                data_post = {
+                    'id_device': settings.ID_DEVICE,
+                    'api-key': settings.API_KEY,
+                    'no_hp': '0%s' % request.user.teacher.no_hp,
+                    'pesan': '''*[NOTIFIKASI]*
+Assalamu'alaikum %s, berhasil melakukan approval proposal *%s* dengan status *%s* dan komentar *%s*.
+Syukron.
+
+_Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, status.nama_event, data.is_kepsek, data.alasan_kepsek)
+                }
+                headers = {'Content-Type': 'application/json'}
+                requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
+
+                data_post = {
+                    'id_device': settings.ID_DEVICE,
+                    'api-key': settings.API_KEY,
+                    # 'no_hp': '085295188663',
+                    'no_hp': '085701570100',
+                    'pesan': '''*[NOTIFIKASI]*
+Assalamu'alaikum %s, Ada mengajukan proposal baru yang masuk dengan rincian:
+
+*Nama proposal : %s*
+*Anggaran dana : %s*
+*Penanggung jawab : %s.*
+*Keputusan Wakasek saat ini: %s*
+*Komentar dari Wakasek: %s*
+*Keputusan Kepala Sekolah saat ini: %s*
+*Komentar dari Kepala Sekolah: %s*
+
+Mohon sekiranya ustadz dapat meninjau proposal tersebut pada aplikasi.
+https://ekskul.smasitalbinaa.com/proposal/approval/bendahara/%s
+Syukron.
+
+_Ini adalah pesan otomatis, jangan dibalas._''' % ("Ustadz Chevi Indrayadi, S.Si", status.nama_event, status.anggaran_biaya, status.penanggungjawab,
+                    data.status_wakasek.is_wakasek, data.status_wakasek.alasan_wakasek, data.is_kepsek, data.alasan_kepsek, status.id)
+                }
+                headers = {'Content-Type': 'application/json'}
+                requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
+
+                data_post = {
+                    'id_device': settings.ID_DEVICE,
+                    'api-key': settings.API_KEY,
+                    # 'no_hp': '0%s' % status.penanggungjawab.no_hp,
+                    'no_hp': '085701570100',
+                    'pesan': '''*[NOTIFIKASI]*
+Assalamu'alaikum %s, Proposal anda dengan judul *%s* telah *ditinjau oleh Wakasek dan Kepala Sekolah*.
+Mohon sekiranya Anda dapat meninjau status proposal tersebut pada aplikasi.
+https://ekskul.smasitalbinaa.com/proposal
+Syukron.
+
+_Ini adalah pesan otomatis, jangan dibalas._''' % (status.penanggungjawab, status.nama_event)
+                }
+                headers = {'Content-Type': 'application/json'}
+                requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
                 return redirect('proposal:proposal-index')
         else:
             forms = StatusProposalKepsekForm(instance=data)
@@ -210,6 +355,42 @@ def proposal_approval_bendahara(request, pk):
                     app="PROPOSAL_BENDAHARA",
                     message="Bendahara berhasil melakukan approval pada proposal {} dengan status {}".format(status, data.is_bendahara)
                 )
+
+                url = 'https://api.watsap.id/send-message'
+                data_post = {
+                    'id_device': settings.ID_DEVICE,
+                    'api-key': settings.API_KEY,
+                    'no_hp': '0%s' % request.user.teacher.no_hp,
+                    'pesan': '''*[NOTIFIKASI]*
+Assalamu'alaikum Ustadz %s, berhasil melakukan approval proposal *%s* dengan status *%s* dan komentar *%s*.
+Syukron.
+
+_Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, status.nama_event, data.is_bendahara, data.alasan_bendahara)
+                }
+                headers = {'Content-Type': 'application/json'}
+                requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
+
+                data_post = {
+                    'id_device': settings.ID_DEVICE,
+                    'api-key': settings.API_KEY,
+                    # 'no_hp': '0%s' % status.penanggungjawab.no_hp,
+                    'no_hp': '085701570100',
+                    'pesan': '''*[NOTIFIKASI]*
+Assalamu'alaikum %s, Proposal anda dengan judul *%s* telah *ditinjau oleh Wakasek, Kepala Sekolah dan Bendahara*.
+Mohon sekiranya Anda dapat meninjau status proposal tersebut pada aplikasi.
+
+https://ekskul.smasitalbinaa.com/proposal
+
+Bukti transfer dana (jika sudah ada):
+https://ekskul.smasitalbinaa.com/proposal/approval/transfer/%s
+
+Syukron.
+
+_Ini adalah pesan otomatis, jangan dibalas._''' % (status.penanggungjawab, status.nama_event, status.id)
+                }
+                headers = {'Content-Type': 'application/json'}
+                requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
+
                 return redirect('proposal:proposal-index')
         else:
             forms = StatusProposalBendaharaForm(instance=data)

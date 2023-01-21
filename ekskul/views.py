@@ -104,13 +104,13 @@ def delete_anggota(request, slug, pk):
         return HttpResponseRedirect(reverse('restricted'))
 
     if request.method == 'POST':
-        deteled_student.delete()
         UserLog.objects.create(
             user=request.user.teacher,
             action_flag="DELETE",
             app="EKSKUL",
             message="Berhasil menghapus anggota ekskul {} atas nama {} kelas {}".format(ekskul, deteled_student.nama_siswa.nama, deteled_student.nama_siswa.kelas)
         )
+        deteled_student.delete()
         return redirect('ekskul:data-detail', ekskul.slug)
     context = {
         'ekskul': ekskul,

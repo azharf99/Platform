@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.db.models import Q
 from deskripsi.models import *
 
-
 # Create your views here.
 
 def home_view(request):
