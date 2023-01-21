@@ -148,23 +148,27 @@ def laporan_upload(request, slug):
         return HttpResponseRedirect(reverse('restricted'))
 
     if request.method == 'POST':
-        forms = FormUploadLaporanKehadiran(request.POST)
         id_laporan = request.POST.get('laporan')
         laporan = get_object_or_404(Report, id=id_laporan)
-        image = request.FILES.get('foto_absensi')
+        try:
+            UploadImage.objects.get(laporan_id=id_laporan)
+            forms = FormUploadLaporanKehadiran(request.POST)
+            messages.error(request, "Dokumentasi/Foto untuk laporan ini sudah ada. Silahkan pilih laporan lain")
+        except:
+            image = request.FILES.get('foto_absensi')
 
-        UploadImage.objects.create(
-                laporan=laporan,
-                foto_absensi=image
-        )
-        UserLog.objects.create(
-            user=request.user.teacher,
-            action_flag="ADD",
-            app="LAPORAN_FOTO",
-            message="Berhasil mengupload foto pertemuan ekskul {} untuk tanggal {}".format(ekskul,
-                                                                                           laporan.tanggal_pembinaan)
-        )
-        return redirect('laporan:laporan-ekskul', ekskul.slug)
+            UploadImage.objects.create(
+                    laporan=laporan,
+                    foto_absensi=image
+            )
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="ADD",
+                app="LAPORAN_FOTO",
+                message="Berhasil mengupload foto pertemuan ekskul {} untuk tanggal {}".format(ekskul,
+                                                                                               laporan.tanggal_pembinaan)
+            )
+            return redirect('laporan:laporan-ekskul', ekskul.slug)
     else:
         forms = FormUploadLaporanKehadiran()
 

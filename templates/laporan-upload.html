@@ -1,42 +1,49 @@
 {% extends 'base.html' %}
 {% block content %}
-
-    <form enctype="multipart/form-data" action="" method="post">
-        {% csrf_token %}
-        <div class="position-absolute top-50 start-50 translate-middle">
-            <div class="card" style="min-width: 18rem;">
-                <div class="card-header bg-dark text-light">
-                    Upload Gambar Kehadiran Ekskul {{ ekskul.nama }}
+    <div class="container-fluid mt-5 p-5">
+        <div class="w-100 h-100 d-flex justify-content-center">
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if messages %}
+                    <ul class="messages text-danger fw-bold">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <div class="card" style="min-width: 18rem;">
+                    <div class="card-header text-bg-dark text-center">
+                        Upload Gambar Kehadiran Ekskul {{ ekskul.nama }}
+                    </div>
+                    <div class="card-body">
+                        {% if filtered_report %}
+                            <div class="row-sm m-2">
+                                <label for="id_laporan">Pilih Laporan:</label>
+                                <select name="laporan" required id="id_laporan" class="form-select">
+                                    {% for report in filtered_report %}
+                                        <option value={{ report.id }}>{{ report }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="row-sm m-2">
+                                {{ forms.as_p }}
+                            </div>
+                        {% else %}
+                            <p class="h3 text-danger">Maaf, sistem kami mendeteksi laporan kehadiran anda kosong. Silahkan input laporan kehadiran terlebih dahulu sebelum upload gambar. :(</p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer text-center">
+                        {% if filtered_report %}
+                            <a href="{% url 'laporan:laporan-index' %}" class="card-link btn m-1 btn-danger">Kembali</a>
+                            <input type="submit" class="card-link btn m-1 btn-success" value="Save Data">
+                        {% else %}
+                            <a href="{% url 'laporan:laporan-input' ekskul.slug %}" class="card-link btn m-1 btn-primary">Input Kehadiran</a>
+                            <a href="{% url 'laporan:laporan-index' %}" class="card-link btn m-1 btn-danger">Kembali</a>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="card-body">
-                    {% if filtered_report %}
-
-                        <div class="row-sm m-2">
-                            <label for="id_laporan">Pilih Laporan:</label>
-                            <select name="laporan" required id="id_laporan" class="form-select">
-                                {% for report in filtered_report %}
-                                    <option value={{ report.id }}>{{ report }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="row-sm m-2">
-                            {{ forms.as_p }}
-                        </div>
-                    {% else %}
-                        <p class="h3 text-danger">Maaf, laporan kehadiran anda kosong. Silahkan input laporan kehadiran terlebih dahulu sebelum upload gambar. :(</p>
-                    {% endif %}
-                </div>
-                <div class="card-footer text-center">
-                    {% if filtered_report %}
-                        <a href="{% url 'laporan:laporan-index' %}" class="card-link btn m-1 btn-danger">Kembali</a>
-                        <input type="submit" class="card-link btn m-1 btn-success" value="Save Data">
-                    {% else %}
-                        <a href="{% url 'laporan:laporan-input' ekskul.slug %}" class="card-link btn m-1 btn-primary">Input Kehadiran</a>
-                        <a href="{% url 'laporan:laporan-index' %}" class="card-link btn m-1 btn-danger">Kembali</a>
-                    {% endif %}
-                </div>
-            </div>
+            </form>
         </div>
-    </form>
+    </div>
 
 {% endblock %}
