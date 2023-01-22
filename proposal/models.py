@@ -41,7 +41,7 @@ class Proposal(models.Model):
     nama_event = models.CharField(max_length=200)
     pembuat_event = models.CharField(max_length=200)
     tanggal_pendaftaran = models.DateField()
-    batas_pendaftaran = models.DateField(default="2022-12-29", blank=True, null=True)
+    batas_pendaftaran = models.DateField(blank=True, null=True)
     tanggal_penyisihan_1 = models.DateField(blank=True, null=True)
     tanggal_penyisihan_2 = models.DateField(blank=True, null=True)
     tanggal_penyisihan_3 = models.DateField(blank=True, null=True)
