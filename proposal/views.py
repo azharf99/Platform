@@ -248,6 +248,10 @@ _Ini adalah pesan otomatis, jangan dibalas._''' % (status.penanggungjawab, statu
         forms = StatusProposalForm(instance=data)
     context = {
         'forms': forms,
+        'status': {
+            'id' : status.id,
+            'nama_event': status.nama_event
+        }
     }
     return render(request, 'proposal-approval.html', context)
 @login_required(login_url='/login/')

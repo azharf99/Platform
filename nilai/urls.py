@@ -5,6 +5,7 @@ app_name = 'nilai'
 urlpatterns = [
     path('', views.index, name='nilai-index'),
     path('kelas', views.nilai_kelas_view, name='nilai-per-kelas'),
+    path('print', views.print_to_excel, name='print-to-excel'),
     path('<slug:slug>', views.nilai_detail, name='nilai-detail'),
     path('<slug:slug>/input', views.nilai_input, name='nilai-input'),
     path('<slug:slug>/edit/<int:pk>', views.nilai_edit, name='nilai-edit'),

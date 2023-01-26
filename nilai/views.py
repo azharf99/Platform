@@ -1,6 +1,10 @@
+from io import BytesIO
+
+import xlsxwriter
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.http import FileResponse
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, reverse
 
 from ekskul.models import Extracurricular, StudentOrganization
@@ -44,6 +48,29 @@ def nilai_kelas_view(request):
     }
     return render(request, 'nilai-berdasarkan-kelas.html', context)
 
+
+@login_required(login_url='/login/')
+def print_to_excel(request):
+    nilai = Penilaian.objects.all().order_by('siswa__nama_siswa__kelas',
+                                             'siswa__ekskul_siswa__nama')
+    buffer = BytesIO()
+    workbook = xlsxwriter.Workbook(buffer)
+    worksheet = workbook.add_worksheet()
+    worksheet.write_row(0, 0, ['No', 'Ekskul', 'Nama Santri', 'Kelas', 'Nilai'])
+    row = 1
+    col = 0
+    for data in nilai:
+        worksheet.write_row(row, col, [row, data.siswa.ekskul_siswa.nama, data.siswa.nama_siswa.nama, data.siswa.nama_siswa.kelas, data.nilai])
+        row += 1
+    workbook.close()
+    buffer.seek(0)
+    UserLog.objects.create(
+        user=request.user.teacher,
+        action_flag="PRINT",
+        app="NILAI",
+        message="Berhasil download data nilai semua ekskul/sc dalam format Excel"
+    )
+    return FileResponse(buffer, as_attachment=True, filename='Nilai Ekskul SMA IT Al Binaa.xlsx')
 
 @login_required(login_url='/login/')
 def nilai_input(request, slug):

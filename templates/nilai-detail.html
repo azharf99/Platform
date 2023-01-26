@@ -3,6 +3,8 @@
 {% block content %}
     <div class="mt-5 pt-4 text-center">
         <h1 class="m-3">Data Nilai Ekstrakurikuler {{ ekskul.nama }}</h1>
+
+        <a href="{% url 'nilai:print-to-excel' %}" class="btn btn-success">Download Excel</a>
         <a class="m-3 btn btn-danger" href="{% url 'nilai:nilai-index' %}">Kembali</a>
     </div>
 
