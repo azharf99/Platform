@@ -55,6 +55,8 @@ class Proposal(models.Model):
     kota = models.CharField(max_length=200, default="", verbose_name="Kota/Kabupaten")
     provinsi = models.CharField(max_length=200, default="")
     penanggungjawab = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    nomor_rekening = models.CharField(max_length=100, default="3410015776")
+    nama_bank = models.CharField(max_length=100, default="Muamalat")
     ekskul = models.ForeignKey(Extracurricular, on_delete=models.CASCADE, null=True, blank=True)
     santri = models.ManyToManyField(StudentOrganization, verbose_name="Santri yang ikut", blank=True, help_text="Pada PC/Laptop, tekan Ctrl untuk memilih banyak opsi")
     anggaran_biaya = models.FloatField()

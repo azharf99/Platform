@@ -4,6 +4,7 @@
     {% load humanize %}
     <div class="mt-5 pt-4 text-center">
         <h1 class="m-3">Detail Proposal {{ data.nama_event }}</h1>
+        <a href="{% url 'proposal:proposal-index' %}" class="my-2 btn btn-danger"> < Kembali</a>
     </div>
 
     <div class="container">

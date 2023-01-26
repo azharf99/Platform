@@ -28,6 +28,7 @@ def index(request):
         'diterima_kepsek': diterima_kepsek,
         'diterima_bendahara': diterima_bendahara,
     }
+
     return render(request, 'proposal.html', context)
 
 
@@ -77,7 +78,9 @@ def proposal_input(request):
                     app="PROPOSAL",
                     message="Berhasil menambahkan data proposal {} dengan anggaran sebesar {} dan penanggung jawab {}".format(p.nama_event, p.anggaran_biaya, p.penanggungjawab)
                 )
+
                 url = 'https://api.watsap.id/send-message'
+                headers = {'Content-Type': 'application/json'}
                 data_post = {
                     'id_device': settings.ID_DEVICE,
                     'api-key': settings.API_KEY,
@@ -88,7 +91,6 @@ Syukron.
 
 _Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, p.nama_event, p.anggaran_biaya, p.penanggungjawab)
                 }
-                headers = {'Content-Type': 'application/json'}
                 requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
 
                 data_post = {
@@ -109,7 +111,6 @@ Syukron.
 
 _Ini adalah pesan otomatis, jangan dibalas._''' % ("Ustadz Panji Asmara, S.Pd.", p.nama_event, p.anggaran_biaya, p.penanggungjawab, p.id)
                 }
-                headers = {'Content-Type': 'application/json'}
                 requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
                 return redirect('proposal:proposal-index')
             else:

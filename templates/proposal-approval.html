@@ -18,7 +18,10 @@
                     </div>
                     <div class="card-body">
                         {% if forms %}
+                            <div class="text-center mb-2">
                             <h3 class="text-center">{{ status.nama_event }}</h3>
+                            <a href="{% url 'proposal:detail-proposal' status.id %}" class="my-2 btn btn-sm btn-secondary ">Detail Proposal</a>
+                            </div>
                         {% endif %}
                         {% if data %}
                             {% for wakasek in status.proposalstatus_set.all %}
@@ -45,9 +48,9 @@
                                     </h4>
                                 {% endif %}
                                 {% if wakasek.alasan_wakasek %}
-                                    <p class="text-center text-bg-secondary rounded p-1">Komentar Wakasek: {{ wakasek.alasan_wakasek }}</p>
+                                    <p class="my-2 p-1">Komentar Wakasek: {{ wakasek.alasan_wakasek }}</p>
                                 {% else %}
-                                    <p class="text-center text-bg-danger rounded p-1">Komentar Wakasek: belum mengisi alasan</p>
+                                    <p class="text-bg-danger rounded p-1">Komentar Wakasek: belum mengisi alasan</p>
                                 {% endif %}
                             {% endfor %}
                         {% else %}
@@ -75,13 +78,15 @@
                                     </h4>
                                 {% endif %}
                                 {% if status.proposalstatus_set.first and kepsek.alasan_kepsek %}
-                                    <p class="text-center text-bg-secondary rounded p-1">Komentar Wakasek: {{ status.proposalstatus_set.first.alasan_wakasek }}</p>
-                                    <p class="text-center text-bg-secondary rounded p-1">Komentar Kepala Sekolah: {{ kepsek.alasan_kepsek }}</p>
+                                    <p class="my-2 p-1">Komentar Wakasek: {{ status.proposalstatus_set.first.alasan_wakasek }}</p>
+                                    <p class="my-2 p-1">Komentar Kepala Sekolah: {{ kepsek.alasan_kepsek }}</p>
                                 {% else %}
-                                    <p class="text-center text-bg-danger rounded p-1">Komentar Wakasek: belum mengisi alasan</p>
-                                    <p class="text-center text-bg-danger rounded p-1">Komentar Kepala Sekolah: belum mengisi alasan</p>
+                                    <p class="m-2 text-bg-danger rounded p-1">Komentar Wakasek: belum mengisi alasan</p>
+                                    <p class="m-2 text-bg-danger rounded p-1">Komentar Kepala Sekolah: belum mengisi alasan</p>
                                 {% endif %}
-                                <p class="text-center">Jumlah dana yang harus ditransfer: <strong class="text-bg-success rounded p-1">Rp. {{ status.anggaran_biaya|intcomma }}</strong></p>
+                                <p class="text-start">Jumlah dana yang harus ditransfer: <strong class="text-bg-success rounded p-1">Rp. {{ status.anggaran_biaya|intcomma }}</strong></p>
+                                <p class="text-start">Nomor Rekening Penanggung Jawab: <strong class="text-bg-success rounded p-1">{{ status.nomor_rekening }}</strong></p>
+                                <p class="text-start">Nama Bank: <strong class="text-bg-success rounded p-1">{{ status.nama_bank }}</strong></p>
                             {% endfor %}
                         {% endif %}
                         {{ forms.as_p }}

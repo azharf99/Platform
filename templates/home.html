@@ -17,6 +17,8 @@
 
         {% if not request.user.is_authenticated %}
             <a class="btn btn-primary" href="{% url 'login' %}">Silahkan Login</a>
+        {% else %}
+            <a class="btn btn-success" href="{% url 'menu' %}">Go to Menu</a>
         {% endif %}
 
 

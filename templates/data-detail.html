@@ -5,7 +5,7 @@
         <div class="row justify-content-center align-items-center mt-5">
             <div class="col-md-4 mt-2">
                 {% for teacher in teachers %}
-                    <img src="{{ teacher.foto.url }}" style="max-height: 10rem; max-width: 10rem;">
+                    <img src="{{ teacher.foto.url }}" alt="Foto Profil Ustadz" style="max-height: 10rem; max-width: 10rem;">
                 {% endfor %}
 
             </div>
@@ -60,7 +60,7 @@
                         {% for student in filtered_student %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ student.nama}}</td>
+                                <td class="text-start">{{ student.nama}}</td>
                                 <td>{{ student.nis}}</td>
                                 <td>{{ student.kelas }}</td>
                                 <td><a href="{% url 'ekskul:delete-anggota' ekskul.slug student.id %}" class="btn btn-sm btn-danger">
