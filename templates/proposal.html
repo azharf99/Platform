@@ -135,6 +135,7 @@
                                 {% elif request.user.username == 'panji_asmara' %}
                                     <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-secondary m-1">Detail</a>
                                     <a href="{% url 'proposal:proposal-approval' data.id %}" class="btn btn-sm btn-success m-1">Approval</a>
+                                    <a href="{% url 'proposal:proposal-approval-transfer' data.id %}" class="btn btn-sm btn-primary m-1">Bukti Transfer</a>
                                 {% elif data.proposalstatusbendahara_set.first.is_bendahara == "Accepted" %}
                                     <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-secondary m-1">Detail</a>
                                     <a href="{% url 'proposal:proposal-approval-transfer' data.id %}" class="btn btn-sm btn-success m-1">Bukti Transfer</a>

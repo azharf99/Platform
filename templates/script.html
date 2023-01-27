@@ -1,0 +1,20 @@
+<script>
+    function myFunction() {
+        var save = document.getElementById("save");
+        var loading = document.getElementById("loading");
+        var back = document.getElementById("back");
+        if (save.style.display === "none") {
+            save.style.display = "block";
+            loading.style.display = "none";
+            back.style.display = "blok";
+        } else {
+            save.style.display = "none";
+            loading.style.display = "inline-block";
+            back.style.display = "none";
+        }
+    }
+
+    const form = document.getElementById('form');
+    form.addEventListener('submit', myFunction);
+
+</script>

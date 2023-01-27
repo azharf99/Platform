@@ -2,7 +2,7 @@
 {% block content %}
     <div class="container-fluid mt-5 p-5">
         <div class="w-100 h-100 d-flex justify-content-center">
-            <form action="" method="post">
+            <form action="" method="post" id="form">
                 {% csrf_token %}
                 {% if messages %}
                     <ul class="messages text-danger fw-bold">
@@ -56,8 +56,12 @@
                     </div>
                     <div class="card-footer text-center">
                         {% if filtered_student %}
-                            <a href="{% url 'laporan:laporan-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
-                            <input type="submit" class="card-link btn btn-success m-1" value="Save Data">
+                            <a id="back" href="{% url 'laporan:laporan-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
+                            <input id="save" type="submit" class="card-link btn btn-success m-1" value="Save Data">
+                            <button id="loading" class="btn btn-success" type="button" style="display: none" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Loading...
+                            </button>
                         {% else %}
                             <a href="{% url 'laporan:laporan-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
                             <a href="{% url 'ekskul:input-anggota' ekskul.slug %}" class="card-link btn btn-primary m-1">Input Anggota {{ ekskul.nama }}</a>
@@ -67,4 +71,6 @@
             </form>
         </div>
     </div>
+
+{% include 'script.html' %}
 {% endblock %}

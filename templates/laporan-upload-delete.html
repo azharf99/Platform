@@ -2,7 +2,7 @@
 {% block content %}
     <div class="container mt-5 p-5">
         <div class="w-100 h-100 d-flex justify-content-center">
-            <form method="post" action="" enctype="multipart/form-data">
+            <form method="post" action="" enctype="multipart/form-data" id="form">
                 {% csrf_token %}
                 <div class="card" style="min-width: 18rem;">
                     <div class="card-body">
@@ -22,8 +22,12 @@
                         </ol>
                     </div>
                     <div class="card-footer text-center">
-                        <a href="{% url 'laporan:laporan-ekskul' ekskul.slug %}" class="card-link btn btn-success">Kembali</a>
-                        <input type="submit" class="card-link btn btn-danger" value="Yakin, Hapus!">
+                        <a id="back" href="{% url 'laporan:laporan-ekskul' ekskul.slug %}" class="card-link btn btn-success">Kembali</a>
+                        <input onsubmit="myFunction()" id="save" type="submit" class="card-link btn btn-danger m-1" value="Yakin, Hapus!">
+                        <button id="loading" class="btn btn-success" type="button" style="display: none" disabled>
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Loading...
+                        </button>
                     </div>
                 </div>
             </form>
