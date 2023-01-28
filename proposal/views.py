@@ -12,9 +12,9 @@ from userlog.models import UserLog
 # Create your views here.
 
 def index(request):
-    proposal = Proposal.objects.all()
+    proposal = Proposal.objects.all().order_by('-created_at')
     jumlah = Proposal.objects.aggregate(Sum('anggaran_biaya'))
-    jumlah_diterima = Proposal.objects.filter(Q(proposalstatus__is_wakasek="Accepted") & Q(proposalstatuskepsek__is_kepsek="Accepted")).aggregate(Sum('anggaran_biaya'))
+    jumlah_diterima = Proposal.objects.filter(proposalstatusbendahara__is_bendahara="Accepted").aggregate(Sum('anggaran_biaya'))
     jumlah_ditolak = Proposal.objects.filter(Q(proposalstatus__is_wakasek="Rejected") | Q(proposalstatuskepsek__is_kepsek="Rejected")).aggregate(Sum('anggaran_biaya'))
     diterima = ProposalStatus.objects.filter(is_wakasek="Accepted")
     diterima_kepsek = ProposalStatusKepsek.objects.filter(is_kepsek="Accepted")

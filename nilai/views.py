@@ -16,15 +16,19 @@ from userlog.models import UserLog
 # Create your views here.
 
 def index(request):
-    if request.GET.get('q') is not None or request.GET.get('q') == '':
-        q = request.GET.get('q')
-        ekskul = Extracurricular.objects.filter(
-            Q(nama__icontains=q) | Q(pembina__nama_lengkap__icontains=q)).order_by('tipe', 'nama')
+    if request.user.is_authenticated or request.user.is_superuser:
+        ekskul = Extracurricular.objects.filter(pembina=request.user.teacher).order_by('tipe', 'nama')
+        extra = Extracurricular.objects.exclude(pembina=request.user.teacher).order_by('tipe', 'nama')
+        context = {
+            'ekskul': ekskul,
+            'extra': extra,
+        }
     else:
         ekskul = Extracurricular.objects.all().order_by('tipe', 'nama')
-    context = {
-        'ekskul': ekskul,
-    }
+        context = {
+            'ekskul': ekskul,
+        }
+
     return render(request, 'nilai.html', context)
 
 

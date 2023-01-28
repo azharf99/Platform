@@ -2,10 +2,15 @@
 {% block content %}
     <div class="container mt-5 pt-4">
         <div class="row justify-content-center align-items-center">
-            <h3 class="text-center">Daftar Inventaris Ekstrakurikuler</h3>
+            <div class="text-center">
+            <h3>Daftar Inventaris Ekstrakurikuler</h3>
             {% if request.user.is_superuser %}
-                <a class="text-center btn btn-primary m-2" href="{% url 'inventaris:inventaris-input' %}">Input Data Inventaris</a>
+                <a class="btn btn-primary m-1" href="{% url 'inventaris:inventaris-input' %}">Input Data Inventaris</a>
+                <a class="btn btn-success m-1" href="{% url 'inventaris:inventaris-status-input' %}">Lapor Status Inventaris</a>
+                <a class="btn btn-dark m-1" href="{% url 'inventaris:inventaris-invoice-input' %}">Upload Nota Inventaris</a>
             {% endif %}
+                <a class="btn btn-danger m-1" href="{% url 'menu' %}">< Kembali</a>
+            </div>
             <div class="col-sm mt-3">
                 <table class="table table-hover w-100">
                     <thead>
@@ -65,7 +70,7 @@
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="5" class="text-center fw-bold text-danger">Maaf, belum ada data inventaris :(</td>
+                            <td colspan="7" class="text-center fw-bold text-danger">Maaf, belum ada data inventaris :(</td>
                         </tr>
                     {% endif %}
                     </tbody>

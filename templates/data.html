@@ -5,25 +5,20 @@
 
     <div class="mt-5 p-4 text-center">
         <h1>Data Ekstrakurikuler SMA IT Al Binaa</h1>
-        <h5 class="btn btn-primary">Jumlah Ekskul dan SC terdeteksi: {{ data.count }}</h5>
     </div>
 
     <div class="container">
-        <form class="d-flex my-4 mx-4" role="search" method="get" action="{% url 'ekskul:data-index' %}">
-            <input class="form-control me-2" name="q" type="text" placeholder="Cari sesuatu?" aria-label="Search">
-            <input class="btn btn-success" type="submit" value="Cari">
-        </form>
         <div class="text-center">
             {% if data %}
                 {% for ekskul in data %}
-                    <div class="card border-dark d-inline-flex text-start m-2" style="width: 18rem; height: 100%;">
-                        <div class="card-header bg-dark text-light">
+                    <div class="card border-primary d-inline-flex text-start m-2" style="width: 18rem; height: 100%;">
+                        <div class="card-header text-bg-primary">
                             {{ ekskul.get_tipe_display }}
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">{{ ekskul.nama }}</h5>
+                            <h5 class="card-title text-primary">{{ ekskul.nama }}</h5>
                             {% for pembina in ekskul.pembina.all %}
-                                <h6 class="card-subtitle mb-2 text-muted">Ustadz {{ pembina }}</h6>
+                                <h6 class="card-subtitle mb-2">Ustadz {{ pembina }}</h6>
                             {% endfor %}
                             <p class="p-0 m-0">Jadwal Pertemuan: {{ ekskul.jadwal }} {{ ekskul.waktu }}</p>
                             {% if ekskul.jadwal_tambahan %}
@@ -31,19 +26,36 @@
                             {% endif %}
                             <p class="card-text p-0 m-0">Jumlah anggota : {{ ekskul.studentorganization_set.count }}</p>
                         </div>
-                        <div class="card-footer border-dark text-light">
+                        <div class="card-footer border-primary text-center">
+                            <a href="{% url 'ekskul:data-detail' ekskul.slug %}" class="btn btn-primary">Info {{ ekskul.tipe }}</a>
+                            <a href="{% url 'ekskul:dokumentasi' ekskul.slug %}" class="btn btn-success">Dokumentasi</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if extra %}
+                {% for ekskul in extra %}
+                    <div class="card border-secondary d-inline-flex text-start m-2" style="width: 18rem; height: 100%;">
+                        <div class="card-header text-bg-secondary">
+                            {{ ekskul.get_tipe_display }}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ ekskul.nama }}</h5>
+                            {% for pembina in ekskul.pembina.all %}
+                                <h6 class="card-subtitle mb-2">Ustadz {{ pembina }}</h6>
+                            {% endfor %}
+                            <p class="p-0 m-0">Jadwal Pertemuan: {{ ekskul.jadwal }} {{ ekskul.waktu }}</p>
+                            {% if ekskul.jadwal_tambahan %}
+                                <p class="p-0 m-0">Pertemuan tambahan: {{ ekskul.jadwal_tambahan }} {{ ekskul.waktu_tambahan }}</p>
+                            {% endif %}
+                            <p class="card-text p-0 m-0">Jumlah anggota : {{ ekskul.studentorganization_set.count }}</p>
+                        </div>
+                        <div class="card-footer border-secondary text-center">
                             <a href="{% url 'ekskul:data-detail' ekskul.slug %}" class="btn btn-sm btn-outline-primary">Info {{ ekskul.tipe }}</a>
                             <a href="{% url 'ekskul:dokumentasi' ekskul.slug %}" class="btn btn-sm btn-outline-success">Dokumentasi</a>
                         </div>
                     </div>
                 {% endfor %}
-            {% else %}
-                <div class="alert alert-danger" role="alert">
-                    <h4 class="alert-heading">Uppss!</h4>
-                    <h5>Maaf yang kamu cari gak ada nih. :( </h5>
-                    <hr>
-                    <p class="mb-2">Mungkin bisa pake kata kunci pencarian yang lain :)</p>
-                </div>
             {% endif %}
         </div>
     </div>

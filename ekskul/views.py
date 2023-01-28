@@ -1,5 +1,4 @@
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, reverse
-from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -12,15 +11,19 @@ from django.views.decorators.csrf import csrf_protect
 # Create your views here.
 
 def home(request):
-    if request.GET.get('q') is not None or request.GET.get('q') == '':
-        q = request.GET.get('q')
-        data = Extracurricular.objects.filter(
-        Q(nama__icontains=q)|Q(pembina__nama_lengkap__icontains=q)).order_by('tipe', 'nama')
+    if request.user.is_authenticated or request.user.is_superuser:
+        data = Extracurricular.objects.filter(pembina=request.user.teacher).order_by('tipe', 'nama')
+        extra = Extracurricular.objects.exclude(pembina=request.user.teacher).order_by('tipe', 'nama')
+        context = {
+            'data': data,
+            'extra': extra,
+        }
     else:
         data = Extracurricular.objects.all().order_by('tipe', 'nama')
-    context = {
-        'data': data,
-    }
+        context = {
+            'data': data,
+        }
+
     return render(request, 'data.html', context)
 
 
