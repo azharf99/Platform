@@ -63,6 +63,7 @@ def dokumentasi(request, slug):
 def input_anggota(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     all = ekskul.pembina.all().values_list('user_id', flat=True)
+    student = Student.objects.all()
     if not request.user.id in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
 
@@ -71,13 +72,14 @@ def input_anggota(request, slug):
 
     if request.method == 'POST':
         try:
-            siswa = StudentOrganization.objects.get(nama_siswa_id=id_siswa, ekskul_siswa_id=data_ekskul)
+            StudentOrganization.objects.get(nama_siswa_id=id_siswa, ekskul_siswa_id=data_ekskul)
             form = InputAnggotaEkskulForm(request.POST)
             messages.error(request, "Santri sudah ada di dalam anggota ekskul. Silahkan pilih santri lain")
         except:
             siswa = get_object_or_404(Student, id=id_siswa)
             form = InputAnggotaEkskulForm(request.POST)
             InputAnggotaEkskulForm.ekskul_siswa = data_ekskul
+            InputAnggotaEkskulForm.nama_siswa = siswa
             if form.is_valid():
                 form.save()
                 UserLog.objects.create(
@@ -92,6 +94,7 @@ def input_anggota(request, slug):
     context = {
         'ekskul': ekskul,
         'form': form,
+        'student': student,
 
     }
     return render(request, 'input-anggota-ekskul.html', context)
@@ -100,7 +103,7 @@ def input_anggota(request, slug):
 @login_required(login_url='/login/')
 def delete_anggota(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
-    deteled_student = get_object_or_404(StudentOrganization, nama_siswa_id=pk, ekskul_siswa_id=ekskul.id)
+    deteled_student = get_object_or_404(StudentOrganization, ekskul_siswa__slug=slug, nama_siswa_id=pk)
 
     all = ekskul.pembina.all().values_list('user_id', flat=True)
     if not request.user.id in all and not request.user.is_superuser:
@@ -160,8 +163,8 @@ def login_view(request):
         return redirect("app-index")
 
     if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('pass')
+        username = request.POST.get('username').rstrip()
+        password = request.POST.get('pass').rstrip()
 
         try:
             user = User.objects.get(username=username)

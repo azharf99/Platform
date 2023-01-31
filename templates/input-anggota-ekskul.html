@@ -23,10 +23,11 @@
                                 <option value="{{ ekskul.id }}">{{ ekskul.nama}}</option>
                             </select>
                         </div>
-                        <div class="d-block m-3 fw-bold">
-                            <label for="id_nama_siswa">Nama siswa:</label>
+                        <div class="d-block m-3">
+                            <label for="id_nama_siswa" class="fw-bold">Nama siswa:</label>
                             {{ form.nama_siswa }}
                         </div>
+
                         <div class="d-block mt-3 fw-bold text-center">
 
                             <a href="{% url 'ekskul:data-detail' ekskul.slug %}" class="card-link btn btn-danger">Kembali</a>
@@ -39,4 +40,11 @@
         </div>
     </div>
 
+<script>
+    $(document).ready(function () {
+      $('#input-anggota').selectize({
+          sortField: 'text'
+      });
+  });
+</script>
 {% endblock %}

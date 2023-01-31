@@ -7,7 +7,7 @@ from userlog.models import UserLog
 
 @login_required(login_url='/login/')
 def index(request):
-    logs = UserLog.objects.all().order_by('-created_at')
+    logs = UserLog.objects.all().order_by('-created_at')[:50]
     context = {
         'logs': logs,
     }

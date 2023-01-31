@@ -7,7 +7,7 @@ class InputAnggotaEkskulForm(forms.ModelForm):
         model = StudentOrganization
         fields = '__all__'
         widgets  = {
-            'nama_siswa': forms.Select(attrs={'class':'form-select'})
+            'nama_siswa': forms.Select(attrs={'id': 'input-anggota'})
         }
 
 
