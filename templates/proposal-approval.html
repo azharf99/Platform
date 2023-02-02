@@ -19,8 +19,12 @@
                     <div class="card-body">
                         {% if forms %}
                             <div class="text-center mb-2">
-                            <h3 class="text-center">{{ status.nama_event }}</h3>
-                            <a href="{% url 'proposal:detail-proposal' status.id %}" class="my-2 btn btn-sm btn-secondary ">Detail Proposal</a>
+                                <h3 class="text-center">{{ status.nama_event }}</h3>
+                                {% if tipe == 'inventaris' %}
+                                    <a href="{% url 'proposal:detail-proposal-inventaris' status.id %}" class="my-2 btn btn-sm btn-secondary ">Detail Proposal</a>
+                                {% else %}
+                                    <a href="{% url 'proposal:detail-proposal' status.id %}" class="my-2 btn btn-sm btn-secondary ">Detail Proposal</a>
+                                {% endif %}
                             </div>
                         {% endif %}
                         {% if data %}
@@ -104,5 +108,5 @@
         </div>
     </div>
 
-{% include 'script.html' %}
+    {% include 'script.html' %}
 {% endblock %}

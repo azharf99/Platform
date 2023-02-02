@@ -1,5 +1,6 @@
 from django.db import models
 from ekskul.models import Extracurricular, StudentOrganization, Teacher
+from ekskul.compress_image import CompressedImageField
 
 
 # Create your models here.
@@ -19,7 +20,7 @@ class Report(models.Model):
 
 class UploadImage(models.Model):
     laporan = models.ForeignKey(Report, on_delete=models.CASCADE)
-    foto_absensi = models.ImageField(upload_to='ekskul/laporan', default='no-image.png')
+    foto_absensi = CompressedImageField(upload_to='ekskul/laporan', default='no-image.png', quality=50, help_text="Format foto harus .jpg atau .jpeg")
 
     def __str__(self):
         return '%s' % (self.laporan)

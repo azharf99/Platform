@@ -25,6 +25,7 @@ class PembinaEkskulForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'no_hp': forms.NumberInput(attrs={'class': 'form-control'}),
             'user': forms.Select(attrs={'class': 'form-select'}),
+            'foto': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
 

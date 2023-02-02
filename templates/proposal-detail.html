@@ -4,13 +4,13 @@
     {% load humanize %}
     <div class="mt-5 pt-4 text-center">
         <h1 class="m-3">Detail Proposal {{ data.nama_event }}</h1>
-        <a href="{% url 'proposal:proposal-index' %}" class="my-2 btn btn-danger"> < Kembali</a>
+        <a href="{{ request.META.HTTP_REFERER }}" class="my-2 btn btn-danger"> < Kembali</a>
     </div>
 
     <div class="container">
         <table class="table table-hover w-100">
             <tbody>
-            {% if data %}
+            {% if tipe == 'lomba' %}
                 <tr>
                     <td>Nama Event</td>
                     <td class="text-end">:</td>
@@ -82,6 +82,16 @@
                     <td>{{ data.penanggungjawab }}</td>
                 </tr>
                 <tr>
+                    <td>No Rekening PJ</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.nomor_rekening }}</td>
+                </tr>
+                <tr>
+                    <td>Nama Bank</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.nama_bank }}</td>
+                </tr>
+                <tr>
                     <td>Ekskul yang terlibat</td>
                     <td class="text-end">:</td>
                     <td>{{ data.ekskul }}</td>
@@ -135,7 +145,74 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="5" class="text-center fw-bold text-danger">Maaf, belum ada data nilai :(</td>
+                    <td>Judul Proposal</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.judul_proposal }}</td>
+                </tr>
+                <tr>
+                    <td>Rencana Pembelian barang</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.tanggal_pembelian|date:"j F Y" }}</td>
+                </tr>
+                <tr>
+                    <td>Nama Toko</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.nama_toko }}</td>
+                </tr>
+                <tr>
+                    <td>Alamat Toko</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.alamat_toko }}</td>
+                </tr>
+                <tr>
+                    <td>Diajukan oleh</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.penanggungjawab }}</td>
+                </tr>
+                <tr>
+                    <td>No Rekening PJ</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.nomor_rekening }}</td>
+                </tr>
+                <tr>
+                    <td>Nama Bank</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.nama_bank }}</td>
+                </tr>
+                <tr>
+                    <td>Ekskul yang membutuhkan</td>
+                    <td class="text-end">:</td>
+                    <td>{{ data.ekskul }}</td>
+                </tr>
+                <tr>
+                    <td>Santri yang membutuhkan</td>
+                    <td class="text-end">:</td>
+                    <td>
+                    {% if data.santri.count %}
+                        {% for santri in data.santri.all %}
+                            <p>{{ santri.nama_siswa.nama }} | {{ santri.nama_siswa.kelas }}</p>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-danger fw-bold">Tidak ada santri yang dilibatkan</p>
+                    {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Anggaran Biaya</td>
+                    <td class="text-end">:</td>
+                    <td>Rp. {{ data.anggaran_biaya|intcomma }}</td>
+                </tr>
+                <tr>
+                    <td>Lampiran File</td>
+                    <td class="text-end">:</td>
+                    <td>
+                        <a class="btn btn-sm btn-primary m-2" href="{{ data.upload_file.url }}" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-arrow-down-circle" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+                            </svg>
+                            Proposal
+                        </a>
+                    </td>
                 </tr>
             {% endif %}
             </tbody>

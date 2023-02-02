@@ -12,12 +12,12 @@
                             <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
                         </svg>
                         <h5 class="card-title">Konfirmasi penghapusan</h5>
-                        <p class="card-text">Kamu yakin ingin menghapus proposal event <b>{{ data.nama_event }}</b> yang diselenggarakan oleh {{ data.pembuat_event }} di <b>{{ data.kota }}</b> ?</p>
+                        <p class="card-text">Kamu yakin ingin menghapus proposal <b>{{ data.nama_event }}</b> <b>{{ data.judul_proposal }}</b>?</p>
                         </div>
                         <hr>
                         <p class="card-text text-danger fw-bold">Hal-hal yang akan terdampak yaitu : </p>
                         <ol>
-                            <li>Semua data status proposal {{ data.nama_event }} akan <strong CLASS="text-danger">HILANG SECARA PERMANEN</strong></li>
+                            <li>Semua data status proposal {{ data.nama_event }} {{ data.judul_proposal }} akan <strong CLASS="text-danger">HILANG SECARA PERMANEN</strong></li>
                         </ol>
                     </div>
                     <div class="card-footer text-center">

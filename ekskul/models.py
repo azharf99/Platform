@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from ekskul.compress_image import CompressedImageField
 
 
 # Create your models here.
@@ -12,7 +13,7 @@ class User(AbstractUser):
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Username",)
-    nama_lengkap = models.CharField(max_length=100, verbose_name="Nama Pembina")
+    nama_lengkap = models.CharField(max_length=100, verbose_name="Nama Ustadz")
     niy = models.IntegerField(default=0, verbose_name='NIY')
     gelar_depan = models.CharField(max_length=20, blank=True)
     gelar_belakang = models.CharField(max_length=20, blank=True)
@@ -20,7 +21,7 @@ class Teacher(models.Model):
     jabatan_khusus = models.CharField(max_length=100, blank=True)
     email = models.EmailField(default='user@gmail.com')
     no_hp = models.IntegerField(blank=True, default=0)
-    foto = models.ImageField(upload_to='user', default='blank-profile.png', blank=True, null=True)
+    foto = CompressedImageField(upload_to='user', default='blank-profile.png', blank=True, null=True, quality=50, help_text="format foto .jpg / .jpeg")
 
     def __str__(self):
         if self.gelar_depan or self.gelar_belakang:
@@ -60,7 +61,7 @@ class Extracurricular(models.Model):
     waktu_tambahan = models.CharField(max_length=15, choices=pilihan_waktu, blank=True)
     tipe = models.CharField(max_length=20, choices=jenis, blank=True)
     slug = models.SlugField(blank=True)
-    logo = models.ImageField(upload_to='ekskul/logo', default='no-image.png', blank=True, null=True)
+    logo = CompressedImageField(upload_to='ekskul/logo', default='no-image.png', blank=True, null=True)
 
     def __str__(self):
         return self.nama

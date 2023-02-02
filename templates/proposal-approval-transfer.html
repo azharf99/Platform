@@ -4,10 +4,13 @@
         <div class="w-100 h-100 d-flex justify-content-center">
             {% if proposal.proposalstatusbendahara_set.first.bukti_transfer %}
                 <img src="{{ proposal.proposalstatusbendahara_set.first.bukti_transfer.url }}" height="450" width="300" alt="Bukti Transfer">
+            {% elif proposal.proposalinventarisstatusbendahara_set.first.bukti_transfer %}
+                <img src="{{ proposal.proposalinventarisstatusbendahara_set.first.bukti_transfer.url }}" height="450" width="300" alt="Bukti Transfer">
             {% else %}
                 <p class="text-center text-bg-danger rounded p-1">Bukti transfer belum ada. Silahkan hubungi bendahara sekolah untuk konfirmasi lebih lanjut.</p>
             {% endif %}
         </div>
+
         <div class="text-center m-3">
             <a id="back" href="{% url 'proposal:proposal-index' %}" class="card-link btn btn-danger"> < Kembali</a>
         </div>

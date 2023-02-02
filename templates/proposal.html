@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
     {% load humanize %}
@@ -8,17 +9,17 @@
         <p class="m-0">Proposal yang disetujui Kepala Sekolah : <span class="text-bg-success ps-2 pe-2 rounded">{{ diterima_kepsek.count }}</span></p>
         <p class="m-0">Proposal yang disetujui Bendahara : <span class="text-bg-success ps-2 pe-2 rounded">{{ diterima_bendahara.count }}</span></p>
     </div>
-    <div class="text-center m-1">
-        <a href="#" class="btn btn-dark m-1 p-2">Total Pengajuan Dana : Rp. {{ jumlah.anggaran_biaya__sum|intcomma }}</a>
+    <div class="text-center">
+        <p class="m-1">Total Pengajuan Dana : <span class="text-bg-dark ps-2 pe-2 rounded">Rp. {{ jumlah.anggaran_biaya__sum|intcomma }}</span></p>
         {% if jumlah_diterima.anggaran_biaya__sum %}
-            <a href="#" class="btn btn-success m-1 p-2">Pengajuan Dana Dicairkan : Rp. {{ jumlah_diterima.anggaran_biaya__sum|intcomma }}</a>
+            <p class="m-1">Pengajuan Dana Dicairkan : <span class="text-bg-success ps-2 pe-2 rounded">Rp. {{ jumlah_diterima.anggaran_biaya__sum|intcomma }}</span></p>
         {% else %}
-            <a href="#" class="btn btn-success m-1 p-2">Pengajuan Dana Diterima : Rp. 0 </a>
+            <p class="m-1">Pengajuan Dana Diterima : <span class="text-bg-success ps-2 pe-2 rounded">Rp. 0 </span></p>
         {% endif %}
         {% if jumlah_ditolak.anggaran_biaya__sum %}
-            <a href="#" class="btn btn-danger m-1 p-2">Pengajuan Dana Ditolak : Rp. {{ jumlah_ditolak.anggaran_biaya__sum|intcomma }}</a>
+            <p class="m-1">Pengajuan Dana Ditolak : <span class="text-bg-danger ps-2 pe-2 rounded">Rp. {{ jumlah_ditolak.anggaran_biaya__sum|intcomma }}</span></p>
         {% else %}
-            <a href="#" class="btn btn-danger m-1 p-2">Pengajuan Dana Ditolak : Rp. 0 </a>
+            <p class="m-1">Pengajuan Dana Ditolak : <span class="text-bg-danger ps-2 pe-2 rounded">Rp. 0 </span></p>
         {% endif %}
     </div>
     <div class="text-center m-3">
@@ -28,7 +29,26 @@
                     <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z"/>
                     <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
                 </svg>
-                Ajukan Proposal Baru
+                Ajukan Proposal Lomba Baru
+            </a>
+            <a href="{% url 'proposal:proposal-inventaris-input' %}" class="btn btn-success m-2 p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cloud-arrow-up" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z"/>
+                    <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
+                </svg>
+                Ajukan Proposal Pengadaan Baru
+            </a>
+            <a href="{% static 'template-proposal.docx' %}" class="btn btn-warning m-2 p-2" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-down-circle" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+                </svg>
+                Template Proposal Lomba
+            </a>
+            <a href="{% static 'template-proposal-pengadaan.docx' %}" class="btn btn-danger m-2 p-2" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-down-circle" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+                </svg>
+                Template Proposal Pengadaan
             </a>
         {% endif %}
     </div>
@@ -39,11 +59,120 @@
             <input class="btn btn-success" type="submit" value="Cari">
         </form>
         <div class="d-flex flex-wrap justify-content-center">
+            {% if proposal_inventaris %}
+                {% for data in proposal_inventaris %}
+                    <div class="card border-success m-2" style="width: 18rem; height: 100%;">
+                        <div class="card-header bg-success text-light">
+                            Proposal Inventaris ke-{{ forloop.revcounter }}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-success">{{ data.judul_proposal }}</h5>
+                            <p class="card-text p-0 m-0">PJ : {{ data.penanggungjawab }}</p>
+                            <p class="card-text p-0 m-0">Biaya : Rp. {{ data.anggaran_biaya|intcomma }}</p>
+                            <p class="card-text p-0 m-0">Status:
+                                {% if data.proposalinventarisstatus_set.first.is_wakasek == "Accepted" %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                    </svg>
+
+                                    {% if data.proposalinventarisstatuskepsek_set.first.is_kepsek == "Accepted" %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                        </svg>
+
+                                        {% if data.proposalinventarisstatusbendahara_set.first.is_bendahara == "Accepted" %}
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                                <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                            </svg>
+                                        {% elif data.proposalstatusbendahara_set.first.is_bendahara == "Pending" %}
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                                <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                                            </svg>
+                                        {% else %}
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                                            </svg>
+                                        {% endif %}
+
+                                    {% elif data.proposalinventarisstatuskepsek_set.first.is_kepsek == "Pending" %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                                        </svg>
+                                    {% elif data.proposalinventarisstatuskepsek_set.first.is_kepsek == "Some Info Required" %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                                        </svg>
+                                    {% else %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                        </svg>
+                                    {% endif %}
+
+                                {% elif data.proposalinventarisstatus_set.first.is_wakasek == "Pending" %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                                    </svg>
+                                {% elif data.proposalinventarisstatus_set.first.is_wakasek == "Some Info Required" %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                                    </svg>
+                                {% else %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                    </svg>
+                                {% endif %}
+
+                            </p>
+                        </div>
+                        <div class="card-footer border-primary text-light">
+                            {% if request.user.is_authenticated %}
+                                {% if request.user.username == 'agung_wa' %}
+                                    <a href="{% url 'proposal:detail-proposal-inventaris' data.id %}" class="btn btn-sm btn-info m-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                                        </svg>
+                                        Lihat Detail
+                                    </a>
+                                    <a href="{% url 'proposal:proposal-inventaris-approval-kepsek' data.id %}" class="btn btn-sm btn-success m-1">Approval Kepsek</a>
+                                {% elif request.user.username == 'chevi_indrayadi' %}
+                                    <a href="{% url 'proposal:detail-proposal-inventaris' data.id %}" class="btn btn-sm btn-secondary m-1">Detail</a>
+                                    <a href="{% url 'proposal:proposal-inventaris-approval-bendahara' data.id %}" class="btn btn-sm btn-success m-1">Approval Bendahara</a>
+                                {% elif request.user.username == 'panji_asmara' %}
+                                    <a href="{% url 'proposal:detail-proposal-inventaris' data.id %}" class="btn btn-sm btn-secondary m-1">Detail</a>
+                                    <a href="{% url 'proposal:proposal-inventaris-approval' data.id %}" class="btn btn-sm btn-success m-1">Approval</a>
+                                    <a href="{% url 'proposal:proposal-inventaris-approval-transfer' data.id %}" class="btn btn-sm btn-primary m-1">Bukti Transfer</a>
+                                {% elif data.proposalstatusbendahara_set.first.is_bendahara == "Accepted" %}
+                                    <a href="{% url 'proposal:detail-proposal-inventaris' data.id %}" class="btn btn-sm btn-secondary m-1">Detail</a>
+                                    <a href="{% url 'proposal:proposal-inventaris-approval-transfer' data.id %}" class="btn btn-sm btn-success m-1">Bukti Transfer</a>
+                                {% else %}
+                                    <a href="{% url 'proposal:detail-proposal-inventaris' data.id %}" class="btn btn-sm btn-secondary m-1">Detail</a>
+                                    <a href="{% url 'proposal:edit-inventaris-proposal' data.id %}" class="btn btn-sm btn-warning m-1">Edit</a>
+                                    <a href="{% url 'proposal:delete-inventaris-proposal' data.id %}" class="btn btn-sm btn-danger m-1">Hapus</a>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'proposal:detail-proposal-inventaris' data.id %}" class="btn btn-sm btn-secondary m-1">Lihat Detail</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
             {% if proposal %}
                 {% for data in proposal %}
                     <div class="card border-primary m-2" style="width: 18rem; height: 100%;">
                         <div class="card-header bg-primary text-light">
-                            Proposal ke-{{ forloop.revcounter }}
+                            Proposal Lomba ke-{{ forloop.revcounter }}
                         </div>
                         <div class="card-body">
                             <h5 class="card-title text-primary">{{ data.nama_event }}</h5>

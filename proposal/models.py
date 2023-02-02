@@ -1,5 +1,6 @@
 from django.db import models
 from ekskul.models import Extracurricular, Teacher, StudentOrganization
+from ekskul.compress_image import CompressedImageField
 
 # Create your models here.
 
@@ -77,7 +78,7 @@ class ProposalStatus(models.Model):
     is_wakasek = models.CharField(max_length=100, choices=status_proposal, default="Pending", verbose_name="Keputusan Wakasek Ekskul")
     alasan_wakasek = models.CharField(max_length=200, default="")
     slug = models.SlugField(max_length=20, default='Wakasek')
-    foto_alasan = models.ImageField(upload_to='proposal/koreksi', blank=True, null=True)
+    foto_alasan = CompressedImageField(upload_to='proposal/koreksi', blank=True, null=True, quality=50, help_text="Format file harus .jpeg atau .jpg")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -91,7 +92,7 @@ class ProposalStatusKepsek(models.Model):
     is_kepsek = models.CharField(max_length=100, choices=status_proposal, default="Pending", verbose_name="Keputusan Kepala Sekolah")
     alasan_kepsek = models.CharField(max_length=200, default="")
     slug = models.SlugField(max_length=20, default='Kepsek')
-    foto_alasan = models.ImageField(upload_to='proposal/koreksi', blank=True, null=True)
+    foto_alasan = CompressedImageField(upload_to='proposal/koreksi', blank=True, null=True, quality=50, help_text="Format file harus .jpeg atau .jpg")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -104,7 +105,66 @@ class ProposalStatusBendahara(models.Model):
     is_bendahara = models.CharField(max_length=100, choices=status_proposal_bendahara, default="Pending", verbose_name="Keputusan Bendahara")
     alasan_bendahara = models.CharField(max_length=200, default="")
     slug = models.SlugField(max_length=20, default='Bendahara')
-    foto_alasan = models.ImageField(upload_to='proposal/koreksi', blank=True, null=True)
+    foto_alasan = CompressedImageField(upload_to='proposal/koreksi', blank=True, null=True, quality=50, help_text="Format file harus .jpeg atau .jpg")
+    bukti_transfer = models.ImageField(upload_to='proposal/transfer', blank=True, null=True)
+    catatan_bendahara = models.TextField(max_length=200, default="Aman")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.is_bendahara
+
+
+class ProposalInventaris(models.Model):
+    judul_proposal = models.CharField(max_length=200, verbose_name="Judul Proposal Pengadaan")
+    tanggal_pembelian = models.DateField(verbose_name="Rencana tanggal pembelian", blank=True, null=True)
+    nama_toko = models.CharField(max_length=200, blank=True, null=True)
+    alamat_toko = models.CharField(max_length=200, blank=True, null=True)
+    penanggungjawab = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    nomor_rekening = models.CharField(max_length=100, default="")
+    nama_bank = models.CharField(max_length=100, default="Muamalat")
+    ekskul = models.ForeignKey(Extracurricular, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Keperluan untuk ekskul")
+    santri = models.ManyToManyField(StudentOrganization, verbose_name="Keperluan untuk santri atas nama", blank=True, help_text="Pada PC/Laptop, tekan Ctrl untuk memilih banyak opsi")
+    anggaran_biaya = models.FloatField()
+    upload_file = models.FileField(upload_to='proposal', verbose_name="Upload File Proposal", help_text="Format file dalam bentuk .pdf")
+    Catatan = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.judul_proposal
+
+
+class ProposalInventarisStatus(models.Model):
+    proposal = models.ForeignKey('ProposalInventaris', on_delete=models.CASCADE)
+    is_wakasek = models.CharField(max_length=100, choices=status_proposal, default="Pending", verbose_name="Keputusan Wakasek Ekskul")
+    alasan_wakasek = models.CharField(max_length=200, default="")
+    slug = models.SlugField(max_length=20, default='Wakasek')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.is_wakasek
+
+
+class ProposalInventarisStatusKepsek(models.Model):
+    proposal = models.ForeignKey('ProposalInventaris', on_delete=models.CASCADE)
+    status_wakasek = models.ForeignKey('ProposalInventarisStatus', on_delete=models.CASCADE)
+    is_kepsek = models.CharField(max_length=100, choices=status_proposal, default="Pending", verbose_name="Keputusan Kepala Sekolah")
+    alasan_kepsek = models.CharField(max_length=200, default="")
+    slug = models.SlugField(max_length=20, default='Kepsek')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.is_kepsek
+
+class ProposalInventarisStatusBendahara(models.Model):
+    proposal = models.ForeignKey('ProposalInventaris', on_delete=models.CASCADE)
+    status_kepsek = models.ForeignKey('ProposalInventarisStatusKepsek', on_delete=models.CASCADE)
+    is_bendahara = models.CharField(max_length=100, choices=status_proposal_bendahara, default="Pending", verbose_name="Keputusan Bendahara")
+    alasan_bendahara = models.CharField(max_length=200, default="")
+    slug = models.SlugField(max_length=20, default='Bendahara')
     bukti_transfer = models.ImageField(upload_to='proposal/transfer', blank=True, null=True)
     catatan_bendahara = models.TextField(max_length=200, default="Aman")
     created_at = models.DateTimeField(auto_now_add=True)

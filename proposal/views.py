@@ -4,8 +4,8 @@ from django.db.models import Sum, Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from proposal.forms import ProposalForm, ProposalEditForm, StatusProposalForm, StatusProposalKepsekForm, StatusProposalBendaharaForm
-from proposal.models import Proposal, ProposalStatus, ProposalStatusBendahara, ProposalStatusKepsek
+from proposal.forms import ProposalForm, ProposalEditForm, StatusProposalForm, StatusProposalKepsekForm, StatusProposalBendaharaForm, ProposalInventarisForm, ProposalInventarisEditForm, StatusProposalInventarisForm, StatusProposalInventarisKepsekForm, StatusProposalInventarisBendaharaForm
+from proposal.models import Proposal, ProposalStatus, ProposalStatusBendahara, ProposalStatusKepsek, ProposalInventaris, ProposalInventarisStatus, ProposalInventarisStatusKepsek, ProposalInventarisStatusBendahara
 from userlog.models import UserLog
 
 
@@ -13,6 +13,7 @@ from userlog.models import UserLog
 
 def index(request):
     proposal = Proposal.objects.all().order_by('-created_at')
+    proposal_inventaris = ProposalInventaris.objects.all().order_by('-created_at')
     jumlah = Proposal.objects.aggregate(Sum('anggaran_biaya'))
     jumlah_diterima = Proposal.objects.filter(proposalstatusbendahara__is_bendahara="Accepted").aggregate(Sum('anggaran_biaya'))
     jumlah_ditolak = Proposal.objects.filter(Q(proposalstatus__is_wakasek="Rejected") | Q(proposalstatuskepsek__is_kepsek="Rejected")).aggregate(Sum('anggaran_biaya'))
@@ -21,6 +22,7 @@ def index(request):
     diterima_bendahara = ProposalStatusBendahara.objects.filter(is_bendahara="Accepted")
     context = {
         'proposal': proposal,
+        'proposal_inventaris': proposal_inventaris,
         'jumlah': jumlah,
         'jumlah_diterima': jumlah_diterima,
         'jumlah_ditolak': jumlah_ditolak,
@@ -38,8 +40,21 @@ def proposal_detail(request, pk):
     context = {
         'data': data,
         'status': status,
+        'tipe' : 'lomba'
     }
     return render(request, 'proposal-detail.html', context)
+
+
+def proposal_inventaris_detail(request, pk):
+    data = get_object_or_404(ProposalInventaris, id=pk)
+    status = ProposalStatus.objects.all()
+    context = {
+        'data': data,
+        'status': status,
+        'tipe': 'barang'
+    }
+    return render(request, 'proposal-detail.html', context)
+
 @login_required(login_url='/login/')
 def proposal_input(request):
     if request.method == "POST":
@@ -120,6 +135,7 @@ _Ini adalah pesan otomatis, jangan dibalas._''' % ("Ustadz Panji Asmara, S.Pd.",
         forms = ProposalForm()
     context = {
         'forms': forms,
+        'name': 'Lomba',
     }
     return render(request, 'proposal-input.html', context)
 
@@ -416,3 +432,215 @@ def proposal_bukti_transfer(request, pk):
         'proposal': proposal,
     }
     return render(request, 'proposal-approval-transfer.html', context)
+
+def proposal_inventaris_bukti_transfer(request, pk):
+    proposal = get_object_or_404(ProposalInventaris, id=pk)
+    context = {
+        'proposal': proposal,
+    }
+    return render(request, 'proposal-approval-transfer.html', context)
+
+
+@login_required(login_url='/login/')
+def proposal_inventaris_input(request):
+    if request.method == "POST":
+        judul = request.POST.get('judul_proposal')
+        obj = ProposalInventaris.objects.filter(judul_proposal__icontains=judul)
+        if obj:
+            forms = ProposalInventarisForm()
+            messages.error(request, "Proposal untuk event ini sudah ada. Silahkan cari di menu atau buat yang baru.")
+        else:
+            forms = ProposalInventarisForm(request.POST, request.FILES)
+            if forms.is_valid():
+                forms.save()
+                p = get_object_or_404(ProposalInventaris, judul_proposal=judul)
+                ProposalInventarisStatus.objects.create(
+                    proposal=p,
+                    is_wakasek="Pending",
+                    alasan_wakasek="",
+                )
+                p_status1 = get_object_or_404(ProposalInventarisStatus, proposal=p.id)
+                ProposalInventarisStatusKepsek.objects.create(
+                    proposal=p,
+                    status_wakasek=p_status1,
+                    is_kepsek="Pending",
+                    alasan_kepsek=""
+                )
+                p_status2 = get_object_or_404(ProposalInventarisStatusKepsek, proposal=p.id)
+                ProposalInventarisStatusBendahara.objects.create(
+                    proposal=p,
+                    status_kepsek=p_status2,
+                    is_bendahara="Pending",
+                    alasan_bendahara=""
+                )
+
+                UserLog.objects.create(
+                    user=request.user.teacher,
+                    action_flag="ADD",
+                    app="PROPOSAL",
+                    message="Berhasil mengajukan proposal INVENTARIS {} dengan anggaran sebesar {} dan penanggung jawab {}".format(p.judul_proposal, p.anggaran_biaya, p.penanggungjawab)
+                )
+
+                return redirect('proposal:proposal-index')
+            else:
+                forms = ProposalInventarisForm(request.POST, request.FILES)
+                messages.error(request, "Yang kamu isi ada yang salah. Silahkan cek lagi.")
+    else:
+        forms = ProposalInventarisForm()
+    context = {
+        'forms': forms,
+        'name' : 'Inventaris',
+    }
+    return render(request, 'proposal-input.html', context)
+
+@login_required(login_url='/login/')
+def proposal_inventaris_edit(request, pk):
+    data = get_object_or_404(ProposalInventaris, id=pk)
+    if not data.penanggungjawab.user.username == request.user.username and not request.user.is_superuser:
+        return redirect('restricted')
+
+    if request.method == "POST":
+        forms = ProposalInventarisEditForm(request.POST, request.FILES, instance=data)
+        if forms.is_valid():
+            forms.save()
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="CHANGE",
+                app="PROPOSAL",
+                message="Berhasil mengubah data proposal inventaris {}".format(data)
+            )
+            return redirect('proposal:proposal-index')
+        else:
+            forms = ProposalInventarisEditForm(instance=data)
+            messages.error(request, "Data yang kamu isi ada yang salah. Silahkan periksa lagi.")
+    else:
+        forms = ProposalInventarisEditForm(instance=data)
+
+    context = {
+        'forms': forms,
+    }
+
+    return render(request, 'proposal-edit.html', context)
+
+@login_required(login_url='/login/')
+def proposal_inventaris_delete(request, pk):
+    data = get_object_or_404(ProposalInventaris, id=pk)
+    if not data.penanggungjawab.user.username == request.user.username and not request.user.is_superuser:
+        return redirect('restricted')
+
+    if request.method == "POST":
+        UserLog.objects.create(
+            user=request.user.teacher,
+            action_flag="CHANGE",
+            app="PROPOSAL",
+            message="Berhasil menghapus data proposal {}".format(data)
+        )
+        data.delete()
+        return redirect('proposal:proposal-index')
+
+    context = {
+        'data': data,
+    }
+    return render(request, 'proposal-delete.html', context)
+
+@login_required(login_url='/login/')
+def proposal_inventaris_approval(request, pk):
+    if not request.user.username == "panji_asmara":
+        return redirect('restricted')
+    status = ProposalInventaris.objects.get(id=pk)
+    data = get_object_or_404(ProposalInventarisStatus, proposal=status.id)
+    if request.method == "POST":
+        forms = StatusProposalInventarisForm(request.POST, request.FILES, instance=data)
+        if forms.is_valid():
+            forms.save()
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="APPROVAL",
+                app="PROPOSAL_WAKASEK",
+                message="Wakasek berhasil melakukan approval pada proposal {} dengan status {}".format(status, data.is_wakasek)
+            )
+
+
+            return redirect('proposal:proposal-index')
+    else:
+        forms = StatusProposalInventarisForm(instance=data)
+    context = {
+        'forms': forms,
+        'status': {
+            'id' : status.id,
+            'nama_event': status.judul_proposal
+
+        },
+        'tipe': 'inventaris',
+    }
+    return render(request, 'proposal-approval.html', context)
+
+@login_required(login_url='/login/')
+def proposal_inventaris_approval_kepsek(request, pk):
+    if not request.user.username == "agung_wa":
+        return redirect('restricted')
+    status = ProposalInventaris.objects.get(id=pk)
+    data = ProposalInventarisStatus.objects.get(proposal=status.id)
+    if request.method == "POST":
+        if data.status_wakasek.is_wakasek == "Accepted":
+            forms = StatusProposalInventarisKepsekForm(request.POST, request.FILES, instance=data)
+            if forms.is_valid():
+                forms.save()
+                UserLog.objects.create(
+                    user=request.user.teacher,
+                    action_flag="APPROVAL",
+                    app="PROPOSAL_KEPSEK",
+                    message="Kepala Sekolah berhasil melakukan approval pada proposal {} dengan status {}".format(status, data.is_kepsek)
+                )
+
+
+                return redirect('proposal:proposal-index')
+        else:
+            forms = StatusProposalInventarisKepsekForm(instance=data)
+            messages.error(request, "Mohon maaf, proposal belum/tidak di-approve oleh Wakasek Ekstrakurikuler.")
+
+    else:
+        forms = StatusProposalInventarisKepsekForm(instance=data)
+
+    context = {
+        'forms': forms,
+        'status': status,
+        'data': data,
+        'tipe': 'inventaris',
+    }
+    return render(request, 'proposal-approval.html', context)
+
+@login_required(login_url='/login/')
+def proposal_inventaris_approval_bendahara(request, pk):
+    if not request.user.username == "chevi_indrayadi":
+        return redirect('restricted')
+    status = ProposalInventaris.objects.get(id=pk)
+    data = ProposalInventarisStatusBendahara.objects.get(proposal=status.id)
+
+    if request.method == "POST":
+        if data.status_kepsek.is_kepsek == "Accepted":
+            forms = StatusProposalInventarisBendaharaForm(request.POST, request.FILES, instance=data)
+            if forms.is_valid():
+                forms.save()
+                UserLog.objects.create(
+                    user=request.user.teacher,
+                    action_flag="APPROVAL",
+                    app="PROPOSAL_BENDAHARA",
+                    message="Bendahara berhasil melakukan approval pada proposal {} dengan status {}".format(status, data.is_bendahara)
+                )
+
+
+
+                return redirect('proposal:proposal-index')
+        else:
+            forms = StatusProposalInventarisBendaharaForm(instance=data)
+            messages.error(request, "Mohon maaf, proposal belum/tidak di-approve oleh Kepala Sekolah.")
+    else:
+        forms = StatusProposalInventarisBendaharaForm(instance=data)
+
+    context = {
+        'forms': forms,
+        'status': status,
+        'tipe': 'inventaris',
+    }
+    return render(request, 'proposal-approval.html', context)
