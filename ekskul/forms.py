@@ -1,4 +1,7 @@
 from django import forms
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
+
 from ekskul.models import *
 
 
@@ -44,3 +47,19 @@ class EkskulForm(forms.ModelForm):
             'tipe': forms.Select(attrs={'class': 'form-select'}),
             'slug': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = get_user_model()
+        fields = ['username', 'password1', 'password2']
+
+class UsernameChangeForm(UserChangeForm):
+    class Meta:
+        model = get_user_model()
+        fields = ['username']
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    class Meta:
+        model = get_user_model()
+        fields = ['old_password', 'new_password1', 'new_password2']

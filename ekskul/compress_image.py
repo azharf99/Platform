@@ -14,7 +14,7 @@ class CompressedImageFieldFile(ImageFieldFile):
         image = image.convert('RGB')
         image = ImageOps.exif_transpose(image)
         im_io = BytesIO()
-        if image.size > 1000:
+        if image.height > 1000:
             image.save(im_io, "JPEG", optimize=True, quality=self.field.quality)
         else:
             image.save(im_io, "JPEG", optimize=True, quality=90)

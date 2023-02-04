@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% load static %}
+    <div class="container w-75 mt-5 pt-4">
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="text-center">
+                <img class="" src="{% static 'images/Binaaul-Mustaqbal.png' %}" alt="logo-sma" width="84" height="70">
+                <img class="" src="{% static 'images/albinaa-vision.png' %}" alt="logo-albinaa-vision" width="187" height="70">
+            </div>
+            {% if messages %}
+                <ul class="messages text-danger">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <div class="rounded p-1 mt-2">
+                {{ forms.as_p }}
+            </div>
+            {% if tipe == 'change' %}
+                <button type="submit" class="w-100 btn btn-warning my-2">Ubah</button>
+                <a href="{% url 'profil' %}" class="w-100 btn btn-danger my-2">< Kembali</a>
+            {% else %}
+                <button type="submit" class="w-100 btn btn-warning my-2">Daftar</button>
+                <div class="text-center">
+                    <p>
+                        Udah punya akun? Silahkan <a href="{% url 'login' %}" class="btn btn-sm btn-primary">Login</a> aja.
+                    </p>
+                </div>
+            {% endif %}
+        </form>
+    </div>
+{% endblock %}

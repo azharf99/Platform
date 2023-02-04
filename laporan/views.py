@@ -114,7 +114,7 @@ def laporan_input(request, slug):
 
     if request.method == 'POST':
         try:
-            Report.objects.get(tanggal_pembinaan=tanggal_pembinaan)
+            Report.objects.get(tanggal_pembinaan=tanggal_pembinaan, nama_ekskul__slug=slug)
             form = FormLaporanKehadiran(request.POST)
             messages.error(request, "Laporan untuk tanggal ini sudah ada. Silahkan pilih tanggal lain")
         except:

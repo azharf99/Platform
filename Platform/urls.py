@@ -21,7 +21,6 @@ from django.shortcuts import render
 
 import deskripsi.views
 import ekskul.views
-import prestasi.views
 import userlog.views
 
 
@@ -44,6 +43,9 @@ urlpatterns = [
     path('log/', userlog.views.index, name='log-index'),
     path('admin/', admin.site.urls),
     path('login/', ekskul.views.login_view, name='login'),
+    path('register/', ekskul.views.register, name='register'),
+    path('password/', ekskul.views.edit_password, name='password'),
+    path('username-change/', ekskul.views.edit_username, name='username-change'),
     path('profil/', ekskul.views.profil_view, name='profil'),
     path('profil/edit', ekskul.views.edit_profil_view, name='edit-profil'),
     path('logout/', ekskul.views.logout_view, name='logout'),

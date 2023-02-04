@@ -2,9 +2,10 @@ from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRe
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+
 from ekskul.models import Extracurricular, Student, StudentOrganization, Teacher, User
 from laporan.models import Report
-from ekskul.forms import InputAnggotaEkskulForm, PembinaEkskulForm, EkskulForm
+from ekskul.forms import InputAnggotaEkskulForm, PembinaEkskulForm, EkskulForm, CustomUserCreationForm, UsernameChangeForm, CustomPasswordChangeForm
 from userlog.models import UserLog
 from django.views.decorators.csrf import csrf_protect
 
@@ -235,3 +236,70 @@ def logout_view(request):
     )
     logout(request)
     return redirect('app-index')
+
+
+def register(request):
+    if request.user.is_authenticated:
+        return redirect('restricted')
+    forms = CustomUserCreationForm()
+
+    if request.method == "POST":
+        forms = CustomUserCreationForm(request.POST)
+        username = request.POST.get('username')
+        password = request.POST.get('password1')
+        if forms.is_valid():
+            forms.save()
+            user = authenticate(request, username=username, password=password)
+            login(request, user)
+            Teacher.objects.create(
+                user_id=request.user.id,
+                nama_lengkap="",
+                niy=0,
+                email="user@gmail.com",
+                no_hp=0,
+            )
+            return redirect('edit-profil')
+
+    context = {
+        'forms': forms,
+    }
+    return render(request, 'register.html', context)
+
+
+# @login_required(login_url='/login')
+def edit_username(request):
+    if not request.user.is_authenticated:
+        return redirect('restricted')
+    forms = UsernameChangeForm(instance=request.user)
+
+    if request.method == "POST":
+        forms = UsernameChangeForm(request.POST, instance=request.user)
+        if forms.is_valid():
+            forms.save()
+            return redirect('profil')
+
+    context = {
+        'forms': forms,
+        'tipe' : 'change',
+    }
+    return render(request, 'register.html', context)
+
+def edit_password(request):
+    if not request.user.is_authenticated:
+        return redirect('restricted')
+    forms = CustomPasswordChangeForm(user=request.user)
+
+    if request.method == "POST":
+        password = request.POST.get('new_password1')
+        forms = CustomPasswordChangeForm(request.user, request.POST)
+        if forms.is_valid():
+            forms.save()
+            user = authenticate(request, username=request.user.username, password=password)
+            login(request, user)
+            return redirect('profil')
+
+    context = {
+        'forms': forms,
+        'tipe' : 'change',
+    }
+    return render(request, 'register.html', context)
