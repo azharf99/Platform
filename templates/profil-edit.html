@@ -19,7 +19,9 @@
                         {{ form.as_p }}
                     </div>
                     <div class="card-footer text-center">
-                        <a href="{% url 'profil' %}" class="btn btn-danger">Back to Profil</a>
+                        {% if request.user.teacher.nama_lengkap %}
+                            <a href="{% url 'profil' %}" class="btn btn-danger">Back to Profil</a>
+                        {% endif %}
                         <input class="btn btn-success" type="submit" value="Simpan Perubahan">
                     </div>
                 </div>

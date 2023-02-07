@@ -83,6 +83,7 @@ def input_anggota(request, slug):
             InputAnggotaEkskulForm.nama_siswa = siswa
             if form.is_valid():
                 form.save()
+                messages.info(request, "Data Anggota Berhasil ditambahkan!")
                 UserLog.objects.create(
                     user=request.user.teacher,
                     action_flag="ADD",
@@ -190,6 +191,8 @@ def login_view(request):
 
 @login_required(login_url='/login/')
 def profil_view(request):
+    if not request.user.teacher.nama_lengkap:
+        redirect('edit-profil')
     try:
         user = request.user
         teacher = Teacher.objects.get(user_id=user.id)
@@ -257,6 +260,12 @@ def register(request):
                 niy=0,
                 email="user@gmail.com",
                 no_hp=0,
+            )
+            UserLog.objects.create(
+                user="Pengguna ke-" + str(request.user.id),
+                action_flag="ADD",
+                app="PENGGUNA",
+                message="Berhasil membuat akun baru di aplikasi ini",
             )
             return redirect('edit-profil')
 

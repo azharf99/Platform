@@ -34,7 +34,14 @@
                 {% if messages %}
                     <ul class="messages text-danger fw-bold">
                         {% for message in messages %}
-                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            <div class="toast show align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                                <div class="d-flex">
+                                    <div {% if message.tags %} class="toast-body {{ message.tags }}"{% endif %}>
+                                        {{ message }}
+                                    </div>
+                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                            </div>
                         {% endfor %}
                     </ul>
                 {% endif %}
@@ -103,10 +110,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
 <script>
     $(document).ready(function () {
-      $('#input-anggota').selectize({
-          sortField: 'text'
-      });
-  });
+        $('#input-anggota').selectize({
+            sortField: 'text'
+        });
+    });
 </script>
 </body>
 </html>
