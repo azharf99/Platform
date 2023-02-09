@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'deskripsi.apps.DeskripsiConfig',
     'prestasi.apps.PrestasiConfig',
     'userlog.apps.UserlogConfig',
+    'osn.apps.OsnConfig',
 
 ]
 

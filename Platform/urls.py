@@ -58,6 +58,7 @@ urlpatterns = [
     path('timeline/', include('timeline.urls')),
     path('prestasi/', include('prestasi.urls')),
     path('struktur/', struktur, name='struktur-page'),
+    path('osn/', include('osn.urls')),
     path('unduh/', unduh, name='unduh-page'),
     path('notavailable/', not_available, name='not-available'),
     path('restricted/', restricted, name='restricted'),
