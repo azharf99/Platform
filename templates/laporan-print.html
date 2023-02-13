@@ -60,13 +60,13 @@
                 </tr>
 
                 </thead>
-                <tbody>
+                <tbody style="font-size: 0.8rem">
                 {% if reports %}
                     {% for student in students %}
                         <tr>
                             <td class="text-center">{{ forloop.counter }}</td>
                             <td>{{ student.nama_siswa.nama}}</td>
-                            <td class="text-center">{{ student.nama_siswa.kelas }}</td>
+                            <td class="text-center">{{ student.nama_siswa.get_kelas_display  }}</td>
                             {% for report in reports %}
                                 <td class="text-center">
                                     {% for santri in report.kehadiran_santri.all %}

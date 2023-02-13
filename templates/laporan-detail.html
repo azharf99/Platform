@@ -31,7 +31,7 @@
                     <td class="text-end">:</td>
                     <td>
                         {% for santri in data.kehadiran_santri.all %}
-                            <p>{{ santri.nama_siswa.nama }} | {{ santri.nama_siswa.kelas }}</p>
+                            <p>{{ santri.nama_siswa.nama }} | {{ santri.nama_siswa.get_kelas_display }}</p>
                         {% endfor %}
 
                     </td>

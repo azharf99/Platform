@@ -18,7 +18,7 @@ class FormUploadLaporanKehadiran(forms.ModelForm):
         model = UploadImage
         fields = ['foto_absensi']
         widgets = {
-            'foto_absensi': forms.FileInput(attrs={'class': 'form-control'}),
+            'foto_absensi': forms.FileInput(attrs={'class': 'form-control', 'required': True}),
         }
 
 class FormEditUploadLaporanKehadiran(forms.ModelForm):

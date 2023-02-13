@@ -26,41 +26,55 @@
                     <td class="text-end">:</td>
                     <td>{{ data.tanggal_pendaftaran|date:"j F Y" }}</td>
                 </tr>
-                <tr>
-                    <td>Batas Pendaftaran</td>
-                    <td class="text-end">:</td>
-                    <td>{{ data.batas_pendaftaran|date:"j F Y" }}</td>
-                </tr>
+                {% if data.batas_pendaftaran %}
+                    <tr>
+                        <td>Batas Pendaftaran</td>
+                        <td class="text-end">:</td>
+                        <td>{{ data.batas_pendaftaran|date:"j F Y" }}</td>
+                    </tr>
+                {% endif %}
+                {% if data.tanggal_penyisihan_1 %}
                 <tr>
                     <td>Tanggal Penyisihan ke-1 (jika ada)</td>
                     <td class="text-end">:</td>
                     <td>{{ data.tanggal_penyisihan_1|date:"j F Y" }}</td>
                 </tr>
+                {% endif %}
+                {% if data.tanggal_penyisihan_2 %}
                 <tr>
                     <td>Tanggal Penyisihan ke-2 (jika ada)</td>
                     <td class="text-end">:</td>
                     <td>{{ data.tanggal_penyisihan_2|date:"j F Y" }}</td>
                 </tr>
+                {% endif %}
+                {% if data.tanggal_penyisihan_3 %}
                 <tr>
                     <td>Tanggal Penyisihan ke-3 (jika ada)</td>
                     <td class="text-end">:</td>
                     <td>{{ data.tanggal_penyisihan_3|date:"j F Y" }}</td>
                 </tr>
+                {% endif %}
+                {% if data.tanggal_semifinal %}
                 <tr>
                     <td>Tanggal Semifinal (jika ada)</td>
                     <td class="text-end">:</td>
                     <td>{{ data.tanggal_semifinal|date:"j F Y" }}</td>
                 </tr>
+                {% endif %}
+                {% if data.tanggal_final %}
                 <tr>
                     <td>Tanggal Final</td>
                     <td class="text-end">:</td>
                     <td>{{ data.tanggal_final|date:"j F Y" }}</td>
                 </tr>
+                {% endif %}
+                {% if data.pengumuman_pemenang %}
                 <tr>
                     <td>Tanggal Pengumuman Pemenang</td>
                     <td class="text-end">:</td>
                     <td>{{ data.pengumuman_pemenang|date:"j F Y" }}</td>
                 </tr>
+                {% endif %}
                 <tr>
                     <td>Jenis Pelaksanaan Event</td>
                     <td class="text-end">:</td>
@@ -94,19 +108,23 @@
                 <tr>
                     <td>Ekskul yang terlibat</td>
                     <td class="text-end">:</td>
+                {% if data.ekskul %}
                     <td>{{ data.ekskul }}</td>
+                {% else %}
+                    <td class="text-danger fw-bold">Tidak ada</td>
+                {% endif %}
                 </tr>
                 <tr>
                     <td>Santri yang terlibat</td>
                     <td class="text-end">:</td>
                     <td>
-                    {% if data.santri.count %}
-                        {% for santri in data.santri.all %}
-                            <p>{{ santri.nama_siswa.nama }} | {{ santri.nama_siswa.kelas }}</p>
-                        {% endfor %}
-                    {% else %}
-                        <p class="text-danger fw-bold">Tidak ada santri yang dilibatkan</p>
-                    {% endif %}
+                        {% if data.santri.count %}
+                            {% for santri in data.santri.all %}
+                                <p>{{ santri.nama_siswa.nama }} | {{ santri.nama_siswa.kelas }}</p>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-danger fw-bold">Tidak ada santri yang dilibatkan</p>
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>
@@ -188,13 +206,13 @@
                     <td>Santri yang membutuhkan</td>
                     <td class="text-end">:</td>
                     <td>
-                    {% if data.santri.count %}
-                        {% for santri in data.santri.all %}
-                            <p>{{ santri.nama_siswa.nama }} | {{ santri.nama_siswa.kelas }}</p>
-                        {% endfor %}
-                    {% else %}
-                        <p class="text-danger fw-bold">Tidak ada santri yang dilibatkan</p>
-                    {% endif %}
+                        {% if data.santri.count %}
+                            {% for santri in data.santri.all %}
+                                <p>{{ santri.nama_siswa.nama }} | {{ santri.nama_siswa.kelas }}</p>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-danger fw-bold">Tidak ada santri yang dilibatkan</p>
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>

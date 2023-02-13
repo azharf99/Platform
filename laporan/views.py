@@ -38,7 +38,7 @@ def print_to_pdf(request, slug):
     locale.setlocale(locale.LC_ALL, 'id_ID')
     tanggal = datetime.datetime.now(pytz.timezone('Asia/Jakarta'))
     reports = Report.objects.filter(nama_ekskul__slug=slug, tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
-    students = StudentOrganization.objects.filter(ekskul_siswa__slug=slug)
+    students = StudentOrganization.objects.filter(ekskul_siswa__slug=slug).order_by('nama_siswa__kelas', 'nama_siswa__nama')
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     angka = [x for x in range(15)]
     UserLog.objects.create(

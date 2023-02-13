@@ -21,7 +21,8 @@
                     <div class="card-footer text-center">
                         {% if tipe %}
                             <a id="back" href="{% url 'osn:osn-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
-                        {% else %}
+                        {% endif %}
+                        {% if slug %}
                             <a id="back" href="{% url 'osn:detail-bidang-osn' slug %}" class="card-link btn btn-danger m-1">Kembali</a>
                         {% endif %}
                         <input id="save" type="submit" class="card-link btn btn-success m-1" value="Save Data">

@@ -25,7 +25,7 @@ class Teacher(models.Model):
 
     def __str__(self):
         if self.gelar_depan or self.gelar_belakang:
-            return f'%s %s, %s.' % (self.gelar_depan, self.nama_lengkap, self.gelar_belakang)
+            return f'%s, %s.' % (self.nama_lengkap, self.gelar_belakang)
         else:
             return self.nama_lengkap
 

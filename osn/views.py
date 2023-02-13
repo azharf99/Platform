@@ -57,6 +57,7 @@ def bidang_osn_edit(request, pk):
         forms = FormInputBidang(instance=data)
     context = {
         'forms': forms,
+        'tipe': True,
         'name': 'Edit Bidang OSN',
     }
     return render(request, 'osn-input.html', context)
