@@ -33,4 +33,4 @@ class DokumentasiPrestasi(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.prestasi
+        return "%s %s" % (self.prestasi.nama_lomba, self.prestasi.peraih_prestasi)

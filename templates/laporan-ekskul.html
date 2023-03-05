@@ -4,7 +4,9 @@
         <div class="row justify-content-center align-items-center">
             <h3 class="text-center">Laporan Kehadiran Ekskul</h3>
             <h4 class="text-center">{{ ekskul.nama }}</h4>
-            <h4 class="text-center"> {{ bulan_ini}}</h4>
+            {% if bulan_ini %}
+                <h4 class="text-center"> {{ bulan_ini}}</h4>
+            {% endif %}
             {% for pembina in ekskul.pembina.all %}
                 {% if ekskul.pembina.count > 1 %}
                     <h6 class="m-0">Pembina {{ forloop.counter }} :
@@ -22,12 +24,40 @@
                 <a href="{% url 'laporan:laporan-upload' ekskul.slug %}" class="btn btn-success m-1">Upload Foto</a>
             {% endif %}
 
+            <form method="post" action="" id="form" class="mt-2">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-2">
+                        <p class="me-2 text-end">Filter: </p>
+                    </div>
+                    <div class="col-7">
+                        <select class="form-select" name="bulan" aria-label="Default select example">
+                          <option value="0" selected>Pilih Bulan Laporan</option>
+                          <option value="1">Januari</option>
+                          <option value="2">Februari</option>
+                          <option value="3">Maret</option>
+                        </select>
+                    </div>
+                    <div class="col-3 ">
+                        <button id="save" type="submit" class="btn btn-primary ms-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                            </svg>
+                            <small>Cari</small>
+                        </button>
+                        <button id="loading" class="btn btn-sm btn-success" type="button" style="display: none" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Loading...
+                        </button>
+                    </div>
+                </div>
+            </form>
             <div class="col-sm mt-3">
 
                 <table class="table table-hover w-100">
                     <thead>
                     <tr>
-                        <th scope="col">No.</th>
+                        <!--<th scope="col">No.</th>-->
                         <th scope="col">Tgl</th>
                         <th scope="col">Kehadiran anggota</th>
                         <th scope="col">Foto</th>
@@ -38,8 +68,8 @@
                     {% if filtered_report %}
                         {% for report in filtered_report %}
                             <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ report.tanggal_pembinaan|date:"j"}}</td>
+                                <!--<td>{{ forloop.counter }}</td>-->
+                                <td>{{ report.tanggal_pembinaan|date:"j M y"}}</td>
                                 <td><strong>{{ report.kehadiran_santri.count }} SANTRI</strong>
                                 </td>
                                 <td>
@@ -61,7 +91,7 @@
                                             {% endif %}
                                         {% endfor %}
                                     {% else %}
-                                        <p>No file !</p>
+                                        <p>No image</p>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -88,7 +118,7 @@
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="5" class="text-center fw-bold text-danger">Maaf, belum ada laporan kehadiran :(</td>
+                            <td colspan="4" class="text-center fw-bold text-danger">Maaf, belum ada laporan kehadiran untuk bulan ini ({{ bulan_ini}}). Jika Anda input laporan untuk bulan yang lalu, silahkan filter untuk melihat hasilnya.</td>
                         </tr>
                     {% endif %}
                     </tbody>
@@ -97,4 +127,5 @@
         </div>
     </div>
 
+{% include 'script.html' %}
 {% endblock %}

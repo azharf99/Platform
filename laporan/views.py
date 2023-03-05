@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 
 from laporan.models import Report, UploadImage
 from laporan.forms import FormLaporanKehadiran, FormUploadLaporanKehadiran, FormEditUploadLaporanKehadiran
-from ekskul.models import Extracurricular, StudentOrganization
+from ekskul.models import Extracurricular, StudentOrganization, Teacher
 from userlog.models import UserLog
 
 
@@ -37,7 +37,10 @@ def index(request):
 def print_to_pdf(request, slug):
     locale.setlocale(locale.LC_ALL, 'id_ID')
     tanggal = datetime.datetime.now(pytz.timezone('Asia/Jakarta'))
-    reports = Report.objects.filter(nama_ekskul__slug=slug, tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
+    if datetime.date.today().month > 1:
+        reports = Report.objects.filter(nama_ekskul__slug=slug, tanggal_pembinaan__month=(datetime.date.today().month-1)).order_by('tanggal_pembinaan')
+    else:
+        reports = Report.objects.filter(nama_ekskul__slug=slug, tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
     students = StudentOrganization.objects.filter(ekskul_siswa__slug=slug).order_by('nama_siswa__kelas', 'nama_siswa__nama')
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     angka = [x for x in range(15)]
@@ -62,16 +65,31 @@ def print_to_pdf(request, slug):
 def laporan_ekskul(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     bulan_ini = datetime.date.today().__format__("%B %Y")
+    teachers = Teacher.objects.filter(extracurricular=ekskul)
+    all = teachers.values_list('user_id', flat=True)
     filtered_report = Report.objects.filter(nama_ekskul__slug=slug).filter(
-        tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
+            tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
+    if request.method == "POST":
+        bulan = request.POST.get("bulan")
+        if bulan != 0:
+            filtered_report = Report.objects.filter(nama_ekskul__slug=slug).filter(
+                tanggal_pembinaan__month=bulan).order_by('tanggal_pembinaan')
+            bulan_ini = None
+        else:
+            filtered_report = Report.objects.filter(nama_ekskul__slug=slug).filter(
+                tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
+
+    # else:
+    #     filtered_report = Report.objects.filter(nama_ekskul__slug=slug).order_by('tanggal_pembinaan')
 
     if request.user.is_authenticated:
-        if not request.user.teacher == ekskul.pembina and not request.user.is_superuser:
+        if not request.user.id in all and not request.user.is_superuser:
+        # if not request.user.teacher == ekskul.pembina and not request.user.is_superuser:
             context = {
                 'ekskul': ekskul,
                 'filtered_report': filtered_report,
                 'bulan_ini': bulan_ini,
-                'display': None
+                'display': None,
             }
         else:
             context = {
