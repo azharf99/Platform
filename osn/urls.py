@@ -13,4 +13,6 @@ urlpatterns = [
     path('<slug:slug>/input/laporan', views.laporan_osn_input, name='laporan-osn-input'),
     path('<slug:slug>/edit/laporan/<int:pk>', views.laporan_osn_edit, name='laporan-osn-edit'),
     path('<slug:slug>/delete/laporan/<int:pk>', views.laporan_osn_delete, name='laporan-osn-delete'),
+    path('<slug:slug>/print', views.cetak_laporan_osnk, name='laporan-osnk-print'),
+    path('<slug:slug>/print2', views.cetak_laporan_osnp, name='laporan-osnp-print'),
 ]

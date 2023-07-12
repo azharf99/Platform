@@ -1,5 +1,5 @@
 from django.contrib import admin
-from ekskul.models import *
+from ekskul.models import User, Student, StudentOrganization,Extracurricular, Teacher
 
 # Register your models here.
 

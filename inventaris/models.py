@@ -45,7 +45,7 @@ class InventoryStatus(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'%s %s' % (self.barang, self.status)
+        return '%s %s' % (self.barang, self.status)
 
     class Meta:
         verbose_name = "Inventory Status"

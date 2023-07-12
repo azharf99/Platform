@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
@@ -8,12 +8,15 @@ from prestasi.models import Prestasi, DokumentasiPrestasi
 from django.contrib import messages
 
 from userlog.models import UserLog
+from io import BytesIO
+
+import xlsxwriter
 
 
 # Create your views here.
 
 def index(request):
-    prestasi = Prestasi.objects.all()
+    prestasi = Prestasi.objects.all().order_by('-tahun_lomba', 'peraih_prestasi')
     context = {
         'prestasi': prestasi
     }
@@ -27,6 +30,30 @@ def prestasi_detail(request, pk):
     }
     return render(request, 'prestasi-detail.html', context)
 
+
+def print_to_excel(request):
+    nilai = Prestasi.objects.all().order_by('-tahun_lomba',
+                                             'peraih_prestasi')
+    buffer = BytesIO()
+    workbook = xlsxwriter.Workbook(buffer)
+    worksheet = workbook.add_worksheet()
+    worksheet.write_row(0, 0, ['No', 'Peraih Prestasi', 'Kelas', 'Kategori Lomba', 'Jenis Lomba', 'Tingkat Lomba', 'Tahun Lomba', 'Nama Lomba', 'Bidang Lomba', 'Predikat', 'Penyelengggara', 'Sekolah'])
+    row = 1
+    col = 0
+    for data in nilai:
+        worksheet.write_row(row, col, [row, data.peraih_prestasi, data.kelas_peraih_prestasi, data.kategori, data.jenis_lomba, data.tingkat_lomba, data.tahun_lomba.year, data.nama_lomba, data.bidang_lomba, data.kategori_kemenangan, data.Penyelenggara_lomba, data.sekolah])
+        row += 1
+    workbook.close()
+    buffer.seek(0)
+
+    UserLog.objects.create(
+        user=request.user.teacher,
+        action_flag="PRINT",
+        app="NILAI",
+        message="Berhasil download data prestasi dalam format Excel"
+    )
+
+    return FileResponse(buffer, as_attachment=True, filename='Prestasi SMA IT Al Binaa.xlsx')
 
 @login_required(login_url="/login/")
 def prestasi_input(request):

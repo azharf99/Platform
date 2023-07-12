@@ -13,24 +13,21 @@ from laporan.models import Report, UploadImage
 from laporan.forms import FormLaporanKehadiran, FormUploadLaporanKehadiran, FormEditUploadLaporanKehadiran
 from ekskul.models import Extracurricular, StudentOrganization, Teacher
 from userlog.models import UserLog
+from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-# Create your views here.
+class ExtracuricularView(ListView):
+    model = Extracurricular
+    context_object_name = 'ekskul'
+    template_name = 'laporan.html'
 
-def index(request):
-    if request.user.is_authenticated or request.user.is_superuser:
-        ekskul = Extracurricular.objects.filter(pembina=request.user.teacher).order_by('tipe', 'nama')
-        extra = Extracurricular.objects.exclude(pembina=request.user.teacher).order_by('tipe', 'nama')
-        context = {
-            'ekskul': ekskul,
-            'extra': extra,
-        }
-    else:
-        ekskul = Extracurricular.objects.all().order_by('tipe', 'nama')
-        context = {
-            'ekskul': ekskul,
-        }
-    return render(request, 'laporan.html', context)
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Extracurricular.objects.filter(pembina=self.request.user.teacher).order_by('tipe', 'nama')
+        else:
+            return Extracurricular.objects.all().order_by('tipe', 'nama')
 
 
 @login_required(login_url='/login/')
@@ -38,19 +35,12 @@ def print_to_pdf(request, slug):
     locale.setlocale(locale.LC_ALL, 'id_ID')
     tanggal = datetime.datetime.now(pytz.timezone('Asia/Jakarta'))
     if datetime.date.today().month > 1:
-        reports = Report.objects.filter(nama_ekskul__slug=slug, tanggal_pembinaan__month=(datetime.date.today().month-1)).order_by('tanggal_pembinaan')
+        reports = Report.objects.select_related('nama_ekskul','pembina_ekskul').filter(nama_ekskul__slug=slug, tanggal_pembinaan__month=2).order_by('tanggal_pembinaan')
     else:
         reports = Report.objects.filter(nama_ekskul__slug=slug, tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
     students = StudentOrganization.objects.filter(ekskul_siswa__slug=slug).order_by('nama_siswa__kelas', 'nama_siswa__nama')
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     angka = [x for x in range(15)]
-    UserLog.objects.create(
-        user=request.user.teacher,
-        action_flag="ADD",
-        app="LAPORAN",
-        message="Berhasil mengunduh/mencetak data laporan bulanan ekskul {} untuk bulan {}".format(slug,
-                                                                                                tanggal.__format__("%B"))
-    )
     context = {
         'reports': reports,
         'angka': angka,
@@ -61,6 +51,14 @@ def print_to_pdf(request, slug):
 
     return render(request, 'laporan-print.html', context)
 
+def laporan_ekskul_print_versi2(request, slug):
+    ekskul = get_object_or_404(Extracurricular, slug=slug)
+    filtered_report = Report.objects.filter(nama_ekskul__slug=slug).order_by('tanggal_pembinaan')
+    context = {
+            'ekskul': ekskul,
+            'filtered_report': filtered_report,
+        }
+    return render(request, 'laporan-print2.html', context)
 
 def laporan_ekskul(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
@@ -107,6 +105,10 @@ def laporan_ekskul(request, slug):
         }
     return render(request, 'laporan-ekskul.html', context)
 
+
+# class LaporanDetailView(DetailView):
+#     model = Report
+
 def laporan_detail(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     data = get_object_or_404(Report, nama_ekskul__slug=slug, id=pk)
@@ -151,12 +153,9 @@ def laporan_input(request, slug):
                                                                                                             tanggal_pembinaan)
                 )
 
-                url = 'https://api.watsap.id/send-message'
-                data_post = {
-                    'id_device': settings.ID_DEVICE,
-                    'api-key': settings.API_KEY,
-                    'no_hp': '0%s' % request.user.teacher.no_hp,
-                    'pesan': '''*[NOTIFIKASI]*
+                token = settings.TOKEN
+                phone = "62%s" % request.user.teacher.no_hp
+                message = '''*[NOTIFIKASI]*
 Assalamu'alaikum %s, Anda berhasil input laporan pertemuan ekskul *%s* untuk tanggal *%s*.
 Detail laporan:
 https://ekskul.smasitalbinaa.com/laporan/%s
@@ -164,9 +163,11 @@ https://ekskul.smasitalbinaa.com/laporan/%s
 Syukron.
 
 _Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, ekskul.nama, tanggal_pembinaan, ekskul.slug)
-                }
-                headers = {'Content-Type': 'application/json'}
-                requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
+                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
+
+                response = requests.get(url)
+                result = response.text
+                print(result)
 
                 return redirect('laporan:laporan-upload', ekskul.slug)
 
@@ -211,12 +212,9 @@ def laporan_upload(request, slug):
                                                                                                laporan.tanggal_pembinaan)
             )
 
-            url = 'https://api.watsap.id/send-message'
-            data_post = {
-                'id_device': settings.ID_DEVICE,
-                'api-key': settings.API_KEY,
-                'no_hp': '0%s' % request.user.teacher.no_hp,
-                'pesan': '''*[NOTIFIKASI]*
+            token = settings.TOKEN
+            phone = "62%s" % request.user.teacher.no_hp
+            message = '''*[NOTIFIKASI]*
 Assalamu'alaikum %s, Anda berhasil upload foto pertemuan ekskul %s untuk laporan *%s*.
 Detail laporan:
 https://ekskul.smasitalbinaa.com/laporan/%s
@@ -224,9 +222,11 @@ https://ekskul.smasitalbinaa.com/laporan/%s
 Syukron.
 
 _Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, ekskul.nama, laporan, ekskul.slug)
-            }
-            headers = {'Content-Type': 'application/json'}
-            requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
+            url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
+
+            response = requests.get(url)
+            result = response.text
+            print(result)
 
             return redirect('laporan:laporan-ekskul', ekskul.slug)
     else:

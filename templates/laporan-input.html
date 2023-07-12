@@ -57,7 +57,7 @@
                     <div class="card-footer text-center">
                         {% if filtered_student %}
                             <a id="back" href="{% url 'laporan:laporan-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
-                            <input id="save" type="submit" class="card-link btn btn-success m-1" value="Save Data">
+                            <input onsubmit="myFunction()" id="save" type="submit" class="card-link btn btn-success m-1" value="Save Data">
                             <button id="loading" class="btn btn-success" type="button" style="display: none" disabled>
                                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                 Loading...

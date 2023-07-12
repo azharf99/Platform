@@ -1,0 +1,138 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Laporan-{{ ekskul.nama }}-2023-Versi2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <!--<link rel="stylesheet" href="{% static 'css/style.css' %}">-->
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/png">
+</head>
+
+<body class="text-bg-light">
+    <div class="row align-items-center">
+        <div class="col-2">
+            <img class="m-2" src="{% static 'images/Binaaul-Mustaqbal.png' %}" alt="logo-sma" width="120" height="100">
+
+        </div>
+        <div class="col-10">
+            <h4 class="mt-4 mb-2 mx-2 text-center">DAFTAR HADIR EKSTRAKURIKULER / STUDY CLUB</h4>
+            <h5 class="m-2 text-center">SMAS IT AL BINAA ISLAMIC BOARDING SCHOOL</h5>
+            <h6 class="mt-2 mb-2 mx-2 text-center">TAHUN AJARAN 2022/2023</h6>
+        </div>
+        <hr>
+
+    </div>
+
+    <div class="container mt-1 pt-1">
+    {% if ekskul.pembina.all.count > 1 %}
+        {% for pembina in ekskul.pembina.all %}
+            <p class="m-0">Nama Pembina {{ forloop.counter }} : {{ pembina }}</p>
+        {% endfor %}
+    {% else %}
+        <p class="m-0">Nama Pembina : {{ ekskul.pembina.first }}</p>
+    {% endif %}
+    <p class="m-0">Ekstrakurikuler/SC : {{ ekskul.nama }}</p>
+    <p class="mb-2">Jadwal : {{ ekskul.jadwal }} {{ ekskul.waktu }}</p>
+        <div class="row justify-content-center align-items-center">
+
+            <div class="col-sm mt-3">
+
+                <table class="table table-hover w-100">
+                    <thead>
+                    <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">Tanggal</th>
+                        <th scope="col">Kehadiran anggota</th>
+                        <th scope="col">Foto</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if filtered_report %}
+                        {% for report in filtered_report %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ report.tanggal_pembinaan|date:"j F Y"}}</td>
+                                <td>
+                                    {% for santri in report.kehadiran_santri.all %}
+                                        <p class="m-0">{{ santri.nama_siswa.nama }} ({{ santri.nama_siswa.get_kelas_display }})</p>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                        {% for image in report.uploadimage_set.all %}
+                                            <img class="m-1" src="{{ image.foto_absensi.url }}" height="100px" width="100px">
+                                        {% endfor %}
+                                </td>
+
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center fw-bold text-danger">Maaf, belum ada laporan kehadiran untuk bulan ini. Jika Anda input laporan untuk bulan yang lalu, silahkan filter untuk melihat hasilnya.</td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+                {% if reports.last.tanggal_pembinaan %}
+                    <p class="text-end m-0">Bekasi, {{tanggal|date:"j F Y"}}</p>
+                {% else %}
+                    <p class="text-end m-0">Bekasi, .............................................</p>
+                {% endif %}
+                {% if ekskul.pembina.all.count > 1 %}
+                    <div class="row mb-4">
+                        <div class="col text-center">
+                            <p>Wakasek Ekstrakurikuler</p>
+                        </div>
+                        {% for pembina in ekskul.pembina.all %}
+                            <div class="col text-center">
+                                <p>Pembina {{ forloop.counter }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="row" mt-1>
+                        <div class="col text-center">
+                            <p>Panji Asmara, S.Pd</p>
+                        </div>
+                        {% for pembina in ekskul.pembina.all %}
+                            <div class="col text-center">
+                                <p>{{ pembina }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="row mb-4">
+                        <div class="col text-center">
+                            <p>Wakasek Ekstrakurikuler</p>
+                        </div>
+                        <div class="col text-center">
+                            <p>Pembina</p>
+                        </div>
+                    </div>
+                    <div class="row" mt-1>
+                        <div class="col text-center">
+                            <p>Panji Asmara, S.Pd</p>
+                        </div>
+                        <div class="col text-center">
+                            <p>{{ ekskul.pembina.first }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", (event) => {
+        window.print();
+    });
+
+    window.addEventListener("afterprint", (event) => {
+        setTimeout(() => {
+          window.location.assign("https://ekskul.smasitalbinaa.com/laporan");
+        }, 10000);
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from deskripsi.models import *
+from deskripsi.models import DeskripsiHome, DeskripsiEkskul
 
 # Register your models here.
 

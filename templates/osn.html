@@ -30,19 +30,27 @@
                                 {% if request.user.is_superuser %}
                                     <a href="{% url 'osn:bidang-osn-edit' datum.id %}" class="btn btn-sm btn-warning m-1">Edit</a>
                                     <a href="{% url 'osn:bidang-osn-delete' datum.id %}" class="btn btn-sm btn-danger m-1">Delete</a>
-                                    <a href="{% url 'osn:detail-bidang-osn' datum.slug %}" class="btn btn-sm btn-info">Detail Bidang</a>
+                                    <a href="{% url 'osn:detail-bidang-osn' datum.slug %}" class="btn btn-sm btn-info m-1">Detail Bidang</a>
                                     <a href="{% url 'osn:siswa-osn-input' datum.slug %}" class="btn btn-sm btn-success m-1">Input siswa OSN</a>
                                     <a href="{% url 'osn:laporan-osn-input' datum.slug %}" class="btn btn-sm btn-secondary m-1">Input laporan OSN</a>
+                                    <a href="{% url 'osn:laporan-osnk-print' datum.slug %}" class="btn btn-sm btn-primary m-1">Cetak Laporan OSN-K</a>
+                                    <a href="{% url 'osn:laporan-osnp-print' datum.slug %}" class="btn btn-sm btn-primary m-1">Cetak Laporan OSN-P</a>
                                 {% elif request.user.teacher == datum.pembimbing %}
-                                    <a href="{% url 'osn:detail-bidang-osn' datum.slug %}" class="btn btn-sm btn-info">Detail Bidang</a>
+                                    <a href="{% url 'osn:detail-bidang-osn' datum.slug %}" class="btn btn-sm btn-info m-1">Detail Bidang</a>
                                     <a href="{% url 'osn:bidang-osn-edit' datum.id %}" class="btn btn-sm btn-warning m-1">Edit Bidang</a>
                                     <a href="{% url 'osn:siswa-osn-input' datum.slug %}" class="btn btn-sm btn-success m-1">Input siswa OSN</a>
                                     <a href="{% url 'osn:laporan-osn-input' datum.slug %}" class="btn btn-sm btn-secondary m-1">Input laporan OSN</a>
+                                    <a href="{% url 'osn:laporan-osnk-print' datum.slug %}" class="btn btn-sm btn-primary m-1">Cetak Laporan OSN-K</a>
+                                    <a href="{% url 'osn:laporan-osnp-print' datum.slug %}" class="btn btn-sm btn-primary m-1">Cetak Laporan OSN-P</a>
                                 {% else %}
-                                    <a href="{% url 'osn:detail-bidang-osn' datum.slug %}" class="btn btn-sm btn-info">Detail Bidang OSN</a>
+                                    <a href="{% url 'osn:detail-bidang-osn' datum.slug %}" class="btn btn-sm btn-info m-1">Detail Bidang OSN</a>
+                                    <a href="{% url 'osn:laporan-osnk-print' datum.slug %}" class="btn btn-sm btn-primary m-1">Cetak Laporan OSN-K</a>
+                                    <a href="{% url 'osn:laporan-osnp-print' datum.slug %}" class="btn btn-sm btn-primary m-1">Cetak Laporan OSN-P</a>
                                 {% endif %}
                             {% else %}
-                                <a href="{% url 'osn:detail-bidang-osn' datum.slug %}" class="btn btn-sm btn-info">Detail Bidang OSN</a>
+                                <a href="{% url 'osn:detail-bidang-osn' datum.slug %}" class="btn btn-sm btn-info m-1">Detail Bidang OSN</a>
+                                <a href="{% url 'osn:laporan-osnk-print' datum.slug %}" class="btn btn-sm btn-primary m-1">Cetak Laporan OSN-K</a>
+                                <a href="{% url 'osn:laporan-osnp-print' datum.slug %}" class="btn btn-sm btn-primary m-1">Cetak Laporan OSN-P</a>
                             {% endif %}
                         </div>
                     </div>

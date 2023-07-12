@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.db.models import Q
-from deskripsi.models import *
+from deskripsi.models import DeskripsiEkskul, DeskripsiHome
+
 
 # Create your views here.
 

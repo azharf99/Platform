@@ -32,10 +32,12 @@
                                         <a href="{% url 'laporan:laporan-input' data.slug %}" class="btn btn-sm btn-danger m-1">Input Kehadiran</a>
                                         <a href="{% url 'laporan:laporan-upload' data.slug %}" class="btn btn-sm btn-primary m-1">Upload Foto</a>
                                         <a href="{% url 'laporan:laporan-print' data.slug %}" class="btn btn-sm btn-success m-1">Print Laporan</a>
+                                        <a href="{% url 'laporan:laporan-print-v2' data.slug %}" class="btn btn-sm btn-success m-1">Cetak Laporan v.2</a>
                                     {% elif request.user.teacher == pembina and not request.user.is_superuser %}
                                         <a href="{% url 'laporan:laporan-input' data.slug %}" class="btn btn-sm btn-danger m-1">Input Kehadiran</a>
                                         <a href="{% url 'laporan:laporan-upload' data.slug %}" class="btn btn-sm btn-primary m-1">Upload Foto</a>
                                         <a href="{% url 'laporan:laporan-print' data.slug %}" class="btn btn-sm btn-success m-1">Print Laporan</a>
+                                        <a href="{% url 'laporan:laporan-print-v2' data.slug %}" class="btn btn-sm btn-success m-1">Cetak Laporan v.2</a>
                                     {% endif %}
                                 {% endfor %}
                                 <a href="{% url 'laporan:laporan-ekskul' data.slug %}" class="btn btn-sm btn-warning m-1">Rekap Laporan</a>
@@ -71,6 +73,7 @@
                                     <a href="{% url 'laporan:laporan-print' data.slug %}" class="btn btn-sm btn-outline-success m-1">Print Laporan</a>
                                 {% endif %}
                                 <a href="{% url 'laporan:laporan-ekskul' data.slug %}" class="btn btn-sm btn-outline-secondary m-1">Rekap Laporan</a>
+                                <a href="{% url 'laporan:laporan-print-v2' data.slug %}" class="btn btn-sm btn-success m-1">Cetak Laporan v.2</a>
                             {% else %}
                                 <a href="{% url 'laporan:laporan-ekskul' data.slug %}" class="btn btn-sm btn-outline-secondary m-1">Rekap Laporan</a>
                             {% endif %}

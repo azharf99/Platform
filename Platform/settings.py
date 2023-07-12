@@ -29,6 +29,7 @@ DEBUG = True
 # Untuk kirim pesan otomatis via Whatsapp
 ID_DEVICE = '4361'
 API_KEY = '2af54c86b60b5027ac1e13945705ece7c1f78893'
+TOKEN = '5A3DlR4NY8xxAs3tkEBHgwWMslDglgHfEcctvdmJfeNQDw5J4zjyz96PmxI7Q1k4'
 
 ALLOWED_HOSTS = ['ekskul.smasitalbinaa.com', 'platform-production-6b92.up.railway.app', '127.0.0.1']
 

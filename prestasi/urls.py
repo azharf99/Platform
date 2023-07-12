@@ -5,6 +5,7 @@ app_name = 'prestasi'
 urlpatterns = [
     path('', views.index, name='prestasi-index'),
     path('input', views.prestasi_input, name='prestasi-input'),
+    path('download', views.print_to_excel, name='print-to-excel'),
     path('detail/<int:pk>', views.prestasi_detail, name='prestasi-detail'),
     path('edit/<int:pk>', views.prestasi_edit, name='prestasi-edit'),
     path('delete/<int:pk>', views.prestasi_delete, name='prestasi-delete'),

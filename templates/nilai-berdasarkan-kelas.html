@@ -26,7 +26,7 @@
                         <td>{{ forloop.counter }}</td>
                         <td>{{ data.siswa.ekskul_siswa.nama }}</td>
                         <td>{{ data.siswa.nama_siswa.nama }}</td>
-                        <td>{{ data.siswa.nama_siswa.kelas }}</td>
+                        <td>{{ data.siswa.nama_siswa.get_kelas_display }}</td>
                         <td>{{ data.nilai }}</td>
                     </tr>
                 {% endfor %}

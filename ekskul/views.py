@@ -2,14 +2,16 @@ from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRe
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-
 from ekskul.models import Extracurricular, Student, StudentOrganization, Teacher, User
 from laporan.models import Report
 from ekskul.forms import InputAnggotaEkskulForm, PembinaEkskulForm, EkskulForm, CustomUserCreationForm, UsernameChangeForm, CustomPasswordChangeForm
 from userlog.models import UserLog
+from nilai.models import Penilaian
 from django.views.decorators.csrf import csrf_protect
 
 # Create your views here.
+
+
 
 def home(request):
     if request.user.is_authenticated or request.user.is_superuser:
@@ -64,7 +66,6 @@ def dokumentasi(request, slug):
 def input_anggota(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     all = ekskul.pembina.all().values_list('user_id', flat=True)
-    student = Student.objects.all()
     if not request.user.id in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
 
@@ -73,17 +74,20 @@ def input_anggota(request, slug):
 
     if request.method == 'POST':
         try:
-            StudentOrganization.objects.get(nama_siswa_id=id_siswa, ekskul_siswa_id=data_ekskul)
+            ekskul_siswa = StudentOrganization.objects.get(nama_siswa_id=id_siswa, ekskul_siswa_id=data_ekskul)
             form = InputAnggotaEkskulForm(request.POST)
             messages.error(request, "Santri sudah ada di dalam anggota ekskul. Silahkan pilih santri lain")
         except:
             siswa = get_object_or_404(Student, id=id_siswa)
             form = InputAnggotaEkskulForm(request.POST)
             InputAnggotaEkskulForm.ekskul_siswa = data_ekskul
-            InputAnggotaEkskulForm.nama_siswa = siswa
             if form.is_valid():
                 form.save()
-                messages.info(request, "Data Anggota Berhasil ditambahkan!")
+                ekskul_siswa = StudentOrganization.objects.get(nama_siswa_id=id_siswa, ekskul_siswa_id=data_ekskul)
+                Penilaian.objects.create(
+                    siswa = ekskul_siswa,
+                    nilai = "A"
+                    )
                 UserLog.objects.create(
                     user=request.user.teacher,
                     action_flag="ADD",
@@ -96,7 +100,6 @@ def input_anggota(request, slug):
     context = {
         'ekskul': ekskul,
         'form': form,
-        'student': student,
 
     }
     return render(request, 'input-anggota-ekskul.html', context)
@@ -105,20 +108,20 @@ def input_anggota(request, slug):
 @login_required(login_url='/login/')
 def delete_anggota(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
-    deteled_student = get_object_or_404(StudentOrganization, ekskul_siswa__slug=slug, nama_siswa_id=pk)
+    deteled_student = get_object_or_404(StudentOrganization, nama_siswa_id=pk, ekskul_siswa_id=ekskul.id)
 
     all = ekskul.pembina.all().values_list('user_id', flat=True)
     if not request.user.id in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
 
     if request.method == 'POST':
+        deteled_student.delete()
         UserLog.objects.create(
             user=request.user.teacher,
             action_flag="DELETE",
             app="EKSKUL",
             message="Berhasil menghapus anggota ekskul {} atas nama {} kelas {}".format(ekskul, deteled_student.nama_siswa.nama, deteled_student.nama_siswa.kelas)
         )
-        deteled_student.delete()
         return redirect('ekskul:data-detail', ekskul.slug)
     context = {
         'ekskul': ekskul,
@@ -191,8 +194,6 @@ def login_view(request):
 
 @login_required(login_url='/login/')
 def profil_view(request):
-    if not request.user.teacher.nama_lengkap:
-        redirect('edit-profil')
     try:
         user = request.user
         teacher = Teacher.objects.get(user_id=user.id)
@@ -239,7 +240,6 @@ def logout_view(request):
     )
     logout(request)
     return redirect('app-index')
-
 
 def register(request):
     if request.user.is_authenticated:

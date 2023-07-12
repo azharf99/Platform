@@ -1,8 +1,8 @@
 from django import forms
+from ekskul.models import StudentOrganization, Teacher, Extracurricular
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
-
-from ekskul.models import *
 
 
 class InputAnggotaEkskulForm(forms.ModelForm):
@@ -28,7 +28,6 @@ class PembinaEkskulForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'no_hp': forms.NumberInput(attrs={'class': 'form-control'}),
             'user': forms.Select(attrs={'class': 'form-select'}),
-            'foto': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
 

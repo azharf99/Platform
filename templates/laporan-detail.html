@@ -31,7 +31,7 @@
                     <td class="text-end">:</td>
                     <td>
                         {% for santri in data.kehadiran_santri.all %}
-                            <p>{{ santri.nama_siswa.nama }} | {{ santri.nama_siswa.get_kelas_display }}</p>
+                            <p>{{ santri.nama_siswa.nama }} ({{ santri.nama_siswa.get_kelas_display }})</p>
                         {% endfor %}
 
                     </td>
@@ -52,7 +52,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="5" class="text-center fw-bold text-danger">Maaf, belum ada data inventaris :(</td>
+                    <td colspan="5" class="text-center fw-bold text-danger">Maaf, belum ada data :(</td>
                 </tr>
             {% endif %}
             </tbody>

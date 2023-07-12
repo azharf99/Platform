@@ -12,7 +12,7 @@
                                 {% for app_datum in app_data %}
                                     {% if app_datum.app == home_datum %}
                                         <a href="{% with app_datum.url as link %}{% url link %}{% endwith %}" class="m-1 btn btn-{{ app_datum.color }} text-start">
-                                           {{ forloop.counter }}. {{ app_datum }}
+                                            {{ forloop.counter }}. {{ app_datum }}
                                         </a>
                                     {% endif %}
                                 {% endfor %}

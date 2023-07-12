@@ -1,3 +1,7 @@
+import locale
+import datetime
+import pytz
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
@@ -31,7 +35,7 @@ def bidang_osn_input(request):
         forms = FormInputBidang()
     context = {
         'forms': forms,
-        'tipe' : True,
+        'tipe': True,
         'name': 'Input Bidang OSN',
     }
     return render(request, 'osn-input.html', context)
@@ -57,7 +61,7 @@ def bidang_osn_edit(request, pk):
         forms = FormInputBidang(instance=data)
     context = {
         'forms': forms,
-        'tipe': True,
+        'tipe' : True,
         'name': 'Edit Bidang OSN',
     }
     return render(request, 'osn-input.html', context)
@@ -186,3 +190,39 @@ def laporan_osn_delete(request, slug, pk):
         'data': data,
     }
     return render(request, 'osn-delete.html', context)
+
+
+def cetak_laporan_osnk(request, slug):
+    locale.setlocale(locale.LC_ALL, 'id_ID')
+    tanggal = datetime.datetime.now(pytz.timezone('Asia/Jakarta'))
+    data = get_object_or_404(BidangOSN, slug=slug)
+    data_siswa = SiswaOSN.objects.filter(bidang_osn__slug=slug).order_by('nama_siswa__kelas', 'nama_siswa__nama')
+    data_laporan = LaporanOSN.objects.filter(bidang_osn__nama_bidang=data.nama_bidang).filter(tanggal_pembinaan__lt="2023-04-07").order_by('tanggal_pembinaan')
+    # angka = [x for x in range(15)]
+    context = {
+        # 'angka': angka,
+        'level': "KABUPATEN",
+        'tag': "OSN-K",
+        'data': data,
+        'data_siswa': data_siswa,
+        'data_laporan': data_laporan,
+        'tanggal': tanggal,
+    }
+    return render(request, 'osn-print.html', context)
+
+def cetak_laporan_osnp(request, slug):
+    locale.setlocale(locale.LC_ALL, 'id_ID')
+    tanggal = datetime.datetime.now(pytz.timezone('Asia/Jakarta'))
+    data = get_object_or_404(BidangOSN, slug=slug)
+    data_siswa = SiswaOSN.objects.filter(bidang_osn__slug=slug).order_by('nama_siswa__kelas', 'nama_siswa__nama')
+    data_laporan = LaporanOSN.objects.filter(bidang_osn__nama_bidang=data.nama_bidang).filter(tanggal_pembinaan__gt="2023-04-06").filter(tanggal_pembinaan__lt="2023-06-09").order_by('tanggal_pembinaan')
+    # angka = [x for x in range(15)]
+    context = {
+        'level': "PROVINSI",
+        'tag': "OSN-P",
+        'data': data,
+        'data_siswa': data_siswa,
+        'data_laporan': data_laporan,
+        'tanggal': tanggal,
+    }
+    return render(request, 'osn-print.html', context)
