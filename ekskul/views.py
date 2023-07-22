@@ -3,63 +3,28 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from ekskul.models import Extracurricular, Student, StudentOrganization, Teacher, User
-from laporan.models import Report
 from ekskul.forms import InputAnggotaEkskulForm, PembinaEkskulForm, EkskulForm, CustomUserCreationForm, UsernameChangeForm, CustomPasswordChangeForm
 from userlog.models import UserLog
 from nilai.models import Penilaian
 from django.views.decorators.csrf import csrf_protect
+from django.views.generic import ListView, DetailView
 
 # Create your views here.
 
 
+class EkskulIndexView(ListView):
+    model = Extracurricular
 
-def home(request):
-    if request.user.is_authenticated or request.user.is_superuser:
-        data = Extracurricular.objects.filter(pembina=request.user.teacher).order_by('tipe', 'nama')
-        extra = Extracurricular.objects.exclude(pembina=request.user.teacher).order_by('tipe', 'nama')
-        context = {
-            'data': data,
-            'extra': extra,
-        }
-    else:
-        data = Extracurricular.objects.all().order_by('tipe', 'nama')
-        context = {
-            'data': data,
-        }
-
-    return render(request, 'data.html', context)
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Extracurricular.objects.filter(pembina=self.request.user.teacher).order_by('tipe', 'nama')
+        else:
+            return Extracurricular.objects.all().order_by('tipe', 'nama')
 
 
-def data_detail(request, slug):
-    ekskul = get_object_or_404(Extracurricular, slug=slug)
-    teachers = Teacher.objects.filter(extracurricular=ekskul)
-    filtered_students = Student.objects.filter(studentorganization__ekskul_siswa__nama=ekskul.nama).order_by('kelas',
-                                                                                                             'nama')
-    all = teachers.values_list('user_id', flat=True)
-    if not request.user.id in all and not request.user.is_superuser:
-        context = {
-            'ekskul': ekskul,
-            'teachers': teachers,
-            'filtered_student': filtered_students,
-            'pembina': False,
-        }
-    else:
-        context = {
-            'ekskul': ekskul,
-            'teachers': teachers,
-            'filtered_student': filtered_students,
-            'pembina': True,
-        }
-    return render(request, 'data-detail.html', context)
+class EkskulDetailView(DetailView):
+    model = Extracurricular
 
-def dokumentasi(request, slug):
-    ekskul = get_object_or_404(Extracurricular, slug=slug)
-    filtered_report = Report.objects.filter(nama_ekskul__slug=slug).order_by('tanggal_pembinaan')
-    context = {
-        'ekskul': ekskul,
-        'filtered_report': filtered_report,
-    }
-    return render(request, 'dokumentasi.html', context)
 
 
 @login_required(login_url='/login/')
@@ -74,18 +39,18 @@ def input_anggota(request, slug):
 
     if request.method == 'POST':
         try:
-            ekskul_siswa = StudentOrganization.objects.get(nama_siswa_id=id_siswa, ekskul_siswa_id=data_ekskul)
+            ekskul = StudentOrganization.objects.get(siswa_id=id_siswa, ekskul_id=data_ekskul)
             form = InputAnggotaEkskulForm(request.POST)
             messages.error(request, "Santri sudah ada di dalam anggota ekskul. Silahkan pilih santri lain")
         except:
             siswa = get_object_or_404(Student, id=id_siswa)
             form = InputAnggotaEkskulForm(request.POST)
-            InputAnggotaEkskulForm.ekskul_siswa = data_ekskul
+            InputAnggotaEkskulForm.ekskul = data_ekskul
             if form.is_valid():
                 form.save()
-                ekskul_siswa = StudentOrganization.objects.get(nama_siswa_id=id_siswa, ekskul_siswa_id=data_ekskul)
+                ekskul = StudentOrganization.objects.get(siswa_id=id_siswa, ekskul_id=data_ekskul)
                 Penilaian.objects.create(
-                    siswa = ekskul_siswa,
+                    siswa = ekskul,
                     nilai = "A"
                     )
                 UserLog.objects.create(
@@ -108,7 +73,7 @@ def input_anggota(request, slug):
 @login_required(login_url='/login/')
 def delete_anggota(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
-    deteled_student = get_object_or_404(StudentOrganization, nama_siswa_id=pk, ekskul_siswa_id=ekskul.id)
+    deteled_student = get_object_or_404(StudentOrganization, siswa_id=pk, ekskul_id=ekskul.id)
 
     all = ekskul.pembina.all().values_list('user_id', flat=True)
     if not request.user.id in all and not request.user.is_superuser:
@@ -120,7 +85,7 @@ def delete_anggota(request, slug, pk):
             user=request.user.teacher,
             action_flag="DELETE",
             app="EKSKUL",
-            message="Berhasil menghapus anggota ekskul {} atas nama {} kelas {}".format(ekskul, deteled_student.nama_siswa.nama, deteled_student.nama_siswa.kelas)
+            message="Berhasil menghapus anggota ekskul {} atas nama {} kelas {}".format(ekskul, deteled_student.siswa.nama, deteled_student.siswa.kelas)
         )
         return redirect('ekskul:data-detail', ekskul.slug)
     context = {

@@ -17,16 +17,15 @@ class InputAnggotaEkskulForm(forms.ModelForm):
 class PembinaEkskulForm(forms.ModelForm):
     class Meta:
         model = Teacher
-        fields = ['nama_lengkap', 'niy', 'gelar_depan', 'gelar_belakang', 'jabatan', 'jabatan_khusus', 'email', 'no_hp', 'foto']
+        fields = ['nama_pembina', 'niy', 'jenis_kelamin', 'jabatan', 'email', 'no_hp', 'alamat', 'foto']
         widgets = {
-            'nama_lengkap': forms.TextInput(attrs={'class': 'form-control'}),
+            'nama_pembina': forms.TextInput(attrs={'class': 'form-control'}),
             'niy': forms.NumberInput(attrs={'class': 'form-control'}),
-            'gelar_depan': forms.TextInput(attrs={'class': 'form-control'}),
-            'gelar_belakang': forms.TextInput(attrs={'class': 'form-control'}),
+            'jenis_kelamin': forms.Select(attrs={'class': 'form-select'}),
             'jabatan': forms.TextInput(attrs={'class': 'form-control'}),
-            'jabatan_khusus': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'no_hp': forms.NumberInput(attrs={'class': 'form-control'}),
+            'alamat': forms.TextInput(attrs={'class': 'form-control'}),
             'user': forms.Select(attrs={'class': 'form-select'}),
         }
 
@@ -37,13 +36,12 @@ class EkskulForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['slug']
         widgets = {
-            'nama': forms.TextInput(attrs={'class': 'form-control'}),
+            'nama_ekskul': forms.TextInput(attrs={'class': 'form-control'}),
             'pembina': forms.SelectMultiple(attrs={'class': 'form-select'}),
             'jadwal': forms.Select(attrs={'class': 'form-select'}),
             'waktu': forms.Select(attrs={'class': 'form-select'}),
-            'jadwal_tambahan': forms.Select(attrs={'class': 'form-select'}),
-            'waktu_tambahan': forms.Select(attrs={'class': 'form-select'}),
             'tipe': forms.Select(attrs={'class': 'form-select'}),
+            'deskripsi': forms.Textarea(attrs={'class': 'form-control'}),
             'slug': forms.TextInput(attrs={'class': 'form-control'}),
         }
 

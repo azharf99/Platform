@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<main>
+    <div class="container-fluid mt-5 p-5">
+        <div class="w-100 h-100 d-flex justify-content-center">
+
+            <form action="" method="post">
+                {% csrf_token %}
+                {% if messages %}
+                <ul class="messages text-danger fw-bold">
+                    {% for message in messages %}
+                    <li>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                <div class="card" style="min-width: 18rem;">
+                    <div class="card-header bg-dark text-light">
+                        Input Anggota Ekskul {{ object }}
+                    </div>
+                    <div class="card-body">
+                        <div class="d-block m-3 fw-bold">
+                            <label for="id_ekskul_siswa">Ekskul siswa:</label>
+                            <select name="ekskul_siswa" class="form-control" required id="id_ekskul_siswa">
+                                <option value="{{ ekskul.id }}">{{ ekskul.nama}}</option>
+                            </select>
+                        </div>
+                        {{form.as_p}}
+                        <div class="d-block mt-3 fw-bold text-center">
+
+                            <a href="#" class="card-link btn btn-danger">Kembali</a>
+                            <input type="submit" class="card-link btn btn-success" value="Save Data">
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</main>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+      $('#id_nama_siswa').selectize({
+          sortField: 'text'
+      });
+  });
+</script>
+{% endblock %}
