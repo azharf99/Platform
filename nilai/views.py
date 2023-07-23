@@ -16,14 +16,14 @@ from userlog.models import UserLog
 
 def index(request):
     if request.user.is_authenticated or request.user.is_superuser:
-        ekskul = Extracurricular.objects.filter(pembina=request.user.teacher).order_by('tipe', 'nama')
-        extra = Extracurricular.objects.exclude(pembina=request.user.teacher).order_by('tipe', 'nama')
+        ekskul = Extracurricular.objects.filter(pembina=request.user.teacher).order_by('tipe', 'nama_ekskul')
+        extra = Extracurricular.objects.exclude(pembina=request.user.teacher).order_by('tipe', 'nama_ekskul')
         context = {
             'ekskul': ekskul,
             'extra': extra,
         }
     else:
-        ekskul = Extracurricular.objects.all().order_by('tipe', 'nama')
+        ekskul = Extracurricular.objects.all().order_by('tipe', 'nama_ekskul')
         context = {
             'ekskul': ekskul,
         }
@@ -32,7 +32,7 @@ def index(request):
 
 def nilai_detail(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
-    nilai = Penilaian.objects.filter(siswa__ekskul_siswa__slug=slug)
+    nilai = Penilaian.objects.filter(siswa__ekskul__slug=slug)
     forms = NilaiForm()
     context = {
         'ekskul': ekskul,
@@ -43,8 +43,8 @@ def nilai_detail(request, slug):
 
 
 def nilai_kelas_view(request):
-    nilai = Penilaian.objects.all().order_by('siswa__nama_siswa__kelas', 'siswa__nama_siswa__nama',
-                                             'siswa__ekskul_siswa__nama')
+    nilai = Penilaian.objects.all().order_by('siswa__siswa__kelas', 'siswa__siswa__nama_siswa',
+                                             'siswa__ekskul__nama_ekskul')
     context = {
         'nilai': nilai,
     }
@@ -52,8 +52,8 @@ def nilai_kelas_view(request):
 
 @login_required(login_url='/login/')
 def print_to_excel(request):
-    nilai = Penilaian.objects.all().order_by('siswa__nama_siswa__kelas', 'siswa__nama_siswa__nama',
-                                             'siswa__ekskul_siswa__nama')
+    nilai = Penilaian.objects.all().order_by('siswa__siswa__kelas', 'siswa__siswa__nama_siswa',
+                                             'siswa__ekskul__nama_ekskul')
     buffer = BytesIO()
     workbook = xlsxwriter.Workbook(buffer)
     worksheet = workbook.add_worksheet()
@@ -61,7 +61,7 @@ def print_to_excel(request):
     row = 1
     col = 0
     for data in nilai:
-        worksheet.write_row(row, col, [row, data.siswa.ekskul_siswa.nama, data.siswa.nama_siswa.nama, data.siswa.nama_siswa.kelas, data.nilai])
+        worksheet.write_row(row, col, [row, data.siswa.ekskul.nama_ekskul, data.siswa.siswa.nama_siswa, data.siswa.siswa.kelas, data.nilai])
         row += 1
     workbook.close()
     buffer.seek(0)

@@ -3,7 +3,7 @@ from laporan import views
 
 app_name = 'laporan'
 urlpatterns = [
-    path('', views.ExtracuricularView.as_view(), name='laporan-index'),
+    path('', views.index, name='laporan-index'),
     path('<slug:slug>', views.laporan_ekskul, name='laporan-ekskul'),
     path('<slug:slug>/print', views.print_to_pdf, name='laporan-print'),
     path('<slug:slug>/print2', views.laporan_ekskul_print_versi2, name='laporan-print-v2'),

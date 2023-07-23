@@ -5,13 +5,23 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 
 
+# class InputAnggotaEkskulForm(forms.Form):
+#     class Meta:
+#         model = StudentOrganization
+#         fields = '__all__'
+#         widgets  = {
+#             'siswa': forms.Select(attrs={'id': 'input-anggota'})
+#         }
+
 class InputAnggotaEkskulForm(forms.ModelForm):
     class Meta:
         model = StudentOrganization
         fields = '__all__'
         widgets  = {
-            'nama_siswa': forms.Select(attrs={'id': 'input-anggota'})
+            'ekskul': forms.Select(attrs={'class': 'form-control'}),
+            'siswa': forms.Select(attrs={'id': 'input-anggota'})
         }
+
 
 
 class PembinaEkskulForm(forms.ModelForm):

@@ -18,6 +18,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import render
+from django.views.generic.base import TemplateView
 
 import deskripsi.views
 import ekskul.views
@@ -39,6 +40,7 @@ def restricted(request):
 
 urlpatterns = [
     path('', deskripsi.views.home_view, name='app-index'),
+    path("robots.txt",TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
     path('menu', deskripsi.views.menu_view, name='menu'),
     path('log/', userlog.views.index, name='log-index'),
     path('admin/', admin.site.urls),
@@ -55,7 +57,7 @@ urlpatterns = [
     path('nilai/', include('nilai.urls')),
     path('data/', include('ekskul.urls')),
     path('inventaris/', include('inventaris.urls')),
-    path('timeline/', include('timeline.urls')),
+    # path('timeline/', include('timeline.urls')),
     path('prestasi/', include('prestasi.urls')),
     path('osn/', include('osn.urls')),
     path('struktur/', struktur, name='struktur-page'),

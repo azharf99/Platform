@@ -10,12 +10,12 @@
 
             </div>
             <div class="col-md-4 mt-2">
-                <h2 class="text-center">{{ object.nama }}</h2>
+                <h2 class="text-center">{{ object.nama_ekskul }}</h2>
                 {% for pembina in object.pembina.all %}
-                    <h6>Ustadz {{ pembina }}</h6>
+                    <h6>Ustadz {{ pembina.nama_pembina }}</h6>
                     <h6>{{ pembina.email }}</h6>
                     {% if pembina.no_hp %}
-                        <h6>+62{{ pembina.no_hp }}</h6>
+                        <h6>{{ pembina.no_hp }}</h6>
                     {% else %}
                         <h6 class="text-danger">No. hp belum ada</h6>
                     {% endif %}
@@ -23,9 +23,6 @@
                 {% endfor %}
 
                 <h6>Jadwal pertemuan: {{ object.jadwal}} {{ object.waktu }}</h6>
-                {% if object.jadwal_tambahan %}
-                    <p>Pertemuan tambahan: {{ object.jadwal_tambahan}} {{ object.waktu_tambahan }}</p>
-                {% endif %}
 
             </div>
 
@@ -37,7 +34,7 @@
                     <thead>
                     <tr>
                         <th scope="col">No.</th>
-                        <th scope="col">Nama Anggota</th>
+                        <th scope="col" class="text-start">Nama Anggota</th>
                         {% if not request.user.is_authenticated %}
                         <th scope="col">NIS</th>
                         {% endif %}
@@ -52,13 +49,13 @@
                         {% for student in object.studentorganization_set.all %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td class="text-start">{{ student.nama_siswa.nama}}</td>
+                                <td class="text-start">{{ student.siswa.nama_siswa}}</td>
                                 {% if not request.user.is_authenticated %}
-                                <td>{{ student.nama_siswa.nis}}</td>
+                                <td>{{ student.siswa.nis}}</td>
                                 {% endif %}
-                                <td>{{ student.nama_siswa.get_kelas_display }}</td>
+                                <td>{{ student.siswa.get_kelas_display }}</td>
                                 {% if request.user.is_authenticated %}
-                                <td><a href="{% url 'ekskul:delete-anggota' object.slug student.nama_siswa.id %}" class="btn btn-sm btn-danger">
+                                <td><a href="{% url 'ekskul:delete-anggota' object.slug student.siswa.pk %}" class="btn btn-sm btn-danger">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                         <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                                         <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>

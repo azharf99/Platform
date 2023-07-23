@@ -25,33 +25,44 @@
     </div>
 </nav>
 
-<main>
-    <div class="container-fluid mt-5 p-5">
-        <div class="w-100 h-100 d-flex justify-content-center">
 
+
+
+<main>
+    <div class="container mt-5 p-1">
+        {% if messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {% for message in messages %}
+                        {{ message }}
+                {% endfor %}
+                <a href="{% url 'ekskul:data-detail' ekskul.slug %}" class="btn btn-sm btn-primary">Lihat Daftar</a>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+        <div class="d-flex justify-content-center">
             <form action="" method="post">
                 {% csrf_token %}
-                {% if messages %}
-                    <ul class="messages text-danger fw-bold">
-                        {% for message in messages %}
-                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                <!--{% if messages %}-->
+                <!--    <ul class="messages text-danger fw-bold">-->
+                <!--        {% for message in messages %}-->
+                <!--            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>-->
+                <!--        {% endfor %}-->
+                <!--    </ul>-->
+                <!--{% endif %}-->
                 <div class="card" style="min-width: 18rem;">
                     <div class="card-header bg-dark text-light">
-                        Input Anggota Ekskul {{ ekskul.nama }}
+                        Input Anggota Ekskul {{ ekskul.nama_ekskul }}
                     </div>
                     <div class="card-body">
-                        <div class="d-block m-3 fw-bold">
-                            <label for="id_ekskul_siswa">Ekskul siswa:</label>
-                            <select name="ekskul_siswa" class="form-control" required id="id_ekskul_siswa">
-                                <option value="{{ ekskul.id }}">{{ ekskul}}</option>
-                            </select>
-                        </div>
+                        <!-- <div class="d-block m-3 fw-bold">-->
+                        <!--    <label for="id_ekskul_siswa">Ekskul siswa:</label>-->
+                        <!--    <select name="ekskul_siswa" class="form-control" required id="id_ekskul_siswa">-->
+                        <!--        <option value="{{ ekskul.id }}">{{ ekskul.nama_ekskul}}</option>-->
+                        <!--    </select>-->
+                        <!--</div>-->
                         <div class="d-block m-3">
-                            <label for="id_nama_siswa" class="fw-bold">Nama siswa:</label>
-                            {{ form.nama_siswa }}
+                            <!--<label for="input-anggota" class="fw-bold">Nama siswa:</label>-->
+                            {{ form.as_p }}
                         </div>
 
                         <div class="d-block mt-3 fw-bold text-center">

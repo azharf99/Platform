@@ -13,21 +13,22 @@ from laporan.models import Report, UploadImage
 from laporan.forms import FormLaporanKehadiran, FormUploadLaporanKehadiran, FormEditUploadLaporanKehadiran
 from ekskul.models import Extracurricular, StudentOrganization, Teacher
 from userlog.models import UserLog
-from django.views.generic import ListView, DetailView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class ExtracuricularView(ListView):
-    model = Extracurricular
-    context_object_name = 'ekskul'
-    template_name = 'laporan.html'
-
-    def get_queryset(self):
-        if self.request.user.is_authenticated:
-            return Extracurricular.objects.filter(pembina=self.request.user.teacher).order_by('tipe', 'nama')
-        else:
-            return Extracurricular.objects.all().order_by('tipe', 'nama')
+def index(request):
+    if request.user.is_authenticated or request.user.is_superuser:
+        ekskul = Extracurricular.objects.filter(pembina=request.user.teacher).order_by('tipe', 'nama_ekskul')
+        extra = Extracurricular.objects.exclude(pembina=request.user.teacher).order_by('tipe', 'nama_ekskul')
+        context = {
+            'ekskul': ekskul,
+            'extra': extra,
+        }
+    else:
+        ekskul = Extracurricular.objects.all().order_by('tipe', 'nama_ekskul')
+        context = {
+            'ekskul': ekskul,
+        }
+    return render(request, 'laporan.html', context)
 
 
 @login_required(login_url='/login/')
@@ -35,10 +36,10 @@ def print_to_pdf(request, slug):
     locale.setlocale(locale.LC_ALL, 'id_ID')
     tanggal = datetime.datetime.now(pytz.timezone('Asia/Jakarta'))
     if datetime.date.today().month > 1:
-        reports = Report.objects.select_related('nama_ekskul','pembina_ekskul').filter(nama_ekskul__slug=slug, tanggal_pembinaan__month=2).order_by('tanggal_pembinaan')
+        reports = Report.objects.filter(nama_ekskul__slug=slug, tanggal_pembinaan__month=(datetime.date.today().month-1)).order_by('tanggal_pembinaan')
     else:
         reports = Report.objects.filter(nama_ekskul__slug=slug, tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
-    students = StudentOrganization.objects.filter(ekskul_siswa__slug=slug).order_by('nama_siswa__kelas', 'nama_siswa__nama')
+    students = StudentOrganization.objects.filter(ekskul__slug=slug).order_by('siswa__kelas', 'siswa__nama')
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     angka = [x for x in range(15)]
     context = {
@@ -105,10 +106,6 @@ def laporan_ekskul(request, slug):
         }
     return render(request, 'laporan-ekskul.html', context)
 
-
-# class LaporanDetailView(DetailView):
-#     model = Report
-
 def laporan_detail(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     data = get_object_or_404(Report, nama_ekskul__slug=slug, id=pk)
@@ -122,7 +119,7 @@ def laporan_detail(request, slug, pk):
 @login_required(login_url='/login/')
 def laporan_input(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
-    filtered_student = StudentOrganization.objects.filter(ekskul_siswa__slug=slug)
+    filtered_student = StudentOrganization.objects.filter(ekskul__slug=slug)
     all = ekskul.pembina.all().values_list('user_id', flat=True)
     if request.user.id not in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
@@ -162,7 +159,7 @@ https://ekskul.smasitalbinaa.com/laporan/%s
 
 Syukron.
 
-_Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, ekskul.nama, tanggal_pembinaan, ekskul.slug)
+_Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, ekskul.nama_ekskul, tanggal_pembinaan, ekskul.slug)
                 url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
 
                 response = requests.get(url)
@@ -221,7 +218,7 @@ https://ekskul.smasitalbinaa.com/laporan/%s
 
 Syukron.
 
-_Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, ekskul.nama, laporan, ekskul.slug)
+_Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, ekskul.nama_ekskul, laporan, ekskul.slug)
             url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
 
             response = requests.get(url)

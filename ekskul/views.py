@@ -17,9 +17,9 @@ class EkskulIndexView(ListView):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            return Extracurricular.objects.filter(pembina=self.request.user.teacher).order_by('tipe', 'nama')
+            return Extracurricular.objects.filter(pembina=self.request.user.teacher).order_by('tipe', 'nama_ekskul')
         else:
-            return Extracurricular.objects.all().order_by('tipe', 'nama')
+            return Extracurricular.objects.all().order_by('tipe', 'nama_ekskul')
 
 
 class EkskulDetailView(DetailView):
@@ -34,32 +34,34 @@ def input_anggota(request, slug):
     if not request.user.id in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
 
-    data_ekskul = request.POST.get('ekskul_siswa')
-    id_siswa = request.POST.get('nama_siswa')
 
     if request.method == 'POST':
+        data_ekskul = request.POST.get('ekskul')
+        id_siswa = request.POST.get('siswa')
+        print(data_ekskul, id_siswa)
         try:
             ekskul = StudentOrganization.objects.get(siswa_id=id_siswa, ekskul_id=data_ekskul)
             form = InputAnggotaEkskulForm(request.POST)
             messages.error(request, "Santri sudah ada di dalam anggota ekskul. Silahkan pilih santri lain")
         except:
-            siswa = get_object_or_404(Student, id=id_siswa)
+            # siswa = Student.objects.get(id=id_siswa)
             form = InputAnggotaEkskulForm(request.POST)
-            InputAnggotaEkskulForm.ekskul = data_ekskul
             if form.is_valid():
+                messages.success(request, "Input data berhasil! Silahkan cek pada daftar yang ada")
                 form.save()
-                ekskul = StudentOrganization.objects.get(siswa_id=id_siswa, ekskul_id=data_ekskul)
-                Penilaian.objects.create(
-                    siswa = ekskul,
-                    nilai = "A"
-                    )
-                UserLog.objects.create(
-                    user=request.user.teacher,
-                    action_flag="ADD",
-                    app="EKSKUL",
-                    message="Berhasil menambahkan anggota baru ekskul {} atas nama {} kelas {}".format(ekskul, siswa.nama, siswa.kelas)
-                )
-                return redirect('ekskul:data-detail', ekskul.slug)
+                # data = StudentOrganization.objects.create(siswa_id=id_siswa, ekskul=ekskul)
+                # data.save()
+                # Penilaian.objects.create(
+                #     siswa = ekskul,
+                #     nilai = "A"
+                #     )
+                # UserLog.objects.create(
+                #     user=request.user.teacher,
+                #     action_flag="ADD",
+                #     app="EKSKUL",
+                #     message="Berhasil menambahkan anggota baru ekskul {} atas nama {} kelas {}".format(ekskul, siswa.nama_siswa, siswa.kelas)
+                # )
+                return redirect('ekskul:input-anggota', ekskul.slug)
     else:
         form = InputAnggotaEkskulForm()
     context = {
@@ -81,12 +83,12 @@ def delete_anggota(request, slug, pk):
 
     if request.method == 'POST':
         deteled_student.delete()
-        UserLog.objects.create(
-            user=request.user.teacher,
-            action_flag="DELETE",
-            app="EKSKUL",
-            message="Berhasil menghapus anggota ekskul {} atas nama {} kelas {}".format(ekskul, deteled_student.siswa.nama, deteled_student.siswa.kelas)
-        )
+        # UserLog.objects.create(
+        #     user=request.user.teacher,
+        #     action_flag="DELETE",
+        #     app="EKSKUL",
+        #     message="Berhasil menghapus anggota ekskul {} atas nama {} kelas {}".format(ekskul, deteled_student.siswa.nama, deteled_student.siswa.kelas)
+        # )
         return redirect('ekskul:data-detail', ekskul.slug)
     context = {
         'ekskul': ekskul,

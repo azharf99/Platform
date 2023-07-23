@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os.path
 from pathlib import Path
-from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,20 +20,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '-61rkkckbdp4^zaqtjor&$^ewvchghohhzad@bmo%#5sloq)_m'
+SECRET_KEY = 'django-insecure-qc-ewe(l__6md70^d8f02(8q@u^srl^hee26y3&cols6u*)(z#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# Untuk kirim pesan otomatis via Whatsapp
-ID_DEVICE = '4361'
-API_KEY = '2af54c86b60b5027ac1e13945705ece7c1f78893'
-TOKEN = '5A3DlR4NY8xxAs3tkEBHgwWMslDglgHfEcctvdmJfeNQDw5J4zjyz96PmxI7Q1k4'
-
-ALLOWED_HOSTS = ['ekskul.smasitalbinaa.com', 'platform-production-6b92.up.railway.app', '127.0.0.1']
+ALLOWED_HOSTS = ['smaitalbinaa.pythonanywhere.com','ekskul.smasitalbinaa.com', 'webapp-1517507.pythonanywhere.com', '127.0.0.1']
 
 AUTH_USER_MODEL = 'ekskul.User'
 
+ID_DEVICE = '4361'
+API_KEY = '2af54c86b60b5027ac1e13945705ece7c1f78893'
+TOKEN = '5A3DlR4NY8xxAs3tkEBHgwWMslDglgHfEcctvdmJfeNQDw5J4zjyz96PmxI7Q1k4'
 
 # Application definition
 
@@ -51,7 +48,6 @@ INSTALLED_APPS = [
     'laporan.apps.LaporanConfig',
     'nilai.apps.NilaiConfig',
     'proposal.apps.ProposalConfig',
-    'timeline.apps.TimelineConfig',
     'deskripsi.apps.DeskripsiConfig',
     'prestasi.apps.PrestasiConfig',
     'userlog.apps.UserlogConfig',
@@ -69,13 +65,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-# CSRF_COOKIE_SECURE = False
-# SESSION_COOKIE_SECURE = False
-# SECURE_SSL_REDIRECT = False
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = False
-# SECURE_HSTS_PRELOAD = False
-# SECURE_HSTS_SECONDS = 3600
 
 ROOT_URLCONF = 'Platform.urls'
 
@@ -110,15 +99,16 @@ WSGI_APPLICATION = 'Platform.wsgi.application'
 # }
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'platform_lokal',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        'NAME' : 'platform_lokal',
         'USER' : 'root',
         'PASSWORD' : 'root',
         'HOST' : '127.0.0.1',
         'PORT' : '3306',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -170,6 +160,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
-
 

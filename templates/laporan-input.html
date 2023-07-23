@@ -13,7 +13,7 @@
                 {% endif %}
                 <div class="card" style="min-width: 18rem;">
                     <div class="card-header text-bg-dark text-center">
-                        Input Laporan Kehadiran Ekskul {{ ekskul.nama }}
+                        Input Laporan Kehadiran Ekskul {{ ekskul.nama_ekskul }}
                     </div>
                     <div class="card-body">
                         {% if filtered_student %}
@@ -21,7 +21,7 @@
                             <p class="field">
                                 <label for="id_nama_ekskul">Nama ekskul:</label>
                                 <select name="nama_ekskul" required id="id_nama_ekskul" class="form-control">
-                                    <option value="{{ ekskul.id }}">{{ ekskul.nama }}</option>
+                                    <option value="{{ ekskul.id }}">{{ ekskul.nama_ekskul }}</option>
                                 </select>
                             </p>
                             <p class="field">
@@ -40,7 +40,7 @@
                                 <label for="id_kehadiran_santri">Kehadiran santri:</label>
                                 <select name="kehadiran_santri" required id="id_kehadiran_santri" multiple class="form-control">
                                     {% for student in filtered_student %}
-                                        <option value="{{ student.id }}">{{ student.nama_siswa }}</option>
+                                        <option value="{{ student.id }}">{{ student.siswa }}</option>
                                     {% endfor %}
                                 </select>
                             </p>
