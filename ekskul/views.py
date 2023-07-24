@@ -17,7 +17,10 @@ class EkskulIndexView(ListView):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            return Extracurricular.objects.filter(pembina=self.request.user.teacher).order_by('tipe', 'nama_ekskul')
+            if self.request.user.is_superuser:
+                return Extracurricular.objects.all().order_by('tipe', 'nama_ekskul')
+            else:
+                return Extracurricular.objects.filter(pembina=self.request.user.teacher).order_by('tipe', 'nama_ekskul')
         else:
             return Extracurricular.objects.all().order_by('tipe', 'nama_ekskul')
 

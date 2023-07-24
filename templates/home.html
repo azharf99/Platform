@@ -1,22 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
-    {% load static %}
-    <div class="mt-5 pt-1 text-center">
-        {% if request.user.is_authenticated %}
-            <h1 class="mt-4 mb-1">السلام عليكم</h1>
-            <h2 class="my-1">أَهْلًا وَسَهْلًا يا أستاذ  </h2>
-            <h2 class="my-1">{{ request.user.teacher }}</h2>
-        {% else %}
-            <h1 class="mt-4 mb-1">السلام عليكم. كيف حالك؟</h1>
-        {% endif %}
+{% load static %}
 
+<section id="home" class="container vw-100 vh-100">
+    <div class="text-center">
         <img class="m-1" src="{% static 'images/web-logo.gif' %}" width="350" alt="logo-sma">
-
-
-
-
-
     </div>
+</section>
 
+<section id="menu" class="container vw-100 vh-100">
+    <div class="container text-center my-5 py-4">
+        <div class="d-flex flex-wrap justify-content-center">
+            {% if home_data %}
+            {% for home_datum in home_data %}
+            <div class="card m-2 text-bg-{{ home_datum.color }}" style="width: 19rem;">
+                <div class="card-body">
+                    <h3 class="card-title">{{ home_datum.nama_bidang }}</h3>
+                    <p class="card-text">{{ home_datum.deskripsi }}</p>
+                    <div class="d-flex flex-column">
+                        {% for app_datum in app_data %}
+                        {% if app_datum.app == home_datum %}
+                        <a href="{% with app_datum.url as link %}{% url link %}{% endwith %}" class="m-1 btn btn-{{ app_datum.color }} text-start">
+                            {{ forloop.counter }}. {{ app_datum }}
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</section>
 
 {% endblock %}

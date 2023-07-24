@@ -6,7 +6,14 @@ from deskripsi.models import DeskripsiEkskul, DeskripsiHome
 # Create your views here.
 
 def home_view(request):
-    return render(request, 'home.html')
+    home_data = DeskripsiHome.objects.all()
+    app_data = DeskripsiEkskul.objects.all()
+    context = {
+        'home_data': home_data,
+        'app_data': app_data,
+        'page' : 'home'
+    }
+    return render(request, 'home.html', context)
 
 
 def ekskul_view(request):

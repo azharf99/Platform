@@ -16,7 +16,7 @@
                             {{ ekskul.get_tipe_display }}
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title text-primary">{{ ekskul.nama }}</h5>
+                            <h5 class="card-title text-primary">{{ ekskul.nama_ekskul }}</h5>
                             {% for pembina in ekskul.pembina.all %}
                                 <h6 class="card-subtitle mb-2">Ustadz {{ pembina }}</h6>
                             {% endfor %}
