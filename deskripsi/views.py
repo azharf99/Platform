@@ -1,17 +1,20 @@
 from django.shortcuts import render
 from django.db.models import Q
 from deskripsi.models import DeskripsiEkskul, DeskripsiHome
-
+from userlog.models import UserLog
 
 # Create your views here.
 
 def home_view(request):
     home_data = DeskripsiHome.objects.all()
-    app_data = DeskripsiEkskul.objects.all()
+    app_data = DeskripsiEkskul.objects.filter(status=True)
+    logs = UserLog.objects.all().order_by('-created_at')[:10]
+
     context = {
         'home_data': home_data,
         'app_data': app_data,
-        'page' : 'home'
+        'page': 'home',
+        'logs': logs,
     }
     return render(request, 'home.html', context)
 
@@ -31,7 +34,7 @@ def menu_view(request):
     if request.method == "GET":
         q = request.GET.get('q') if request.GET.get('q') is not None else ""
         home_data = DeskripsiHome.objects.filter(Q(nama_bidang__icontains=q) | Q(deskripsi__icontains=q))
-    app_data = DeskripsiEkskul.objects.all()
+    app_data = DeskripsiEkskul.objects.filter(status=True)
     context = {
         'home_data': home_data,
         'app_data': app_data,

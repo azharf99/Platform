@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="list-group mt-5 p-2 mx-2">
+    <section id="userlog" class="container vw-100 vh-100 pt-4">
+    <div class="list-group mt-5 pt-2">
         {% for log in logs %}
             <a href="#" class="list-group-item list-group-item-action" aria-current="true">
                 <h6 class="mb-1">{{ log.user }}</h6>
@@ -10,4 +11,5 @@
             </a>
         {% endfor %}
     </div>
+</section>
 {% endblock %}

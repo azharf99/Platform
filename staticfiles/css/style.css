@@ -1,19 +1,43 @@
+#bottom{
+position: fixed;
+bottom:0;
+width: 100%
+}
 
+.wrapper{
+text-align: center;
+background-color: LightGray;
+display: flex;
+border-radius: 10px;
+margin: 1rem;
+justify-content: center;
+}
 
-/**, ::after, ::before{*/
-/*    box-sizing: border-box;*/
-/*}*/
+.tombol{
+color: white;
+display: flex;
+justify-content: center;
+background-color: blue;
+width: 80px;
+height: 70px;
+align-items: center;
+border-radius: 10px;
+margin: 0.5rem;
+}
 
-/*body{*/
-/*    margin: 0;*/
-/*    display: block;*/
-/*    font-family: Inter, sans-serif;*/
-/*    font-size: 1rem;*/
-/*    font-weight: normal;*/
-/*    line-height: normal;*/
-/*    color: #212529;*/
-/*    text-align: center;*/
-/*    background-color: #fff;*/
-/*    -webkit-text-size-adjust: 100%;*/
-/*    -webkit-tap-highlight-color: transparent;*/
-/*}*/
+.tombol a{
+text-decoration:none;
+}
+
+.tombol a svg{
+color: white;
+}
+
+.tombol a p{
+color: white;
+}
+
+.tombol:hover{
+background-color: violet;
+}
+

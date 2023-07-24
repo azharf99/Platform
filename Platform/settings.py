@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'userlog.apps.UserlogConfig',
     'osn.apps.OsnConfig',
 
+
 ]
 
 

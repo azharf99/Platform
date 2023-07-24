@@ -1,26 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div class="container text-center my-5 py-4">
+    <section id="menu" class="container vw-100 vh-100 pt-2">
+    <div class="container text-center my-5 pt-5">
+        {% if home_data %}
+        <h2 class="text-center pt-4">{{ home_data.first.nama_bidang }}</h2>
+        <p class="card-text">{{ home_data.first.deskripsi }}</p>
         <div class="d-flex flex-wrap justify-content-center">
-            {% if home_data %}
-                {% for home_datum in home_data %}
-                    <div class="card m-2 text-bg-{{ home_datum.color }}" style="width: 19rem;">
-                        <div class="card-body">
-                            <h3 class="card-title">{{ home_datum.nama_bidang }}</h3>
-                            <p class="card-text">{{ home_datum.deskripsi }}</p>
-                            <div class="d-flex flex-column">
-                                {% for app_datum in app_data %}
-                                    {% if app_datum.app == home_datum %}
-                                        <a href="{% with app_datum.url as link %}{% url link %}{% endwith %}" class="m-1 btn btn-{{ app_datum.color }} text-start">
-                                            {{ forloop.counter }}. {{ app_datum }}
-                                        </a>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
+            {% for app_datum in app_data %}
+            {% if app_datum.app == home_data.first %}
+            <a href="{% with app_datum.url as link %}{% url link %}{% endwith %}" class="m-1 btn btn-{{ app_datum.color }} text-start">
+                <div class="d-flex flex-column text-center align-items-center" style="width:80px">
+                    <i class="{{ app_datum.icon }}"></i>
+                    <span>{{ app_datum }}</span>
+                </div>
+            </a>
             {% endif %}
+            {% endfor %}
         </div>
+        {% endif %}
     </div>
+</section>
 {% endblock %}
