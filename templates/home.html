@@ -4,6 +4,14 @@
 
 <section id="home" class="container vw-100 vh-100">
     <div class="text-center pt-5">
+        {% if messages %}
+        <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
         <img class="m-1" src="{% static 'images/web-logo.gif' %}" width="350" alt="logo-sma">
     </div>
 </section>
@@ -33,11 +41,11 @@
 <section id="userlog" class="container vw-100 vh-100 pt-4">
     <div class="list-group mt-5 pt-2">
         {% for log in logs %}
-            <a href="#" class="list-group-item list-group-item-action" aria-current="true">
-                <h6 class="mb-1">{{ log.user }}</h6>
-                <small>{{ log.created_at }} ({{ log.created_at|timesince }} yang lalu)</small>
-                <p class="mb-1">{{ log.message }}</p>
-            </a>
+        <a href="#" class="list-group-item list-group-item-action" aria-current="true">
+            <h6 class="mb-1">{{ log.user }}</h6>
+            <small>{{ log.created_at }} ({{ log.created_at|timesince }} yang lalu)</small>
+            <p class="mb-1">{{ log.message }}</p>
+        </a>
         {% endfor %}
     </div>
 </section>
@@ -50,11 +58,11 @@
                 <img class="" src="{% static 'images/login.svg' %}" alt="login" width="50%" height="50%">
             </div>
             {% if messages %}
-                <ul class="messages text-danger">
-                    {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                    {% endfor %}
-                </ul>
+            <ul class="messages text-danger">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
             {% endif %}
             <div class="input-group mb-3">
                 <label for="username" class="visually-hidden">Username</label>
@@ -74,9 +82,9 @@
         </form>
     </div>
     <div class="text-center">
-    <p>
-        Belum punya akun? Silahkan <a href="{% url 'register' %}" class="btn btn-sm btn-success">Daftar</a> aja.
-    </p>
+        <p>
+            Belum punya akun? Silahkan <a href="{% url 'register' %}" class="btn btn-sm btn-success">Daftar</a> aja.
+        </p>
     </div>
 </section>
 {% endif %}

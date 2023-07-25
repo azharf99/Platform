@@ -23,14 +23,14 @@
 
     <div class="container text-center">
         <div class="d-flex flex-wrap justify-content-center">
-            {% if ekskul %}
-                {% for data in ekskul %}
+            {% if object_list %}
+                {% for data in object_list %}
                     <div class="card border-success m-2" style="width: 18rem; height: 100%;">
                         <div class="card-header text-bg-success">
                             {{ data.get_tipe_display }}
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">{{ data.nama }}</h5>
+                            <h5 class="card-title">{{ data.nama_ekskul }}</h5>
                             {% for pembina in data.pembina.all %}
                                 <h6 class="card-subtitle mb-2">Ustadz {{ pembina }}</h6>
                             {% endfor %}

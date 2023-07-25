@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Q
 from deskripsi.models import DeskripsiEkskul, DeskripsiHome
 from userlog.models import UserLog
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 
 # Create your views here.
 
@@ -9,6 +11,26 @@ def home_view(request):
     home_data = DeskripsiHome.objects.all()
     app_data = DeskripsiEkskul.objects.filter(status=True)
     logs = UserLog.objects.all().order_by('-created_at')[:10]
+
+    if request.method == "POST":
+        username = request.POST.get('username').rstrip()
+        password = request.POST.get('pass').rstrip()
+
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            messages.success(request, "Login berhasil! Selamat datang..")
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="LOGIN",
+                app="EKSKUL",
+                message="Berhasil melakukan login ke aplikasi"
+            )
+            return redirect('app-index')
+        else:
+            messages.warning(request, "Username atau Password salah!")
 
     context = {
         'home_data': home_data,

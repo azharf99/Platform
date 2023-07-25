@@ -8,6 +8,8 @@ from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.views.generic import ListView, DetailView
 
 from laporan.models import Report, UploadImage
 from laporan.forms import FormLaporanKehadiran, FormUploadLaporanKehadiran, FormEditUploadLaporanKehadiran
@@ -15,20 +17,41 @@ from ekskul.models import Extracurricular, StudentOrganization, Teacher
 from userlog.models import UserLog
 
 
-def index(request):
-    if request.user.is_authenticated or request.user.is_superuser:
-        ekskul = Extracurricular.objects.filter(pembina=request.user.teacher).order_by('tipe', 'nama_ekskul')
-        extra = Extracurricular.objects.exclude(pembina=request.user.teacher).order_by('tipe', 'nama_ekskul')
-        context = {
-            'ekskul': ekskul,
-            'extra': extra,
-        }
-    else:
-        ekskul = Extracurricular.objects.all().order_by('tipe', 'nama_ekskul')
-        context = {
-            'ekskul': ekskul,
-        }
-    return render(request, 'laporan.html', context)
+class LaporanIndexView(ListView):
+    model = Extracurricular
+    template_name = 'laporan.html'
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_superuser:
+                return Extracurricular.objects.all().order_by('tipe', 'nama_ekskul')
+            else:
+                return Extracurricular.objects.filter(pembina=self.request.user.teacher).order_by('tipe', 'nama_ekskul')
+        else:
+            return Extracurricular.objects.all().order_by('tipe', 'nama_ekskul')
+
+# class PrintToPDFView(DetailView):
+#     model = Report
+#     template_name = 'laporan-print.html'
+
+    # def get_queryset(self):
+    #     if datetime.date.today().month > 1:
+    #         return Report.objects.filter(nama_ekskul_id=self.kwargs['pk'],
+    #                                      tanggal_pembinaan__month=7).order_by(
+    #             'tanggal_pembinaan')
+    #     else:
+    #         return Report.objects.filter(nama_ekskul_id=self.kwargs['pk'],
+    #                                      tanggal_pembinaan__month=datetime.date.today().month).order_by(
+    #             'tanggal_pembinaan')
+
+    # def get_object(self):
+    #     course = get_object_or_404(Report, pk=self.kwargs['pk'])
+    #     return self.model.objects.filter(nama_ekskul__slug=slug)
+    # def get_context_data(self, **kwargs):
+    #     context = super(PrintToPDFView, self).get_context_data(**kwargs)
+    #     context['tanggal'] = timezone.now()
+    #     # context['students'] = StudentOrganization.objects.filter(ekskul__slug=self.kwargs['slug']).order_by('siswa__kelas', 'siswa__nama_siswa')
+    #     return context
 
 
 @login_required(login_url='/login/')
@@ -36,17 +59,15 @@ def print_to_pdf(request, slug):
     locale.setlocale(locale.LC_ALL, 'id_ID')
     tanggal = datetime.datetime.now(pytz.timezone('Asia/Jakarta'))
     if datetime.date.today().month > 1:
-        reports = Report.objects.filter(nama_ekskul__slug=slug, tanggal_pembinaan__month=(datetime.date.today().month-1)).order_by('tanggal_pembinaan')
+        reports = Report.objects.filter(nama_ekskul__slug=slug, tanggal_pembinaan__month=(datetime.date.today().month)).order_by('tanggal_pembinaan')
     else:
         reports = Report.objects.filter(nama_ekskul__slug=slug, tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
-    students = StudentOrganization.objects.filter(ekskul__slug=slug).order_by('siswa__kelas', 'siswa__nama')
-    ekskul = get_object_or_404(Extracurricular, slug=slug)
+    students = StudentOrganization.objects.filter(ekskul__slug=slug).order_by('siswa__kelas', 'siswa__nama_siswa')
     angka = [x for x in range(15)]
     context = {
         'reports': reports,
         'angka': angka,
         'students': students,
-        'ekskul': ekskul,
         'tanggal': tanggal,
     }
 
@@ -56,10 +77,19 @@ def laporan_ekskul_print_versi2(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     filtered_report = Report.objects.filter(nama_ekskul__slug=slug).order_by('tanggal_pembinaan')
     context = {
-            'ekskul': ekskul,
-            'filtered_report': filtered_report,
-        }
+        'ekskul': ekskul,
+        'filtered_report': filtered_report,
+    }
     return render(request, 'laporan-print2.html', context)
+
+class LaporanEkskulView(ListView):
+    model = Report
+    template_name = 'laporan-ekskul2.html'
+    queryset = Report.objects.all()
+    paginate_by = 10
+
+    def get_queryset(self):
+        return self.queryset.filter(nama_ekskul__slug=self.kwargs.get('slug')).order_by('-tanggal_pembinaan')
 
 def laporan_ekskul(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
@@ -67,7 +97,7 @@ def laporan_ekskul(request, slug):
     teachers = Teacher.objects.filter(extracurricular=ekskul)
     all = teachers.values_list('user_id', flat=True)
     filtered_report = Report.objects.filter(nama_ekskul__slug=slug).filter(
-            tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
+        tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
     if request.method == "POST":
         bulan = request.POST.get("bulan")
         if bulan != 0:
@@ -83,7 +113,7 @@ def laporan_ekskul(request, slug):
 
     if request.user.is_authenticated:
         if not request.user.id in all and not request.user.is_superuser:
-        # if not request.user.teacher == ekskul.pembina and not request.user.is_superuser:
+            # if not request.user.teacher == ekskul.pembina and not request.user.is_superuser:
             context = {
                 'ekskul': ekskul,
                 'filtered_report': filtered_report,
@@ -106,14 +136,10 @@ def laporan_ekskul(request, slug):
         }
     return render(request, 'laporan-ekskul.html', context)
 
-def laporan_detail(request, slug, pk):
-    ekskul = get_object_or_404(Extracurricular, slug=slug)
-    data = get_object_or_404(Report, nama_ekskul__slug=slug, id=pk)
-    context = {
-        'ekskul': ekskul,
-        'data': data,
-    }
-    return render(request, 'laporan-detail.html', context)
+
+class LaporanDetailView(DetailView):
+    model = Report
+    template_name = 'laporan-detail.html'
 
 
 @login_required(login_url='/login/')
@@ -198,8 +224,8 @@ def laporan_upload(request, slug):
             image = request.FILES.get('foto_absensi')
 
             UploadImage.objects.create(
-                    laporan=laporan,
-                    foto_absensi=image
+                laporan=laporan,
+                foto_absensi=image
             )
             UserLog.objects.create(
                 user=request.user.teacher,
@@ -398,7 +424,7 @@ def laporan_upload_delete(request, slug, pk):
             action_flag="DELETE",
             app="LAPORAN_FOTO",
             message="Berhasil menghapus foto laporan pertemuan ekskul {} untuk tanggal {}".format(ekskul,
-                                                                                                     laporan.tanggal_pembinaan)
+                                                                                                  laporan.tanggal_pembinaan)
         )
 
         url = 'https://api.watsap.id/send-message'

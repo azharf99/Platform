@@ -20,7 +20,7 @@
                     {% endif %}
                     <h5>{{ teacher.email }}</h5>
                     {% if teacher.no_hp %}
-                        <h5>+62{{ teacher.no_hp }}</h5>
+                        <h5>{{ teacher.no_hp }}</h5>
                     {% else %}
                         <h6 class="text-danger">No HP belum diisi</h6>
                     {% endif %}

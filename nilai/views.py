@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import FileResponse
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, reverse
+from django.views.generic import ListView
 
 from ekskul.models import Extracurricular, StudentOrganization
 from nilai.forms import NilaiForm, NilaiEditForm
@@ -14,20 +15,18 @@ from userlog.models import UserLog
 
 # Create your views here.
 
-def index(request):
-    if request.user.is_authenticated or request.user.is_superuser:
-        ekskul = Extracurricular.objects.filter(pembina=request.user.teacher).order_by('tipe', 'nama_ekskul')
-        extra = Extracurricular.objects.exclude(pembina=request.user.teacher).order_by('tipe', 'nama_ekskul')
-        context = {
-            'ekskul': ekskul,
-            'extra': extra,
-        }
-    else:
-        ekskul = Extracurricular.objects.all().order_by('tipe', 'nama_ekskul')
-        context = {
-            'ekskul': ekskul,
-        }
-    return render(request, 'nilai.html', context)
+class NilaiIndexView(ListView):
+    model = Extracurricular
+    template_name = 'nilai.html'
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_superuser:
+                return Extracurricular.objects.all().order_by('tipe', 'nama_ekskul')
+            else:
+                return Extracurricular.objects.filter(pembina=self.request.user.teacher).order_by('tipe', 'nama_ekskul')
+        else:
+            return Extracurricular.objects.all().order_by('tipe', 'nama_ekskul')
 
 
 def nilai_detail(request, slug):
@@ -78,7 +77,7 @@ def print_to_excel(request):
 @login_required(login_url='/login/')
 def nilai_input(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
-    siswa = StudentOrganization.objects.filter(ekskul_siswa__slug=slug)
+    siswa = StudentOrganization.objects.filter(ekskul__slug=slug)
     all = ekskul.pembina.all().values_list('user_id', flat=True)
     if request.user.id not in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
@@ -95,12 +94,13 @@ def nilai_input(request, slug):
             forms.siswa = id_siswa
             if forms.is_valid():
                 forms.save()
+                messages.success(request, "Input nilai berhasil!")
                 data = Penilaian.objects.get(siswa_id=id_siswa)
                 UserLog.objects.create(
                     user=request.user.teacher,
                     action_flag="ADD",
                     app="NILAI",
-                    message="Berhasil menambahkan data nilai ekskul {} atas nama {}".format(ekskul, data.siswa.nama_siswa.nama)
+                    message="Berhasil menambahkan data nilai ekskul {} atas nama {}".format(ekskul, data.siswa.siswa.nama_siswa)
                 )
                 return redirect('nilai:nilai-detail', ekskul.slug)
             else:
@@ -132,7 +132,7 @@ def nilai_edit(request, slug, pk):
                 user=request.user.teacher,
                 action_flag="CHANGE",
                 app="NILAI",
-                message="Berhasil mengubah data nilai ekskul {} atas nama {}".format(ekskul, nilai.siswa.nama_siswa.nama)
+                message="Berhasil mengubah data nilai ekskul {} atas nama {}".format(ekskul, nilai.siswa.siswa.nama_siswa)
             )
             return redirect('nilai:nilai-detail', ekskul.slug)
         else:
@@ -161,7 +161,7 @@ def nilai_delete(request, slug, pk):
             user=request.user.teacher,
             action_flag="DELETE",
             app="NILAI",
-            message="Berhasil menghapus data nilai ekskul {} atas nama {}".format(ekskul, data.siswa.nama_siswa.nama)
+            message="Berhasil menghapus data nilai ekskul {} atas nama {}".format(ekskul, data.siswa.siswa.nama_siswa)
         )
         data.delete()
         return redirect('nilai:nilai-detail', ekskul.slug)

@@ -3,35 +3,35 @@
 {% block content %}
     {% load humanize %}
     <div class="mt-5 pt-4 text-center">
-        <h1 class="m-3">Detail Laporan {{ ekskul.nama }}</h1>
-        <a href="{% url 'laporan:laporan-ekskul' ekskul.slug %}" class="btn btn-danger">Kembali</a>
+        <h1 class="m-3">Detail Laporan {{ object.nama_ekskul }}</h1>
+        <a href="{% url 'laporan:laporan-ekskul' object.nama_ekskul.slug %}" class="btn btn-danger">Kembali</a>
     </div>
 
     <div class="container">
         <table class="table table-hover w-100">
             <tbody>
-            {% if data %}
+            {% if object %}
                 <tr>
                     <td>Nama Ekskul</td>
                     <td class="text-end">:</td>
-                    <td>{{ data.nama_ekskul }}</td>
+                    <td>{{ object.nama_ekskul }}</td>
                 </tr>
                 <tr>
-                    <td>Pembina {{ data.nama_ekskul.tipe }}</td>
+                    <td>Pembina {{ object.nama_ekskul.tipe }}</td>
                     <td class="text-end">:</td>
-                    <td>{{ data.pembina_ekskul }}</td>
+                    <td>{{ object.pembina_ekskul }}</td>
                 </tr>
                 <tr>
                     <td>Tanggal Pembinaan</td>
                     <td class="text-end">:</td>
-                    <td>{{ data.tanggal_pembinaan|date:"j F Y" }}</td>
+                    <td>{{ object.tanggal_pembinaan|date:"j F Y" }}</td>
                 </tr>
                 <tr>
                     <td>Santri yang hadir</td>
                     <td class="text-end">:</td>
                     <td>
-                        {% for santri in data.kehadiran_santri.all %}
-                            <p>{{ santri.nama_siswa.nama }} ({{ santri.nama_siswa.get_kelas_display }})</p>
+                        {% for santri in object.kehadiran_santri.all %}
+                            <p>{{ santri.siswa.nama_siswa }} ({{ santri.siswa.get_kelas_display }})</p>
                         {% endfor %}
 
                     </td>
@@ -39,13 +39,13 @@
                 <tr>
                     <td>Catatan Pembinaan</td>
                     <td class="text-end">:</td>
-                    <td>{{ data.catatan_pembinaan }}</td>
+                    <td>{{ object.catatan_pembinaan }}</td>
                 </tr>
                 <tr>
                     <td>Foto pembinaan</td>
                     <td class="text-end">:</td>
                     <td>
-                        {% for image in data.uploadimage_set.all %}
+                        {% for image in object.uploadimage_set.all %}
                             <img class="m-1" src="{{ image.foto_absensi.url }}" height="100%" width="100%">
                         {% endfor %}
                     </td>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ ekskul.nama }}-{{ reports.first.tanggal_pembinaan|date:"F" }}-2023</title>
+    <title>{{ reports.first.nama_ekskul }}-{{ reports.first.tanggal_pembinaan|date:"F" }}-2023</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <!--<link rel="stylesheet" href="{% static 'css/style.css' %}">-->
     <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/png">
@@ -25,15 +25,15 @@
         </div>
 
     </div>
-    {% if ekskul.pembina.all.count > 1 %}
-        {% for pembina in ekskul.pembina.all %}
+    {% for pembina in reports.first.nama_ekskul.pembina.all %}
+        {% if reports.first.nama_ekskul.pembina.all.count > 1 %}
             <p class="m-0">Nama Pembina {{ forloop.counter }} : {{ pembina }}</p>
-        {% endfor %}
-    {% else %}
-        <p class="m-0">Nama Pembina : {{ ekskul.pembina.first }}</p>
-    {% endif %}
-    <p class="m-0">Ekstrakurikuler/SC : {{ ekskul.nama }}</p>
-    <p class="mb-2">Jadwal : {{ ekskul.jadwal }} {{ ekskul.waktu }}</p>
+        {% else %}
+            <p class="m-0">Nama Pembina : {{ reports.first.nama_ekskul.pembina.first }}</p>
+        {% endif %}
+    {% endfor %}
+    <p class="m-0">Ekstrakurikuler/SC : {{ reports.first.nama_ekskul.nama_ekskul }}</p>
+    <p class="mb-2">Jadwal : {{ reports.first.nama_ekskul.jadwal }} {{ reports.first.nama_ekskul.waktu }}</p>
 
     <div class="row align-item-center">
         <div class="col-sm">
@@ -66,12 +66,12 @@
                     {% for student in students %}
                         <tr>
                             <td class="text-center">{{ forloop.counter }}</td>
-                            <td>{{ student.nama_siswa.nama }}</td>
-                            <td class="text-center">{{ student.nama_siswa.get_kelas_display  }}</td>
+                            <td>{{ student.siswa.nama_siswa }}</td>
+                            <td class="text-center">{{ student.siswa.get_kelas_display  }}</td>
                             {% for report in reports %}
                                 <td class="text-center">
                                     {% for santri in report.kehadiran_santri.all %}
-                                        {% if santri.nama_siswa.nama == student.nama_siswa.nama %}
+                                        {% if santri.siswa.nama_siswa == student.siswa.nama_siswa %}
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
                                                 <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
                                                 <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
@@ -160,22 +160,22 @@
             {% else %}
                 <p class="text-end m-0">Bekasi, .............................................</p>
             {% endif %}
-            {% if ekskul.pembina.all.count > 1 %}
+            {% if reports.first.nama_ekskul.pembina.all.count > 1 %}
                 <div class="row mb-4">
                     <div class="col text-center">
                         <p>Wakasek Ekstrakurikuler</p>
                     </div>
-                    {% for pembina in ekskul.pembina.all %}
+                    {% for pembina in reports.first.nama_ekskul.pembina.all %}
                         <div class="col text-center">
                             <p>Pembina {{ forloop.counter }}</p>
                         </div>
                     {% endfor %}
                 </div>
-                <div class="row" mt-1>
+                <div class="row mt-1">
                     <div class="col text-center">
                         <p>Panji Asmara, S.Pd</p>
                     </div>
-                    {% for pembina in ekskul.pembina.all %}
+                    {% for pembina in reports.first.nama_ekskul.pembina.all %}
                         <div class="col text-center">
                             <p>{{ pembina }}</p>
                         </div>
@@ -190,12 +190,12 @@
                         <p>Pembina</p>
                     </div>
                 </div>
-                <div class="row" mt-1>
+                <div class="row mt-1">
                     <div class="col text-center">
                         <p>Panji Asmara, S.Pd</p>
                     </div>
                     <div class="col text-center">
-                        <p>{{ ekskul.pembina.first }}</p>
+                        <p>{{ reports.first.nama_ekskul.pembina.first }}</p>
                     </div>
                 </div>
             {% endif %}
@@ -210,10 +210,10 @@
 
     window.addEventListener("afterprint", (event) => {
         setTimeout(() => {
-          window.location.assign("https://ekskul.smasitalbinaa.com/laporan/");
+          window.location.assign("https://pmbp.smasitalbinaa.com/laporan/");
         }, 3000);
 
-        // window.location.assign(https://ekskul.smasitalbinaa.com/laporan/);
+        // window.location.assign(https://pmbp.smasitalbinaa.com/laporan/);
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
