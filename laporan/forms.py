@@ -1,5 +1,5 @@
 from django import forms
-from laporan.models import Report, UploadImage
+from laporan.models import Report
 
 class FormLaporanKehadiran(forms.ModelForm):
     class Meta:
@@ -11,20 +11,21 @@ class FormLaporanKehadiran(forms.ModelForm):
             'tanggal_pembinaan': forms.DateInput(attrs={'class': 'form-control'}),
             'catatan_pembinaan': forms.Textarea(attrs={'class': 'form-control'}),
             'kehadiran_santri': forms.SelectMultiple(attrs={'class': 'form-select'}),
+            'foto': forms.FileInput(attrs={'class': 'form-control', 'required': True}),
         }
 
-class FormUploadLaporanKehadiran(forms.ModelForm):
-    class Meta:
-        model = UploadImage
-        fields = ['foto_absensi']
-        widgets = {
-            'foto_absensi': forms.FileInput(attrs={'class': 'form-control', 'required': True}),
-        }
-
-class FormEditUploadLaporanKehadiran(forms.ModelForm):
-    class Meta:
-        model = UploadImage
-        fields = ['foto_absensi']
-        widgets = {
-            'laporan': forms.Select(attrs={'class': 'form-select', 'disabled': True}),
-        }
+# class FormUploadLaporanKehadiran(forms.ModelForm):
+#     class Meta:
+#         model = UploadImage
+#         fields = ['foto_absensi']
+#         widgets = {
+#             'foto_absensi': forms.FileInput(attrs={'class': 'form-control', 'required': True}),
+#         }
+#
+# class FormEditUploadLaporanKehadiran(forms.ModelForm):
+#     class Meta:
+#         model = UploadImage
+#         fields = ['foto_absensi']
+#         widgets = {
+#             'laporan': forms.Select(attrs={'class': 'form-select', 'disabled': True}),
+#         }

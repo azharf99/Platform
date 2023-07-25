@@ -45,9 +45,7 @@
                     <td>Foto pembinaan</td>
                     <td class="text-end">:</td>
                     <td>
-                        {% for image in object.uploadimage_set.all %}
-                            <img class="m-1" src="{{ image.foto_absensi.url }}" height="100%" width="100%">
-                        {% endfor %}
+                        <img class="m-1" src="{{ object.foto.url }}" height="100%" width="100%">
                     </td>
                 </tr>
             {% else %}

@@ -2,7 +2,7 @@
 {% block content %}
     <div class="container-fluid mt-5 p-5">
         <div class="w-100 h-100 d-flex justify-content-center">
-            <form action="" method="post" id="form">
+            <form action="" method="post" id="form" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% if messages %}
                     <ul class="messages text-danger fw-bold">
@@ -45,12 +45,16 @@
                                 </select>
                             </p>
                             <p class="field">
-                                <label for="id_catatan_pembinaan">Catatan Pembinaan:</label>
+                                <label for="id_catatan_pembinaan">Foto Pembinaan:</label>
+                                {{ form.foto }}
+                            </p>
+                            <p class="field">
+                                <label for="id_foto">Catatan Pembinaan:</label>
                                 {{ form.catatan_pembinaan }}
                             </p>
 
                         {% else %}
-                            <h3 class="text-danger">Maaf, sistem kami mendeteksi anda belum input data anggota ekskul. Silahkan input data anggota ekskul terlebih dahulu sebelum anda input laporan. Terima kasih. :)</h3>
+                            <p class="text-danger ">Maaf, Silahkan input data anggota ekskul terlebih dahulu agar anda dapat input laporan. Terima kasih. :)</p>
                         {% endif %}
 
                     </div>

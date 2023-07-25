@@ -11,7 +11,7 @@ urlpatterns = [
     path('<slug:slug>/detail/<int:pk>', views.LaporanDetailView.as_view(), name='laporan-detail'),
     path('<slug:slug>/edit/<int:pk>', views.laporan_edit, name='laporan-edit'),
     path('<slug:slug>/delete/<int:pk>', views.laporan_delete, name='laporan-delete'),
-    path('<slug:slug>/upload', views.laporan_upload, name='laporan-upload'),
-    path('<slug:slug>/upload/edit/<int:pk>', views.laporan_upload_edit, name='laporan-upload-edit'),
-    path('<slug:slug>/upload/delete/<int:pk>', views.laporan_upload_delete, name='laporan-upload-delete'),
+    # path('<slug:slug>/upload', views.laporan_upload, name='laporan-upload'),
+    # path('<slug:slug>/upload/edit/<int:pk>', views.laporan_upload_edit, name='laporan-upload-edit'),
+    # path('<slug:slug>/upload/delete/<int:pk>', views.laporan_upload_delete, name='laporan-upload-delete'),
 ]

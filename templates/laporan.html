@@ -25,7 +25,6 @@
             <div class="card-footer border-primary text-light">
                 {% if request.user.is_authenticated %}
                 <a href="{% url 'laporan:laporan-input' data.slug %}" class="btn btn-sm btn-danger m-1">Input Kehadiran</a>
-                <a href="{% url 'laporan:laporan-upload' data.slug %}" class="btn btn-sm btn-primary m-1">Upload Foto</a>
                 <a href="{% url 'laporan:laporan-print' data.slug %}" class="btn btn-sm btn-success m-1">Print Laporan</a>
                 <a href="{% url 'laporan:laporan-print-v2' data.slug %}" class="btn btn-sm btn-success m-1">Cetak Laporan v.2</a>
                 <a href="{% url 'laporan:laporan-ekskul' data.slug %}" class="btn btn-sm btn-warning m-1">Rekap Laporan</a>
