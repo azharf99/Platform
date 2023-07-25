@@ -1,5 +1,5 @@
 from django.db import models
-from ekskul.models import Extracurricular, Teacher, StudentOrganization
+from ekskul.models import Extracurricular, Teacher, Student
 from ekskul.compress_image import CompressedImageField
 
 # Create your models here.
@@ -42,28 +42,16 @@ class Proposal(models.Model):
     nama_event = models.CharField(max_length=200)
     pembuat_event = models.CharField(max_length=200)
     tanggal_pendaftaran = models.DateField()
-    batas_pendaftaran = models.DateField(blank=True, null=True)
-    tanggal_penyisihan_1 = models.DateField(blank=True, null=True)
-    tanggal_penyisihan_2 = models.DateField(blank=True, null=True)
-    tanggal_penyisihan_3 = models.DateField(blank=True, null=True)
-    tanggal_semifinal = models.DateField(blank=True, null=True)
-    tanggal_final = models.DateField(blank=True, null=True)
-    pengumuman_pemenang = models.DateField(blank=True, null=True)
-    pelaksanaan = models.CharField(max_length=30, choices=pilihan_pelaksaan)
+    tanggal_pelaksanaan = models.DateField(blank=True, null=True)
+    pelaksanaan = models.CharField(max_length=30, choices=pilihan_pelaksaan, verbose_name="Tempat Pelaksanaan")
     tingkat_event = models.CharField(max_length=30, choices=pilihan_tingkat)
-    berjenjang = models.CharField(max_length=50, choices=pilihan_berjenjang)
     lokasi_event = models.CharField(max_length=200, default="")
-    kota = models.CharField(max_length=200, default="", verbose_name="Kota/Kabupaten")
-    provinsi = models.CharField(max_length=200, default="")
     penanggungjawab = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    nomor_rekening = models.CharField(max_length=100, default="")
+    nomor_rekening = models.CharField(max_length=100, default="", verbose_name="Nomor Rekening PJ")
     nama_bank = models.CharField(max_length=100, default="Muamalat")
     ekskul = models.ForeignKey(Extracurricular, on_delete=models.CASCADE, null=True, blank=True)
-    santri = models.ManyToManyField(StudentOrganization, verbose_name="Santri yang ikut", blank=True, help_text="Pada PC/Laptop, tekan Ctrl untuk memilih banyak opsi")
+    santri = models.ManyToManyField(Student, verbose_name="Santri yang terlibat", blank=True, help_text="Pada PC/Laptop, tekan Ctrl untuk memilih banyak opsi")
     anggaran_biaya = models.FloatField()
-    upload_brosur = models.FileField(upload_to='proposal/brosur', verbose_name="Upload Brosur Lomba", null=True, blank=True)
-    upload_undangan = models.FileField(upload_to='proposal/undangan', verbose_name="Upload Undangan Lomba", null=True,
-                                     blank=True)
     upload_file = models.FileField(upload_to='proposal', verbose_name="Upload File Proposal", help_text="Format file dalam bentuk .pdf")
     Catatan = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -124,7 +112,7 @@ class ProposalInventaris(models.Model):
     nomor_rekening = models.CharField(max_length=100, default="")
     nama_bank = models.CharField(max_length=100, default="Muamalat")
     ekskul = models.ForeignKey(Extracurricular, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Keperluan untuk ekskul")
-    santri = models.ManyToManyField(StudentOrganization, verbose_name="Keperluan untuk santri atas nama", blank=True, help_text="Pada PC/Laptop, tekan Ctrl untuk memilih banyak opsi")
+    santri = models.ManyToManyField(Student, verbose_name="Keperluan untuk santri atas nama", blank=True, help_text="Pada PC/Laptop, tekan Ctrl untuk memilih banyak opsi")
     anggaran_biaya = models.FloatField()
     upload_file = models.FileField(upload_to='proposal', verbose_name="Upload File Proposal", help_text="Format file dalam bentuk .pdf")
     Catatan = models.TextField(blank=True, null=True)
