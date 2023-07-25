@@ -4,12 +4,28 @@ from django.db.models import Sum, Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.views.generic import DetailView, ListView
+
 from proposal.forms import ProposalForm, ProposalEditForm, StatusProposalForm, StatusProposalKepsekForm, StatusProposalBendaharaForm, ProposalInventarisForm, ProposalInventarisEditForm, StatusProposalInventarisForm, StatusProposalInventarisKepsekForm, StatusProposalInventarisBendaharaForm
 from proposal.models import Proposal, ProposalStatus, ProposalStatusBendahara, ProposalStatusKepsek, ProposalInventaris, ProposalInventarisStatus, ProposalInventarisStatusKepsek, ProposalInventarisStatusBendahara
 from userlog.models import UserLog
 
 
 # Create your views here.
+class ProposalIndexView(ListView):
+    model = Proposal
+    template_name = 'proposal.html'
+    paginate_by = 5
+    queryset = Proposal.objects.all().order_by('-created_at')
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context["proposal_inventaris"] = ProposalInventaris.objects.all().order_by('-created_at')
+        context["jumlah"] = Proposal.objects.aggregate(Sum('anggaran_biaya'))
+        context["jumlah_diterima"] = Proposal.objects.filter(proposalstatusbendahara__is_bendahara="Accepted").aggregate(Sum('anggaran_biaya'))
+        return context
 
 def index(request):
     proposal = Proposal.objects.all().order_by('-created_at')
@@ -32,7 +48,14 @@ def index(request):
     }
     return render(request, 'proposal.html', context)
 
+class ProposalDetailView(DetailView):
+    model = Proposal
+    template_name = 'proposal-detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tipe'] = 'lomba'
+        return context
 def proposal_detail(request, pk):
     data = get_object_or_404(Proposal, id=pk)
     status = ProposalStatus.objects.all()

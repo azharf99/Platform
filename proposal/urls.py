@@ -4,9 +4,9 @@ from proposal import views
 app_name = 'proposal'
 
 urlpatterns = [
-    path('', views.index, name='proposal-index'),
+    path('', views.ProposalIndexView.as_view(), name='proposal-index'),
     path('input', views.proposal_input, name='proposal-input'),
-    path('detail/<int:pk>', views.proposal_detail, name='detail-proposal'),
+    path('detail/<int:pk>', views.ProposalDetailView.as_view(), name='detail-proposal'),
     path('edit/<int:pk>', views.proposal_edit, name='edit-proposal'),
     path('delete/<int:pk>', views.proposal_delete, name='delete-proposal'),
     path('approval/<int:pk>', views.proposal_approval, name='proposal-approval'),
