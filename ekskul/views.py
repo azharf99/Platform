@@ -1,13 +1,17 @@
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.urls import reverse_lazy
+
 from ekskul.models import Extracurricular, Student, StudentOrganization, Teacher, User
 from ekskul.forms import InputAnggotaEkskulForm, PembinaEkskulForm, EkskulForm, CustomUserCreationForm, UsernameChangeForm, CustomPasswordChangeForm
 from userlog.models import UserLog
 from nilai.models import Penilaian
 from django.views.decorators.csrf import csrf_protect
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView, DeleteView
+
 
 # Create your views here.
 
@@ -28,77 +32,68 @@ class EkskulIndexView(ListView):
 class EkskulDetailView(DetailView):
     model = Extracurricular
 
+class InputAnggotaView(LoginRequiredMixin, CreateView):
+    model = StudentOrganization
+    form_class = InputAnggotaEkskulForm
+    template_name = 'input-anggota-ekskul.html'
+    login_url = '/login/'
 
-
-@login_required(login_url='/login/')
-def input_anggota(request, slug):
-    ekskul = get_object_or_404(Extracurricular, slug=slug)
-    all = ekskul.pembina.all().values_list('user_id', flat=True)
-    if not request.user.id in all and not request.user.is_superuser:
-        return HttpResponseRedirect(reverse('restricted'))
-
-
-    if request.method == 'POST':
-        data_ekskul = request.POST.get('ekskul')
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        data_ekskul = request.POST.get('ekskul_siswa')
         id_siswa = request.POST.get('siswa')
-        print(data_ekskul, id_siswa)
         try:
-            ekskul = StudentOrganization.objects.get(siswa_id=id_siswa, ekskul_id=data_ekskul)
-            form = InputAnggotaEkskulForm(request.POST)
+            self.object = StudentOrganization.objects.get(siswa_id=id_siswa, ekskul_id=data_ekskul)
             messages.error(request, "Santri sudah ada di dalam anggota ekskul. Silahkan pilih santri lain")
+            return self.form_invalid(form)
         except:
-            # siswa = Student.objects.get(id=id_siswa)
-            form = InputAnggotaEkskulForm(request.POST)
-            if form.is_valid():
-                messages.success(request, "Input data berhasil! Silahkan cek pada daftar yang ada")
-                form.save()
-                # data = StudentOrganization.objects.create(siswa_id=id_siswa, ekskul=ekskul)
-                # data.save()
-                # Penilaian.objects.create(
-                #     siswa = ekskul,
-                #     nilai = "A"
-                #     )
-                # UserLog.objects.create(
-                #     user=request.user.teacher,
-                #     action_flag="ADD",
-                #     app="EKSKUL",
-                #     message="Berhasil menambahkan anggota baru ekskul {} atas nama {} kelas {}".format(ekskul, siswa.nama_siswa, siswa.kelas)
-                # )
-                return redirect('ekskul:input-anggota', ekskul.slug)
-    else:
-        form = InputAnggotaEkskulForm()
-    context = {
-        'ekskul': ekskul,
-        'form': form,
+            return self.form_valid(form)
 
-    }
-    return render(request, 'input-anggota-ekskul.html', context)
+    def form_valid(self, form):
+        ekskul = get_object_or_404(Extracurricular, slug=self.kwargs.get('slug'))
+        form.instance.ekskul = ekskul
+        messages.success(self.request, "Input data berhasil! Silahkan cek pada daftar yang ada")
+        UserLog.objects.create(
+            user=self.request.user.teacher,
+            action_flag="ADD",
+            app="EKSKUL",
+            message=f"Berhasil menambahkan anggota baru ekskul {ekskul}"
+        )
+        return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['ekskul'] = get_object_or_404(Extracurricular, slug=self.kwargs.get('slug'))
+        return context
 
-@login_required(login_url='/login/')
-def delete_anggota(request, slug, pk):
-    ekskul = get_object_or_404(Extracurricular, slug=slug)
-    deteled_student = get_object_or_404(StudentOrganization, siswa_id=pk, ekskul_id=ekskul.id)
+class DeleteAnggotaView(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    model = StudentOrganization
+    success_url = reverse_lazy('ekskul:data-index')
+    template_name = 'delete-anggota.html'
 
-    all = ekskul.pembina.all().values_list('user_id', flat=True)
-    if not request.user.id in all and not request.user.is_superuser:
-        return HttpResponseRedirect(reverse('restricted'))
+    def get(self, request, *args, **kwargs):
+        ekskul = get_object_or_404(Extracurricular, slug=self.kwargs.get('slug'))
+        all = ekskul.pembina.all().values_list('user_id', flat=True)
+        if not self.request.user.id in all and not self.request.user.is_superuser:
+            return HttpResponseRedirect(reverse('restricted'))
+        return self.render_to_response(self.get_context_data())
+    def get_object(self, queryset=None):
+        queryset = StudentOrganization.objects.get(siswa_id=self.kwargs.get('pk'), ekskul__slug=self.kwargs.get('slug'))
+        return queryset
 
-    if request.method == 'POST':
-        deteled_student.delete()
-        # UserLog.objects.create(
-        #     user=request.user.teacher,
-        #     action_flag="DELETE",
-        #     app="EKSKUL",
-        #     message="Berhasil menghapus anggota ekskul {} atas nama {} kelas {}".format(ekskul, deteled_student.siswa.nama, deteled_student.siswa.kelas)
-        # )
-        return redirect('ekskul:data-detail', ekskul.slug)
-    context = {
-        'ekskul': ekskul,
-        'deleted_student': deteled_student,
-    }
-    return render(request, 'delete-anggota.html', context)
-
+    def form_valid(self, form):
+        ekskul = get_object_or_404(Extracurricular, slug=self.kwargs.get('slug'))
+        all = ekskul.pembina.all().values_list('user_id', flat=True)
+        if not self.request.user.id in all and not self.request.user.is_superuser:
+            return HttpResponseRedirect(reverse('restricted'))
+        UserLog.objects.create(
+            user=self.request.user.teacher,
+            action_flag="DELETE",
+            app="EKSKUL",
+            message=f"Berhasil menghapus anggota baru ekskul {ekskul}"
+        )
+        return super().form_valid(form)
 
 @login_required(login_url='/login/')
 def edit_ekskul(request, slug):

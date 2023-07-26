@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.urls import reverse
+
 from ekskul.compress_image import CompressedImageField
 from django.utils.text import slugify
 
@@ -136,6 +138,9 @@ class StudentOrganization(models.Model):
     siswa = models.ForeignKey(Student, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "%s | %s" % (self.ekskul.nama_ekskul, self.siswa)
+        return "%s | %s" % (self.ekskul, self.siswa)
+
+    def get_absolute_url(self):
+        return reverse("ekskul:input-anggota", kwargs={"slug":self.ekskul.slug})
 
 

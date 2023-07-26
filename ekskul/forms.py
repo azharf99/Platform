@@ -16,9 +16,9 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm, Password
 class InputAnggotaEkskulForm(forms.ModelForm):
     class Meta:
         model = StudentOrganization
-        fields = '__all__'
+        fields = ['siswa']
         widgets  = {
-            'ekskul': forms.Select(attrs={'class': 'form-control'}),
+            # 'ekskul': forms.Select(attrs={'class': 'form-control'}),
             'siswa': forms.Select(attrs={'id': 'input-anggota'})
         }
 

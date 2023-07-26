@@ -6,8 +6,8 @@ urlpatterns = [
     path('', views.EkskulIndexView.as_view(), name='data-index'),
     path('<slug:slug>/', views.EkskulDetailView.as_view(), name='data-detail'),
     path('<slug:slug>/edit', views.edit_ekskul, name='edit-detail'),
-    path('<slug:slug>/input/anggota', views.input_anggota, name='input-anggota'),
-    path('<slug:slug>/delete/anggota/<int:pk>', views.delete_anggota, name='delete-anggota'),
+    path('<slug:slug>/input/anggota', views.InputAnggotaView.as_view(), name='input-anggota'),
+    path('<slug:slug>/delete/anggota/<int:pk>', views.DeleteAnggotaView.as_view(), name='delete-anggota'),
     path('input/pembina', views.input_pembina, name='input-pembina'),
 
 ]
