@@ -8,13 +8,13 @@
                 {% csrf_token %}
                     <div class="card" style="min-width: 18rem;">
                         <div class="card-header bg-dark text-light">
-                            Edit Data Ekskul {{ ekskul.nama }}
+                            Edit Data Ekskul {{ object.nama_ekskul }}
                         </div>
                         <div class="card-body d-flex flex-column">
                             {{ form.as_p }}
                         </div>
                         <div class="card-footer text-center">
-                            <a href="{% url 'ekskul:data-detail' ekskul.slug %}" class="card-link btn btn-danger">Kembali</a>
+                            <a href="{% url 'ekskul:data-index' %}" class="card-link btn btn-danger">Kembali</a>
                             <input type="submit" class="card-link btn btn-success" value="Save Data">
                         </div>
                     </div>

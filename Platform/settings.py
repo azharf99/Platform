@@ -31,7 +31,7 @@ AUTH_USER_MODEL = 'ekskul.User'
 
 ID_DEVICE = '4361'
 API_KEY = '2af54c86b60b5027ac1e13945705ece7c1f78893'
-TOKEN = '5A3DlR4NY8xxAs3tkEBHgwWMslDglgHfEcctvdmJfeNQDw5J4zjyz96PmxI7Q1k4'
+TOKEN = 'IeFSDe7RzYEDn4QJxKLX9Wc3luhUnMgvdQPB5Gr8tshU97RywNjkgpdG5XRZr8BT'
 
 # Application definition
 

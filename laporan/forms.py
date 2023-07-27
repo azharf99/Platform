@@ -11,7 +11,6 @@ class FormLaporanKehadiran(forms.ModelForm):
             'tanggal_pembinaan': forms.DateInput(attrs={'class': 'form-control'}),
             'catatan_pembinaan': forms.Textarea(attrs={'class': 'form-control'}),
             'kehadiran_santri': forms.SelectMultiple(attrs={'class': 'form-select'}),
-            'foto': forms.FileInput(attrs={'class': 'form-control', 'required': True}),
         }
 
 # class FormUploadLaporanKehadiran(forms.ModelForm):

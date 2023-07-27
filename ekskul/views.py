@@ -10,7 +10,7 @@ from ekskul.forms import InputAnggotaEkskulForm, PembinaEkskulForm, EkskulForm, 
 from userlog.models import UserLog
 from nilai.models import Penilaian
 from django.views.decorators.csrf import csrf_protect
-from django.views.generic import ListView, DetailView, CreateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 
 
 # Create your views here.
@@ -95,32 +95,26 @@ class DeleteAnggotaView(LoginRequiredMixin, DeleteView):
         )
         return super().form_valid(form)
 
-@login_required(login_url='/login/')
-def edit_ekskul(request, slug):
-    ekskul = get_object_or_404(Extracurricular, slug=slug)
+class UpdateEskkulView(LoginRequiredMixin, UpdateView):
+    model = Extracurricular
+    template_name = 'edit-ekskul.html'
+    form_class = EkskulForm
 
-    all = ekskul.pembina.all().values_list('user_id', flat=True)
-    if not request.user.id in all and not request.user.is_superuser:
-        return HttpResponseRedirect(reverse('restricted'))
+    def get(self, request, *args, **kwargs):
+        ekskul = self.get_object()
+        all = ekskul.pembina.all().values_list('user_id', flat=True)
+        if not request.user.id in all and not request.user.is_superuser:
+            return HttpResponseRedirect(reverse('restricted'))
+        return super().get(request, *args, **kwargs)
 
-    if request.method == 'POST':
-        form = EkskulForm(request.POST, instance=ekskul)
-        if form.is_valid():
-            form.save()
-            UserLog.objects.create(
-                user=request.user.teacher,
-                action_flag="CHANGE",
-                app="EKSKUL",
-                message="Berhasil mengedit data ekskul {}".format(ekskul)
-            )
-            return redirect('ekskul:data-detail', ekskul.slug)
-    else:
-        form = EkskulForm(instance=ekskul)
-    context = {
-        'ekskul': ekskul,
-        'form': form,
-    }
-    return render(request, 'edit-ekskul.html', context)
+    def form_valid(self, form):
+        UserLog.objects.create(
+            user=self.request.user.teacher,
+            action_flag="CHANGE",
+            app="EKSKUL",
+            message=f"Berhasil mengedit data ekskul {self.object}"
+        )
+        return super().form_valid(form)
 
 @login_required(login_url='/login/')
 def input_pembina(request):

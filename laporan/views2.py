@@ -150,12 +150,14 @@ def laporan_input(request, slug):
                 )
 
                 phone = request.user.teacher.no_hp
-                message = f'''*[NOTIFIKASI LAPORAN EKSKUL]*
-Anda berhasil input laporan pertemuan ekskul *{ekskul.nama_ekskul}* untuk tanggal *{tanggal_pembinaan}*.
+                message = '''*[NOTIFIKASI LAPORAN EKSKUL]*
+Anda berhasil input laporan pertemuan ekskul *%s* untuk tanggal *%s*.
 Detail laporan:
-https://pmbp.smasitalbinaa.com/laporan/{ekskul.slug}
+https://pmbp.smasitalbinaa.com/laporan/%s
 
-_Ini adalah pesan otomatis, jangan dibalas._'''
+Syukron.
+
+_Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, ekskul.nama_ekskul, tanggal_pembinaan, ekskul.slug)
                 url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
 
                 response = requests.get(url)
@@ -173,6 +175,64 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
         'form': form,
     }
     return render(request, 'laporan-input.html', context)
+
+#
+# @login_required(login_url='/login/')
+# def laporan_upload(request, slug):
+#     ekskul = get_object_or_404(Extracurricular, slug=slug)
+#     filtered_report = Report.objects.filter(nama_ekskul__slug=slug).order_by('-tanggal_pembinaan')
+#     all = ekskul.pembina.all().values_list('user_id', flat=True)
+#     if request.user.id not in all and not request.user.is_superuser:
+#         return HttpResponseRedirect(reverse('restricted'))
+#
+#     if request.method == 'POST':
+#         id_laporan = request.POST.get('laporan')
+#         laporan = get_object_or_404(Report, id=id_laporan)
+#         try:
+#             UploadImage.objects.get(laporan_id=id_laporan)
+#             forms = FormUploadLaporanKehadiran(request.POST)
+#             messages.error(request, "Dokumentasi/Foto untuk laporan ini sudah ada. Silahkan pilih laporan lain")
+#         except:
+#             image = request.FILES.get('foto_absensi')
+#
+#             UploadImage.objects.create(
+#                 laporan=laporan,
+#                 foto_absensi=image
+#             )
+#             UserLog.objects.create(
+#                 user=request.user.teacher,
+#                 action_flag="ADD",
+#                 app="LAPORAN_FOTO",
+#                 message="Berhasil mengupload foto pertemuan ekskul {} untuk tanggal {}".format(ekskul,
+#                                                                                                laporan.tanggal_pembinaan)
+#             )
+#
+#             token = settings.TOKEN
+#             phone = "62%s" % request.user.teacher.no_hp
+#             message = '''*[NOTIFIKASI]*
+# Assalamu'alaikum %s, Anda berhasil upload foto pertemuan ekskul %s untuk laporan *%s*.
+# Detail laporan:
+# https://ekskul.smasitalbinaa.com/laporan/%s
+#
+# Syukron.
+#
+# _Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, ekskul.nama_ekskul, laporan, ekskul.slug)
+#             url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
+#
+#             response = requests.get(url)
+#             result = response.text
+#             print(result)
+#
+#             return redirect('laporan:laporan-ekskul', ekskul.slug)
+#     else:
+#         forms = FormUploadLaporanKehadiran()
+#
+#     context = {
+#         'ekskul': ekskul,
+#         'filtered_report': filtered_report,
+#         'forms': forms,
+#     }
+#     return render(request, 'laporan-upload.html', context)
 
 
 @login_required(login_url='/login/')
@@ -195,18 +255,23 @@ def laporan_edit(request, slug, pk):
                                                                                                      laporan.tanggal_pembinaan)
             )
 
-            phone = request.user.teacher.no_hp
-            message = f'''*[NOTIFIKASI LAPORAN EKSKUL]*
-Anda berhasil edit laporan pertemuan ekskul *{ekskul.nama_ekskul}* untuk tanggal *{laporan.tanggal_pembinaan}*.
+            url = 'https://api.watsap.id/send-message'
+            data_post = {
+                'id_device': settings.ID_DEVICE,
+                'api-key': settings.API_KEY,
+                'no_hp': '0%s' % request.user.teacher.no_hp,
+                'pesan': '''*[NOTIFIKASI]*
+Assalamu'alaikum %s, Anda berhasil mengubah data laporan pertemuan ekskul %s untuk tanggal *%s*.
 Detail laporan:
-https://pmbp.smasitalbinaa.com/laporan/{ekskul.slug}
+https://ekskul.smasitalbinaa.com/laporan/%s
 
-_Ini adalah pesan otomatis, jangan dibalas._'''
-            url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
+Syukron.
 
-            response = requests.get(url)
-            result = response.text
-            print(result)
+_Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, ekskul.nama_ekskul, laporan.tanggal_pembinaan, ekskul.slug)
+            }
+            headers = {'Content-Type': 'application/json'}
+            requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
+
             return redirect('laporan:laporan-ekskul', ekskul.slug)
         else:
             messages.error(request, "Mohon input data dengan benar!")
@@ -237,18 +302,22 @@ def laporan_delete(request, slug, pk):
                                                                                                   laporan.tanggal_pembinaan)
         )
 
-        phone = request.user.teacher.no_hp
-        message = f'''*[NOTIFIKASI LAPORAN EKSKUL]*
-Anda berhasil edit laporan pertemuan ekskul *{ekskul.nama_ekskul}* untuk tanggal *{laporan.tanggal_pembinaan}*.
+        url = 'https://api.watsap.id/send-message'
+        data_post = {
+            'id_device': settings.ID_DEVICE,
+            'api-key': settings.API_KEY,
+            'no_hp': '0%s' % request.user.teacher.no_hp,
+            'pesan': '''*[NOTIFIKASI]*
+Assalamu'alaikum %s, Anda berhasil menghapus laporan pertemuan ekskul %s untuk tanggal *%s*.
 Detail laporan:
-https://pmbp.smasitalbinaa.com/laporan/{ekskul.slug}
+https://ekskul.smasitalbinaa.com/laporan/%s
 
-_Ini adalah pesan otomatis, jangan dibalas._'''
-        url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
+Syukron.
 
-        response = requests.get(url)
-        result = response.text
-        print(result)
+_Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, ekskul.nama, laporan.tanggal_pembinaan, ekskul.slug)
+        }
+        headers = {'Content-Type': 'application/json'}
+        requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
 
         laporan.delete()
         return redirect('laporan:laporan-ekskul', ekskul.slug)
@@ -258,3 +327,101 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
     }
 
     return render(request, 'laporan-delete.html', context)
+
+#
+# @login_required(login_url='/login/')
+# def laporan_upload_edit(request, slug, pk):
+#     ekskul = get_object_or_404(Extracurricular, slug=slug)
+#     laporan = get_object_or_404(Report, id=pk)
+#     foto = UploadImage.objects.get(laporan_id=laporan.id)
+#     all = ekskul.pembina.all().values_list('user_id', flat=True)
+#     if not request.user.id in all and not request.user.is_superuser:
+#         return HttpResponseRedirect(reverse('restricted'))
+#
+#     if request.method == 'POST':
+#         form_upload_edit = FormEditUploadLaporanKehadiran(request.POST, request.FILES, instance=foto)
+#         if form_upload_edit.is_valid():
+#             form_upload_edit.save()
+#             UserLog.objects.create(
+#                 user=request.user.teacher,
+#                 action_flag="CHANGE",
+#                 app="LAPORAN_FOTO",
+#                 message="Berhasil mengubah foto laporan pertemuan ekskul {} untuk tanggal {}".format(ekskul,
+#                                                                                                      laporan.tanggal_pembinaan)
+#             )
+#
+#             url = 'https://api.watsap.id/send-message'
+#             data_post = {
+#                 'id_device': settings.ID_DEVICE,
+#                 'api-key': settings.API_KEY,
+#                 'no_hp': '0%s' % request.user.teacher.no_hp,
+#                 'pesan': '''*[NOTIFIKASI]*
+# Assalamu'alaikum %s, Anda berhasil mengubah foto pertemuan ekskul %s untuk tanggal *%s*.
+# Detail laporan:
+# https://ekskul.smasitalbinaa.com/laporan/%s
+#
+# Syukron.
+#
+# _Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, ekskul.nama, laporan.tanggal_pembinaan, ekskul.slug)
+#             }
+#             headers = {'Content-Type': 'application/json'}
+#             requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
+#
+#             return redirect('laporan:laporan-ekskul', ekskul.slug)
+#         else:
+#             messages.error(request, "Mohon input data dengan benar!")
+#             form_upload_edit = FormEditUploadLaporanKehadiran(request.POST, request.FILES, instance=foto)
+#     else:
+#         form_upload_edit = FormEditUploadLaporanKehadiran(instance=foto)
+#
+#     context = {
+#         'ekskul': ekskul,
+#         'form_upload_edit': form_upload_edit,
+#     }
+#     return render(request, 'laporan-upload-edit.html', context)
+#
+#
+# @login_required(login_url='/login/')
+# def laporan_upload_delete(request, slug, pk):
+#     ekskul = get_object_or_404(Extracurricular, slug=slug)
+#     laporan = get_object_or_404(Report, id=pk)
+#     foto = UploadImage.objects.get(laporan_id=laporan.id)
+#     all = ekskul.pembina.all().values_list('user_id', flat=True)
+#     if request.user.id not in all and not request.user.is_superuser:
+#         return HttpResponseRedirect(reverse('restricted'))
+#
+#     if request.method == 'POST':
+#         UserLog.objects.create(
+#             user=request.user.teacher,
+#             action_flag="DELETE",
+#             app="LAPORAN_FOTO",
+#             message="Berhasil menghapus foto laporan pertemuan ekskul {} untuk tanggal {}".format(ekskul,
+#                                                                                                   laporan.tanggal_pembinaan)
+#         )
+#
+#         url = 'https://api.watsap.id/send-message'
+#         data_post = {
+#             'id_device': settings.ID_DEVICE,
+#             'api-key': settings.API_KEY,
+#             'no_hp': '0%s' % request.user.teacher.no_hp,
+#             'pesan': '''*[NOTIFIKASI]*
+# Assalamu'alaikum %s, Anda berhasil menghapus foto pertemuan ekskul %s untuk tanggal *%s*.
+# Detail laporan:
+# https://ekskul.smasitalbinaa.com/laporan/%s
+#
+# Syukron.
+#
+# _Ini adalah pesan otomatis, jangan dibalas._''' % (request.user.teacher, ekskul.nama, laporan.tanggal_pembinaan, ekskul.slug)
+#         }
+#         headers = {'Content-Type': 'application/json'}
+#         requests.post(url, json=data_post, headers=headers, allow_redirects=True, verify=False)
+#
+#         foto.delete()
+#         return redirect('laporan:laporan-ekskul', ekskul.slug)
+#
+#     context = {
+#         'ekskul': ekskul,
+#         'foto': foto,
+#     }
+#
+#     return render(request, 'laporan-upload-delete.html', context)

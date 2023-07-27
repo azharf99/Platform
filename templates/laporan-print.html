@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ reports.first.nama_ekskul }}-{{ reports.first.tanggal_pembinaan|date:"F" }}-2023</title>
+    <title>{{ object_list.first.nama_ekskul }}-{{ object_list.first.tanggal_pembinaan|date:"F" }}-2023</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <!--<link rel="stylesheet" href="{% static 'css/style.css' %}">-->
     <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/png">
@@ -25,15 +25,15 @@
         </div>
 
     </div>
-    {% for pembina in reports.first.nama_ekskul.pembina.all %}
-        {% if reports.first.nama_ekskul.pembina.all.count > 1 %}
+    {% for pembina in object_list.first.nama_ekskul.pembina.all %}
+        {% if object_list.first.nama_ekskul.pembina.all.count > 1 %}
             <p class="m-0">Nama Pembina {{ forloop.counter }} : {{ pembina }}</p>
         {% else %}
-            <p class="m-0">Nama Pembina : {{ reports.first.nama_ekskul.pembina.first }}</p>
+            <p class="m-0">Nama Pembina : {{ object_list.first.nama_ekskul.pembina.first }}</p>
         {% endif %}
     {% endfor %}
-    <p class="m-0">Ekstrakurikuler/SC : {{ reports.first.nama_ekskul.nama_ekskul }}</p>
-    <p class="mb-2">Jadwal : {{ reports.first.nama_ekskul.jadwal }} {{ reports.first.nama_ekskul.waktu }}</p>
+    <p class="m-0">Ekstrakurikuler/SC : {{ object_list.first.nama_ekskul.nama_ekskul }}</p>
+    <p class="mb-2">Jadwal : {{ object_list.first.nama_ekskul.jadwal }} {{ object_list.first.nama_ekskul.waktu }}</p>
 
     <div class="row align-item-center">
         <div class="col-sm">
@@ -43,35 +43,35 @@
                     <th scope="col" rowspan="3">No.</th>
                     <th scope="col" rowspan="3">Nama Anggota</th>
                     <th scope="col" rowspan="3">Kelas</th>
-                    {% if reports %}
-                        <th scope="col" colspan="{{ reports.count }}">
-                            Pertemuan Eksktrakurikuler Bulan {{ reports.first.tanggal_pembinaan|date:"F" }}
+                    {% if object_list %}
+                        <th scope="col" colspan="{{ object_list.count }}">
+                            Pertemuan Eksktrakurikuler Bulan {{ object_list.first.tanggal_pembinaan|date:"F" }}
                         </th>
                     {% else %}
                         <th scope="col" colspan="4">
-                            Pertemuan Eksktrakurikuler Bulan {{ reports.first.tanggal_pembinaan|date:"F" }}
+                            Pertemuan Eksktrakurikuler Bulan {{ object_list.first.tanggal_pembinaan|date:"F" }}
                         </th>
 
                     {% endif %}
                 </tr>
                 <tr>
-                    {% for report in reports %}
+                    {% for report in object_list %}
                         <th scope="col">{{ report.tanggal_pembinaan|date:"d/m" }}</th>
                     {% endfor %}
                 </tr>
 
                 </thead>
                 <tbody style="font-size: 0.8rem">
-                {% if reports %}
+                {% if object_list %}
                     {% for student in students %}
                         <tr>
                             <td class="text-center">{{ forloop.counter }}</td>
                             <td>{{ student.siswa.nama_siswa }}</td>
                             <td class="text-center">{{ student.siswa.get_kelas_display  }}</td>
-                            {% for report in reports %}
+                            {% for report in object_list %}
                                 <td class="text-center">
                                     {% for santri in report.kehadiran_santri.all %}
-                                        {% if santri.siswa.nama_siswa == student.siswa.nama_siswa %}
+                                        {% if santri.siswa == student.siswa %}
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
                                                 <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
                                                 <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
@@ -87,7 +87,7 @@
                         {% for pembina in ekskul.pembina.all %}
                             <tr>
                                 <td colspan="3">Pembina Ekskul {{ forloop.counter }} : {{ pembina }}</td>
-                                {% for report in reports %}
+                                {% for report in object_list %}
                                     <td class="text-center">
                                         {% if report.pembina_ekskul == pembina %}
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
@@ -102,7 +102,7 @@
                     {% else %}
                         <tr>
                             <td colspan="3">Pembina Ekskul : {{ ekskul.pembina.first }}</td>
-                            {% for report in reports %}
+                            {% for report in object_list %}
                                 <td class="text-center">
                                     {% if report.pembina_ekskul == ekskul.pembina.first %}
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
@@ -117,7 +117,7 @@
 
                     <tr>
                         <td colspan="3">Materi / Catatan Pembinaan</td>
-                        {% for report in reports %}
+                        {% for report in object_list %}
                             <td class="text-center">
                                 {{ report.catatan_pembinaan }}
                             </td>
@@ -155,17 +155,17 @@
                 {% endif %}
                 </tbody>
             </table>
-            {% if reports.last.tanggal_pembinaan %}
+            {% if object_list.last.tanggal_pembinaan %}
                 <p class="text-end m-0">Bekasi, {{tanggal|date:"j F Y"}}</p>
             {% else %}
                 <p class="text-end m-0">Bekasi, .............................................</p>
             {% endif %}
-            {% if reports.first.nama_ekskul.pembina.all.count > 1 %}
+            {% if object_list.first.nama_ekskul.pembina.all.count > 1 %}
                 <div class="row mb-4">
                     <div class="col text-center">
                         <p>Wakasek Ekstrakurikuler</p>
                     </div>
-                    {% for pembina in reports.first.nama_ekskul.pembina.all %}
+                    {% for pembina in object_list.first.nama_ekskul.pembina.all %}
                         <div class="col text-center">
                             <p>Pembina {{ forloop.counter }}</p>
                         </div>
@@ -175,7 +175,7 @@
                     <div class="col text-center">
                         <p>Panji Asmara, S.Pd</p>
                     </div>
-                    {% for pembina in reports.first.nama_ekskul.pembina.all %}
+                    {% for pembina in object_list.first.nama_ekskul.pembina.all %}
                         <div class="col text-center">
                             <p>{{ pembina }}</p>
                         </div>
@@ -195,7 +195,7 @@
                         <p>Panji Asmara, S.Pd</p>
                     </div>
                     <div class="col text-center">
-                        <p>{{ reports.first.nama_ekskul.pembina.first }}</p>
+                        <p>{{ object_list.first.nama_ekskul.pembina.first }}</p>
                     </div>
                 </div>
             {% endif %}

@@ -25,7 +25,6 @@
             {% for pembina in object_list.first.nama_ekskul.pembina.all %}
             {% if request.user.teacher == pembina %}
             <a href="{% url 'laporan:laporan-input' object_list.first.nama_ekskul.slug %}" class="btn btn-primary">Input Laporan</a>
-            <a href="{% url 'laporan:laporan-upload' object_list.first.nama_ekskul.slug %}" class="btn btn-success">Upload Foto</a>
             {% endif %}
             {% endfor %}
             {% endif %}

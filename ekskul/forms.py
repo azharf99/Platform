@@ -37,6 +37,7 @@ class PembinaEkskulForm(forms.ModelForm):
             'no_hp': forms.NumberInput(attrs={'class': 'form-control'}),
             'alamat': forms.TextInput(attrs={'class': 'form-control'}),
             'user': forms.Select(attrs={'class': 'form-select'}),
+            'foto': forms.FileInput(attrs={'class': 'form-control', 'required': True}),
         }
 
 
@@ -52,7 +53,6 @@ class EkskulForm(forms.ModelForm):
             'waktu': forms.Select(attrs={'class': 'form-select'}),
             'tipe': forms.Select(attrs={'class': 'form-select'}),
             'deskripsi': forms.Textarea(attrs={'class': 'form-control'}),
-            'slug': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 
