@@ -1,16 +1,12 @@
 from django.db import models
 
 # Create your models here.
-pilihan = (
-    (1, "Ada"),
-    (0, "Tidak Ada"),
-)
 
 class Prestasi(models.Model):
     kategori = models.CharField(max_length=100)
     jenis_lomba = models.CharField(max_length=100)
     tingkat_lomba = models.CharField(max_length=100)
-    tahun_lomba = models.DateField()
+    tahun_lomba = models.CharField(max_length=4)
     nama_lomba = models.CharField(max_length=100)
     Penyelenggara_lomba = models.CharField(max_length=100)
     peraih_prestasi = models.CharField(max_length=100)
@@ -18,7 +14,6 @@ class Prestasi(models.Model):
     sekolah = models.CharField(max_length=100, default="SMAS IT Al Binaa")
     bidang_lomba = models.CharField(max_length=100)
     kategori_kemenangan = models.CharField(max_length=100)
-    dokumentasi = models.BooleanField(choices=pilihan, default=0)
     sertifikat_1 = models.FileField(upload_to='prestasi/sertifikat', null=True, blank=True)
     sertifikat_2 = models.FileField(upload_to='prestasi/sertifikat', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -30,6 +25,7 @@ class Prestasi(models.Model):
 class DokumentasiPrestasi(models.Model):
     prestasi = models.ForeignKey('Prestasi', on_delete=models.CASCADE)
     foto = models.FileField(upload_to='prestasi', blank=True, null=True, default='no-image.png')
+    keterangan = models.TextField(max_length=300, blank=True, null=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -29,7 +29,7 @@
                         {% for data in prestasi %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ data.nama_lomba}} {{ data.tahun_lomba|date:"Y"}}</td>
+                                <td>{{ data.nama_lomba}} {{ data.tahun_lomba}}</td>
                                 <td>{{ data.tingkat_lomba }}</td>
                                 <td>{{ data.kategori_kemenangan }} {{ data.bidang_lomba }}</td>
                                 <td>{{ data.peraih_prestasi }}</td>
