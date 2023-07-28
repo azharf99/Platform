@@ -18,6 +18,7 @@ from django.views.generic import ListView, DetailView, CreateView, DeleteView, U
 
 class EkskulIndexView(ListView):
     model = Extracurricular
+    paginate_by = 9
 
     def get_queryset(self):
         if self.request.user.is_authenticated:

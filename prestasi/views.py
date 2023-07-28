@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.views.generic import ListView
 
 from prestasi.forms import PrestasiInputForm, PrestasiEditForm, DokumentasiPrestasiEditForm, DokumentasiPrestasiInputForm
 from prestasi.models import Prestasi, DokumentasiPrestasi
@@ -14,6 +15,12 @@ import xlsxwriter
 
 
 # Create your views here.
+class PrestasiIndexView(ListView):
+    model = Prestasi
+    queryset = Prestasi.objects.all().order_by('-tahun_lomba', 'peraih_prestasi')
+    paginate_by = 9
+    template_name = 'prestasi2.html'
+
 
 def index(request):
     prestasi = Prestasi.objects.all().order_by('-tahun_lomba', 'peraih_prestasi')
@@ -41,7 +48,7 @@ def print_to_excel(request):
     row = 1
     col = 0
     for data in nilai:
-        worksheet.write_row(row, col, [row, data.peraih_prestasi, data.kelas_peraih_prestasi, data.kategori, data.jenis_lomba, data.tingkat_lomba, data.tahun_lomba.year, data.nama_lomba, data.bidang_lomba, data.kategori_kemenangan, data.Penyelenggara_lomba, data.sekolah])
+        worksheet.write_row(row, col, [row, data.peraih_prestasi, data.kelas_peraih_prestasi, data.kategori, data.jenis_lomba, data.tingkat_lomba, data.tahun_lomba, data.nama_lomba, data.bidang_lomba, data.kategori_kemenangan, data.Penyelenggara_lomba, data.sekolah])
         row += 1
     workbook.close()
     buffer.seek(0)

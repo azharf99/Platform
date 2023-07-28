@@ -104,6 +104,9 @@ class Extracurricular(models.Model):
         self.slug = slugify(self.nama_ekskul)
         super(Extracurricular, self).save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return reverse("ekskul:data-detail", kwargs={"slug": self.slug})
+
     class Meta:
         indexes = [
             models.Index(fields=["id", "slug",]),
