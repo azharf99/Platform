@@ -34,7 +34,7 @@ class ProposalEditForm(forms.ModelForm):
             'pembuat_event': forms.TextInput(attrs={'class': 'form-control'}),
             'tanggal_pendaftaran': forms.DateInput(attrs={'class': 'form-control'}),
             'tanggal_pelaksanaan': forms.DateInput(attrs={'class': 'form-control'}),
-            'pengumuman_pemenang': forms.DateInput(attrs={'class': 'form-control'}),
+            'pelaksanaan': forms.Select(attrs={'class': 'form-control'}),
             'tingkat_event': forms.Select(attrs={'class': 'form-select'}),
             'lokasi_event': forms.TextInput(attrs={'class': 'form-control'}),
             'penanggungjawab': forms.Select(attrs={'class': 'form-select'}),
@@ -50,23 +50,21 @@ class ProposalEditForm(forms.ModelForm):
 class StatusProposalForm(forms.ModelForm):
     class Meta:
         model = ProposalStatus
-        fields = ['proposal', 'is_wakasek', 'alasan_wakasek', 'foto_alasan']
+        fields = ['proposal', 'is_wakasek', 'alasan_wakasek']
         widgets = {
             'proposal': forms.Select(attrs={'class': 'form-control'}),
             'is_wakasek': forms.Select(attrs={'class': 'form-select'}),
             'alasan_wakasek': forms.TextInput(attrs={'class': 'form-control'}),
-            'foto_alasan': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
 
 class StatusProposalKepsekForm(forms.ModelForm):
     class Meta:
         model = ProposalStatusKepsek
-        fields = ['is_kepsek', 'alasan_kepsek', 'foto_alasan']
+        fields = ['is_kepsek', 'alasan_kepsek']
         widgets = {
             'is_kepsek': forms.Select(attrs={'class': 'form-select'}),
             'alasan_kepsek': forms.TextInput(attrs={'class': 'form-control'}),
-            'foto_alasan': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
 
