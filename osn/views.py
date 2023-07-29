@@ -5,18 +5,18 @@ import pytz
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import ListView, DetailView, CreateView
+
 from osn.models import BidangOSN, SiswaOSN, LaporanOSN
 from osn.forms import FormInputBidang, FormInputSiswa, FormInputLaporanOSN, FormEditLaporanOSN
 
 
 # Create your views here.
-
-def index(request):
-    data = BidangOSN.objects.all().order_by('nama_bidang')
-    context = {
-        'data': data,
-    }
-    return render(request, 'osn.html', context)
+class OsnIndexView(ListView):
+    model = BidangOSN
+    queryset = BidangOSN.objects.all().order_by('nama_bidang')
+    context_object_name = 'data'
+    template_name = 'osn.html'
 
 
 @login_required(login_url='/login/')
@@ -82,17 +82,17 @@ def bidang_osn_delete(request, pk):
     }
     return render(request, 'osn-delete.html', context)
 
-def detail_bidang_osn(request, slug):
-    data = get_object_or_404(BidangOSN, slug=slug)
-    data_siswa = SiswaOSN.objects.filter(bidang_osn__slug=slug).order_by('nama_siswa__kelas', 'nama_siswa__nama')
-    data_laporan = LaporanOSN.objects.filter(bidang_osn__nama_bidang=data.nama_bidang).order_by('tanggal_pembinaan')
+class DetailBidangOSNView(DetailView):
+    model = BidangOSN
+    template_name = 'osn-detail.html'
+    context_object_name = 'data'
 
-    context = {
-        'data': data,
-        'data_siswa': data_siswa,
-        'data_laporan': data_laporan,
-    }
-    return render(request, 'osn-detail.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['data_siswa'] = SiswaOSN.objects.filter(bidang_osn__slug=self.kwargs.get('slug')).order_by('nama_siswa__kelas', 'nama_siswa__nama_siswa')
+        context['data_laporan'] = LaporanOSN.objects.filter(bidang_osn__slug=self.kwargs.get('slug')).order_by('tanggal_pembinaan')
+        return context
+
 
 @login_required(login_url='/login')
 def siswa_osn_input(request, slug):

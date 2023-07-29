@@ -52,7 +52,7 @@
                         {% for student in data_siswa %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td class="text-start">{{ student.nama_siswa.nama}}</td>
+                                <td class="text-start">{{ student.nama_siswa.nama_siswa}}</td>
                                 <td>{{ student.nama_siswa.nis}}</td>
                                 <td>{{ student.nama_siswa.kelas }}</td>
                                 {% if request.user.is_authenticated %}
