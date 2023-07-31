@@ -64,6 +64,7 @@ urlpatterns = [
     path('unduh/', unduh, name='unduh-page'),
     path('notavailable/', not_available, name='not-available'),
     path('restricted/', restricted, name='restricted'),
+    path('webhook/', ekskul.views.webhook_view, name='webhook'),
 ]
 
 urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

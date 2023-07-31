@@ -1,3 +1,8 @@
+import json
+
+import requests
+from django.conf import settings
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -9,7 +14,7 @@ from ekskul.models import Extracurricular, Student, StudentOrganization, Teacher
 from ekskul.forms import InputAnggotaEkskulForm, PembinaEkskulForm, EkskulForm, CustomUserCreationForm, UsernameChangeForm, CustomPasswordChangeForm
 from userlog.models import UserLog
 from nilai.models import Penilaian
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 
 
@@ -272,3 +277,23 @@ def edit_password(request):
         'tipe' : 'change',
     }
     return render(request, 'register.html', context)
+
+@csrf_exempt
+def webhook_view(request):
+    if request.method == 'POST':
+        # Process the incoming webhook data here
+        # For example, you can access the payload using `request.POST` or `request.body`
+
+        # Replace this with your actual webhook processing logic
+        dataku = json.loads(request.POST)
+        message = dataku['message']
+        phone = dataku['phone']
+        url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={settings.TOKEN}"
+        requests.get(url)
+        data = {
+            'status': 'success',
+            'message': 'Webhook received and processed successfully!',
+        }
+        return JsonResponse(data)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
