@@ -83,7 +83,7 @@ class DeleteAnggotaView(LoginRequiredMixin, DeleteView):
         all = ekskul.pembina.all().values_list('user_id', flat=True)
         if not self.request.user.id in all and not self.request.user.is_superuser:
             return HttpResponseRedirect(reverse('restricted'))
-        return self.render_to_response(self.get_context_data())
+        return super().get(request, *args, **kwargs)
     def get_object(self, queryset=None):
         queryset = StudentOrganization.objects.get(siswa_id=self.kwargs.get('pk'), ekskul__slug=self.kwargs.get('slug'))
         return queryset
