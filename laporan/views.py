@@ -33,13 +33,16 @@ class PrintToPDFView(ListView):
     template_name = 'laporan-print.html'
 
     def get_queryset(self):
-        return Report.objects.filter(nama_ekskul__slug=self.kwargs.get('slug'), tanggal_pembinaan__month=datetime.date.today().month).order_by('tanggal_pembinaan')
+        return Report.objects.filter(nama_ekskul__slug=self.kwargs.get('slug'), tanggal_pembinaan__month=datetime.date.today().month-1).order_by('tanggal_pembinaan')
 
     def get_context_data(self, **kwargs):
         context = super(PrintToPDFView, self).get_context_data(**kwargs)
         locale.setlocale(locale.LC_ALL, 'id_ID')
         context['tanggal'] = datetime.datetime.now(timezone.get_default_timezone())
-        context['students'] = StudentOrganization.objects.filter(ekskul__slug=self.kwargs.get('slug')).order_by('siswa__kelas', 'siswa__nama_siswa')
+        # data = Report.objects.values_list('kehadiran_santri__siswa__nama_siswa', flat=True)
+        # for d in set(data):
+        #     print(d)
+        context['students'] = StudentOrganization.objects.filter(ekskul__slug=self.kwargs.get('slug')).order_by('siswa__kelas', 'siswa__nama_siswa').values_list('siswa__nama_siswa', 'siswa__kelas')
         context['angka'] = [x for x in range(15)]
         return context
 
@@ -116,7 +119,7 @@ class LaporanDetailView(DetailView):
 @login_required(login_url='/login/')
 def laporan_input(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
-    filtered_student = StudentOrganization.objects.filter(ekskul=ekskul)
+    filtered_student = StudentOrganization.objects.filter(ekskul=ekskul).order_by('siswa__kelas', 'siswa__nama_siswa')
     all = ekskul.pembina.all().values_list('user_id', flat=True)
     if request.user.id not in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
@@ -141,17 +144,19 @@ def laporan_input(request, slug):
             FormLaporanKehadiran.foto = image
             if form.is_valid():
                 form.save()
+                locale.setlocale(locale.LC_ALL, 'id_ID')
+                tanggal = datetime.date.fromisoformat(tanggal_pembinaan).strftime('%d %B %Y')
                 UserLog.objects.create(
                     user=request.user.teacher,
                     action_flag="ADD",
                     app="LAPORAN",
                     message="Berhasil menambahkan data laporan pertemuan ekskul {} untuk tanggal {}".format(ekskul,
-                                                                                                            tanggal_pembinaan)
+                                                                                                            tanggal)
                 )
 
                 phone = request.user.teacher.no_hp
                 message = f'''*[NOTIFIKASI LAPORAN EKSKUL]*
-Anda berhasil input laporan pertemuan ekskul *{ekskul.nama_ekskul}* untuk tanggal *{tanggal_pembinaan}*.
+Anda berhasil input laporan pertemuan ekskul *{ekskul.nama_ekskul}* untuk tanggal *{tanggal}*.
 Detail laporan:
 https://pmbp.smasitalbinaa.com/laporan/{ekskul.slug}
 

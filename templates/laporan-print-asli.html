@@ -63,20 +63,19 @@
                 </thead>
                 <tbody style="font-size: 0.8rem">
                 {% if object_list %}
-                    {% for nama, kelas in students %}
+                    {% for student in students %}
                         <tr>
                             <td class="text-center">{{ forloop.counter }}</td>
-                            <td>{{ nama }}</td>
-                            <td class="text-center">{{ kelas }}</td>
+                            <td>{{ student.siswa.nama_siswa }}</td>
+                            <td class="text-center">{{ student.siswa.get_kelas_display  }}</td>
                             {% for report in object_list %}
-                                <td class="text-center" >
-                                    {% for x in report.kehadiran_santri.all %}
-                                        {% if x.siswa.nama_siswa == nama %}
+                                <td class="text-center">
+                                    {% for santri in report.kehadiran_santri.all %}
+                                        {% if santri.siswa == student.siswa %}
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
                                                 <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
                                                 <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
                                             </svg>
-
                                         {% endif %}
                                     {% endfor %}
 
@@ -84,20 +83,37 @@
                             {% endfor %}
                         </tr>
                     {% endfor %}
-
-                    {% for pembina in object_list.first.nama_ekskul.pembina.all %}
+                    {% if ekskul.pembina.all.count > 1 %}
+                        {% for pembina in ekskul.pembina.all %}
+                            <tr>
+                                <td colspan="3">Pembina Ekskul {{ forloop.counter }} : {{ pembina }}</td>
+                                {% for report in object_list %}
+                                    <td class="text-center">
+                                        {% if report.pembina_ekskul == pembina %}
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
+                                                <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
+                                                <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
+                                            </svg>
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    {% else %}
                         <tr>
-                            <td colspan="3">Pembina {{ forloop.counter }} : {{ pembina }}</td>
+                            <td colspan="3">Pembina Ekskul : {{ ekskul.pembina.first }}</td>
                             {% for report in object_list %}
                                 <td class="text-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
-                                        <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
-                                        <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
-                                    </svg>
+                                    {% if report.pembina_ekskul == ekskul.pembina.first %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
+                                            <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
+                                            <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
+                                        </svg>
+                                    {% endif %}
                                 </td>
                             {% endfor %}
                         </tr>
-                    {% endfor %}
+                    {% endif %}
 
                     <tr>
                         <td colspan="3">Materi / Catatan Pembinaan</td>
@@ -122,7 +138,7 @@
                     {% endfor %}
 
                     <tr>
-                        <td colspan="3">Pembina Ekskul : {{ object_list.first.nama_ekskul.pembina.first }}</td>
+                        <td colspan="3">Pembina Ekskul : {{ ekskul.pembina.first }}</td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -140,7 +156,7 @@
                 </tbody>
             </table>
             {% if object_list.last.tanggal_pembinaan %}
-                <p class="text-end m-0">Bekasi, {{object_list.last.tanggal_pembinaan|date:"j F Y"}}</p>
+                <p class="text-end m-0">Bekasi, {{tanggal|date:"j F Y"}}</p>
             {% else %}
                 <p class="text-end m-0">Bekasi, .............................................</p>
             {% endif %}
@@ -191,6 +207,7 @@
     document.addEventListener("DOMContentLoaded", (event) => {
         window.print();
     });
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 </body>

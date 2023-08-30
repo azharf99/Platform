@@ -38,6 +38,12 @@ class EkskulIndexView(ListView):
 class EkskulDetailView(DetailView):
     model = Extracurricular
 
+    def get_context_data(self, **kwargs):
+        context = super(EkskulDetailView, self).get_context_data(**kwargs)
+        context['anggota'] = StudentOrganization.objects.filter(ekskul__slug=self.kwargs.get('slug')).order_by('siswa__kelas', 'siswa__nama_siswa')
+        return context
+
+
 class InputAnggotaView(LoginRequiredMixin, CreateView):
     model = StudentOrganization
     form_class = InputAnggotaEkskulForm

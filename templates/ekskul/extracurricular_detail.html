@@ -47,7 +47,7 @@
                 </thead>
                 <tbody>
                 {% if object.studentorganization_set.all %}
-                {% for student in object.studentorganization_set.all %}
+                {% for student in anggota %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td class="text-start">{{ student.siswa.nama_siswa}}</td>

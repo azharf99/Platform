@@ -53,13 +53,6 @@ def print_to_excel(request):
     workbook.close()
     buffer.seek(0)
 
-    UserLog.objects.create(
-        user=request.user.teacher,
-        action_flag="PRINT",
-        app="NILAI",
-        message="Berhasil download data prestasi dalam format Excel"
-    )
-
     return FileResponse(buffer, as_attachment=True, filename='Prestasi SMA IT Al Binaa.xlsx')
 
 @login_required(login_url="/login/")
