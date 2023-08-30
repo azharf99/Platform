@@ -3,22 +3,20 @@
 {% block content %}
 
 
-    <div class="container mt-5 p-4 text-center">
-        <h1>Daftar Ekstrakurikuler dan <em>Study Club</em> SMA IT Al Binaa</h1>
+    <div class="mt-5 p-4 text-center">
+        <h1>Data Ekstrakurikuler SMA IT Al Binaa</h1>
     </div>
 
     <div class="container">
-        <div class="row justify-content-center align-items-center">
+        <div class="text-center">
             {% if object_list %}
-                        <div class="d-flex flex-wrap justify-content-around align-items-start">
                 {% for ekskul in object_list %}
-                    <div class="card border-primary m-2" style="width: 18rem; height: 100%;">
-                        <div class="card-header p-0 text-bg-primary">
-                        <img src="{{ekskul.logo.url}}" class="card-img-top" alt="Logo Ekskul">
-                        <p class="text-center m-0">{{ ekskul.get_tipe_display }}</p>
+                    <div class="card border-primary d-inline-flex text-start m-2" style="width: 18rem; height: 100%;">
+                        <div class="card-header text-bg-primary">
+                            {{ ekskul.get_tipe_display }}
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title text-primary">{{ ekskul.nama_ekskul }}</h5>
+                            <h5 class="card-title text-primary">{{ ekskul.nama }}</h5>
                             {% for pembina in ekskul.pembina.all %}
                                 <h6 class="card-subtitle mb-2">Ustadz {{ pembina }}</h6>
                             {% endfor %}
@@ -27,41 +25,19 @@
                                 <p class="p-0 m-0">Pertemuan tambahan: {{ ekskul.jadwal_tambahan }} {{ ekskul.waktu_tambahan }}</p>
                             {% endif %}
                             <p class="card-text p-0 m-0">Jumlah anggota : {{ ekskul.studentorganization_set.count }}</p>
-                            {% if ekskul.deskripsi %}
-                            <p class="card-text p-0 m-0">{{ ekskul.deskripsi }}</p>
-                            {% endif %}
                         </div>
                         <div class="card-footer border-primary text-center">
                             {% if request.user.is_authenticated %}
-                            <a href="{% url 'ekskul:edit-detail' ekskul.slug %}" class="btn btn-danger m-1">Edit {{ ekskul.tipe }}</a>
+                            <a href="{% url 'ekskul:edit-detail' ekskul.slug %}" class="btn btn-danger m-1">Edit Ekskul</a>
                             <a href="{% url 'ekskul:input-anggota' ekskul.slug %}" class="btn btn-success m-1">Input Anggota</a>
                             {% endif %}
                             <a href="{% url 'ekskul:data-detail' ekskul.slug %}" class="btn btn-primary m-1">Lihat Anggota</a>
                         </div>
                     </div>
-
                 {% endfor %}
-                        </div>
             {% endif %}
         </div>
     </div>
-<div class="pagination container justify-content-center my-3">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?page=1" class="btn btn-sm btn-outline-primary">&laquo; First</a>
-            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-outline-primary">Previous</a>
-        {% endif %}
-
-        <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-        </span>
-
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm btn-outline-primary">Next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-sm btn-outline-primary">Last &raquo;</a>
-        {% endif %}
-    </span>
-        </div>
 
 
 {% endblock %}
