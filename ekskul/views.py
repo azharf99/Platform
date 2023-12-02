@@ -43,6 +43,21 @@ class EkskulDetailView(DetailView):
         context['anggota'] = StudentOrganization.objects.filter(ekskul__slug=self.kwargs.get('slug')).order_by('siswa__kelas', 'siswa__nama_siswa')
         return context
 
+class DataSantriView(ListView):
+    model = StudentOrganization
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        print(query)
+        if query:
+            # Use the 'q' parameter to filter the queryset
+            queryset = StudentOrganization.objects.filter(siswa__nama_siswa__icontains=query)
+        else:
+            queryset = StudentOrganization.objects.all().order_by('siswa__kelas', 'siswa__nama_siswa')
+
+        return queryset
+
+
 
 class InputAnggotaView(LoginRequiredMixin, CreateView):
     model = StudentOrganization

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5 pt-5 mb-2 d-flex justify-content-center">
+<div class="mt-2 pt-2">
+    <form action="" method="get" class="row g-3">
+  <div class="col-auto">
+    <label for="cariSiswa" class="visually-hidden">Cari data siswa</label>
+    <input type="text" class="form-control" name="q" id="cariSiswa" placeholder="ketik nama siswa ..">
+  </div>
+  <div class="col-auto">
+    <input type="submit" class="btn btn-primary mb-3" value="Cari data">
+  </div>
+</form>
+</div>
+</div>
+
+<table class="table table-hover container">
+  <thead>
+    <tr>
+      <th scope="col">No.</th>
+      <th scope="col">Nama Siswa</th>
+      <th scope="col">Kelas</th>
+      <th scope="col">Ekstrakurikuler</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for object in object_list %}
+    <tr>
+      <th scope="row">{{forloop.counter}}</th>
+      <td>{{object.siswa.nama_siswa}}</td>
+      <td>{{object.siswa.get_kelas_display}}</td>
+      <td>{{ object.ekskul.nama_ekskul }}</td>
+    </tr>
+    {% empty %}
+    <td colspan="4" class="text-center">Data tidak ditemukan!</td>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!--<ul>-->
+<!--    &lt;!&ndash; Iterate over object_list &ndash;&gt;-->
+<!--    {% for object in object_list %}-->
+<!--    &lt;!&ndash; Display Objects &ndash;&gt;-->
+<!--    <li>{{ object.siswa }}</li>-->
+<!--    <li>{{ object.ekskul }}</li>-->
+
+<!--    <hr/>-->
+<!--    &lt;!&ndash; If object_list is empty  &ndash;&gt;-->
+<!--    {% empty %}-->
+<!--    <li>No objects yet.</li>-->
+<!--    {% endfor %}-->
+<!--</ul>-->
+
+
+{% endblock %}
