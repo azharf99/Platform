@@ -1,0 +1,273 @@
+{% load static %}
+<!-- ======= Sidebar ======= -->
+<aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'dashboard' %}">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-menu-button-wide"></i><span>Ekstrakurikuler/SC</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          {% if request.user.is_authenticated %}
+          {% for data in request.user.teacher.extracurricular_set.all %}
+          <small class="fw-bold text-primary">{{data.nama_ekskul}}</small class="fw-bold">
+            <li>
+              <a href="{% url 'ekskul:input-anggota' data.slug %}">
+                <i class="bi bi-circle"></i><span>Input Anggota</span>
+              </a>
+            </li>
+            <li>
+            <a href="{% url 'ekskul:edit-detail' data.slug %}">
+              <i class="bi bi-circle"></i><span>Edit Konfigurasi</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'ekskul:data-detail' data.slug %}">
+              <i class="bi bi-circle"></i><span>Lihat/Edit Anggota</span>
+            </a>
+          </li>
+          <hr class="m-0 p-0">
+          {% endfor %}
+          {% endif %}
+          <li>
+            <a href="{% url 'ekskul:data-index' %}">
+              <i class="bi bi-circle"></i><span>Daftar Ekskul/SC</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'ekskul:data-santri' %}">
+              <i class="bi bi-circle"></i><span>Data Siswa Ekskul/SC</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Components Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-journal-text"></i><span>Laporan</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          {% if request.user.is_authenticated %}
+          {% for data in request.user.teacher.extracurricular_set.all %}
+          <small class="fw-bold text-primary">{{data.nama_ekskul}}</small class="fw-bold">
+          <li>
+            <a href="{% url 'laporan:laporan-input' data.slug %}">
+              <i class="bi bi-circle"></i><span>Input Laporan</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'laporan:laporan-ekskul' data.slug %}">
+              <i class="bi bi-circle"></i><span>Rekap/Edit Laporan</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'laporan:laporan-print' data.slug %}">
+              <i class="bi bi-circle"></i><span>Cetak Laporan {{data.nama_ekskul}}</span>
+            </a>
+          </li>
+          <hr class="m-0 p-0">
+          {% endfor%}
+          {% endif %}
+          <li>
+            <a href="{% url 'laporan:laporan-index' %}">
+              <i class="bi bi-circle"></i><span>Daftar Laporan Ekskul/SC</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Forms Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-layout-text-window-reverse"></i><span>Nilai</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          {% if request.user.is_authenticated %}
+          {% for data in request.user.teacher.extracurricular_set.all %}
+          <small class="fw-bold text-primary">{{data.nama_ekskul}}</small class="fw-bold">
+          <li>
+            <a href="{% url 'nilai:nilai-input' data.slug %}">
+              <i class="bi bi-circle"></i><span>Input Nilai</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'nilai:nilai-detail' data.slug %}">
+              <i class="bi bi-circle"></i><span>Rekap/Edit Nilai</span>
+            </a>
+          </li>
+          <hr class="m-0 p-0">
+          {% endfor%}
+          {% endif %}
+          <li>
+            <a href="{% url 'nilai:nilai-index' %}">
+              <i class="bi bi-circle"></i><span>Daftar Nilai Ekskul/SC</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Tables Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-file-earmark-text"></i><span>Proposal</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          {% if request.user.is_authenticated %}
+          <li>
+            <a href="{% url 'proposal:proposal-input' %}">
+              <i class="bi bi-circle"></i><span>Buat Proposal Lomba</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'proposal:proposal-inventaris-input' %}">
+              <i class="bi bi-circle"></i><span>Buat Proposal Inventaris</span>
+            </a>
+          </li>
+          <hr class="m-0 p-0">
+          {% endif %}
+          <li>
+            <a href="{% url 'proposal:proposal-index' %}">
+              <i class="bi bi-circle"></i><span>Daftar Proposal</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% static 'template-proposal.docx' %}l">
+              <i class="bi bi-circle"></i><span>Template Proposal Lomba</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% static 'template-proposal-pengadaan.docx' %}">
+              <i class="bi bi-circle"></i><span>Template Proposal Inventaris</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Charts Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#osn-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-award"></i><span>OSN 2024</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="osn-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          {% if request.user.is_authenticated %}
+          {% for data in request.user.teacher.bidangosn_set.all %}
+          <small class="fw-bold text-primary">{{data.nama_bidang}}</small class="fw-bold">
+            <li>
+              <a href="{% url 'osn:siswa-osn-input' data.slug %}">
+                <i class="bi bi-circle"></i><span>Input Siswa</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'osn:laporan-osn-input' data.slug %}">
+                <i class="bi bi-circle"></i><span>Input Bimbingan OSN</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'osn:detail-bidang-osn' data.slug %}">
+                <i class="bi bi-circle"></i><span>Rekapan Bimbingan</span>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'osn:laporan-osnk-print' data.slug %}">
+                <i class="bi bi-circle"></i><span>Cetak Hasil Bimbingan</span>
+              </a>
+            </li>
+            <hr class="m-0 p-0">
+            {% endfor%}
+            {% endif %}
+            {% if request.user.is_superuser %}
+            <li>
+              <a href="{% url 'osn:bidang-osn-input' %}">
+                <i class="bi bi-circle"></i><span>Input Bidang OSN</span>
+              </a>
+            </li>
+            {% endif %}
+            <li>
+              <a href="{% url 'osn:osn-index' %}">
+                <i class="bi bi-circle"></i><span>Daftar Bidang OSN</span>
+              </a>
+            </li>
+        </ul>
+      </li><!-- End Charts Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#icons-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-gem"></i><span>Prestasi</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="icons-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          {% if request.user.is_superuser %}
+          <li>
+            <a href="{% url 'prestasi:prestasi-input' %}">
+              <i class="bi bi-circle"></i><span>Input Data Prestasi</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'prestasi:prestasi-foto-input' %}">
+              <i class="bi bi-circle"></i><span>Input Dokumentasi Prestasi</span>
+            </a>
+          </li>
+          <hr class="m-0 p-0">
+          {% endif %}
+          <li>
+            <a href="{% url 'prestasi:prestasi-index' %}">
+              <i class="bi bi-circle"></i><span>Daftar Prestasi</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'prestasi:print-to-excel' %}">
+              <i class="bi bi-circle"></i><span>Unduh ke Excel</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Icons Nav -->
+
+      <li class="nav-heading">Pages</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'profil' %}">
+          <i class="bi bi-person"></i>
+          <span>Profile</span>
+        </a>
+      </li><!-- End Profile Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'app-index' %}#faq">
+          <i class="bi bi-question-circle"></i>
+          <span>F.A.Q</span>
+        </a>
+      </li><!-- End F.A.Q Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'app-index' %}#contact">
+          <i class="bi bi-envelope"></i>
+          <span>Contact</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+
+      {% if not request.user.is_authenticated %}
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'register' %}">
+          <i class="bi bi-card-list"></i>
+          <span>Register</span>
+        </a>
+      </li><!-- End Register Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'login' %}">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>Login</span>
+        </a>
+      </li><!-- End Login Page Nav -->
+
+      {% endif %}
+
+    </ul>
+
+  </aside><!-- End Sidebar-->

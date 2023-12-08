@@ -1,0 +1,98 @@
+{% extends 'new_base.html' %}
+{% block content %}
+{% load static %}
+{% include 'new_navbar.html'%}
+{% include 'new_sidebar.html'%}
+<main id="main" class="main">
+    <section class="section dashboard">
+        <div class="pagetitle">
+            <h1>Input Bidang OSN 2024 SMA IT Al Binaa</h1>
+            <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Home</a></li>
+                  <li class="breadcrumb-item">OSN 2024</li>
+                  <li class="breadcrumb-item active">{{ name }}</li>
+                </ol>
+            </nav>
+        </div>
+
+    <div class="container-fluid mt-5 p-5">
+        <div class="w-100 h-100 d-flex justify-content-center">
+            <form action="" method="post" id="form" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if messages %}
+                    <ul class="messages text-danger fw-bold">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <div class="card" style="min-width: 18rem;">
+                    <div class="card-header text-bg-dark text-center">
+                        {{ name }}
+                    </div>
+                    <div class="card-body">
+                        {% if siswa_osn and name == "Input Laporan OSN" %}
+                            {{ forms.as_p }}
+                        {% elif not name == "Input Laporan OSN" %}
+                            {{ forms.as_p }}
+                        {% else %}
+                            <h1 class="text-danger">Input siswa terlebih dahulu</h1>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer text-center">
+                        <a id="back" href="{% url 'osn:osn-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
+                        {% if siswa_osn and name == "Input Laporan OSN" %}
+                            <input id="save" type="submit" class="card-link btn btn-success m-1" value="Save Data">
+                            <button id="loading" class="btn btn-success" type="button" style="display: none" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Loading...
+                            </button>
+                        {% elif not name == "Input Laporan OSN" %}
+                            <input id="save" type="submit" class="card-link btn btn-success m-1" value="Save Data">
+                            <button id="loading" class="btn btn-success" type="button" style="display: none" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Loading...
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    </section>
+</main>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+<script>
+    $(document).ready(() => {
+        $('#id_pembimbing').selectize({
+            sortField: 'text',
+        });
+    });
+    $(document).ready(() => {
+        $('#id_bidang_osn').selectize({
+            sortField: 'text',
+        });
+    });
+    $(document).ready(() => {
+        $('#id_nama_siswa').selectize({
+            sortField: 'text',
+        });
+    });
+    $(document).ready(() => {
+        $('#id_pembimbing_osn').selectize({
+            sortField: 'text',
+        });
+    });
+    $(document).ready(() => {
+        $('#id_kehadiran_santri').selectize({
+            sortField: 'text',
+            maxItems: 5,
+        });
+    });
+</script>
+{% include 'script.html' %}
+{% endblock %}

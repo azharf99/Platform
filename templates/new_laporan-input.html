@@ -1,0 +1,127 @@
+{% extends 'new_base.html' %}
+{% block content %}
+{% load static %}
+{% include 'new_navbar.html'%}
+{% include 'new_sidebar.html'%}
+<main id="main" class="main">
+    <section class="section dashboard">
+        <div class="pagetitle">
+            <h1>Input Laporan Pembinaan {{ ekskul.nama_ekskul }} SMA IT Al Binaa</h1>
+            <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Home</a></li>
+                  <li class="breadcrumb-item">{{ ekskul.get_tipe_display }}</li>
+                  <li class="breadcrumb-item active">Input Laporan</li>
+                </ol>
+            </nav>
+        </div>
+
+    <div class="container-fluid mt-5 p-5">
+        <div class="w-100 h-100 d-flex justify-content-center">
+            <form action="" method="post" id="form" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if messages %}
+                    <ul class="messages text-danger fw-bold">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <div class="card" style="min-width: 18rem;">
+                    <div class="card-header text-bg-dark text-center">
+                        Input Laporan Kehadiran Ekskul {{ ekskul.nama_ekskul }}
+                    </div>
+                    <div class="card-body">
+                        {% if filtered_student %}
+
+                            <p class="field">
+                                <label for="id_nama_ekskul">Nama ekskul:</label>
+                                <select name="nama_ekskul" required id="id_nama_ekskul" class="form-control">
+                                    <option value="{{ ekskul.id }}">{{ ekskul.nama_ekskul }}</option>
+                                </select>
+                            </p>
+                            <p class="field">
+                                <label for="id_pembina_ekskul">Pembina Ekskul:</label>
+                                <select name="pembina_ekskul" required id="id_pembina_ekskul" class="form-select">
+                                    {% for guru in ekskul.pembina.all %}
+                                        <option value="{{ guru.id }}">{{ guru }}</option>
+                                    {% endfor %}
+                                </select>
+                            </p>
+                            <p class="field">
+                                <label for="id_tanggal_pembinaan">Tanggal Pembinaan:</label>
+                                <input type="date" name="tanggal_pembinaan" required id="id_tanggal_pembinaan" class="form-control">
+                            </p>
+                            <p class="field">
+                                <label for="id_kehadiran_santri">Kehadiran santri:</label>
+                                <input type="button" id="select_all" name="select_all" value="Pilih semua" class="btn btn-sm btn-primary float-end mb-2">
+                                <input type="button" id="unselect_all" name="unselect_all" value="Hapus semua" class="btn btn-sm btn-primary float-end mb-2">
+                                <select name="kehadiran_santri" required id="id_kehadiran_santri" multiple class="form-control">
+                                    {% for student in filtered_student %}
+                                    <option value="{{ student.id }}">{{ student.siswa }}</option>
+                                    {% endfor %}
+                                </select>
+                            </p>
+                            <p class="field">
+                                <label for="id_catatan_pembinaan">Foto Pembinaan:</label>
+                                {{ form.foto }}
+                            </p>
+                            <p class="field">
+                                <label for="id_foto">Catatan Pembinaan:</label>
+                                {{ form.catatan_pembinaan }}
+                            </p>
+
+                        {% else %}
+                            <p class="text-danger ">Maaf, Silahkan input data anggota ekskul terlebih dahulu agar anda dapat input laporan. Terima kasih. :)</p>
+                        {% endif %}
+
+                    </div>
+                    <div class="card-footer text-center">
+                        {% if filtered_student %}
+                            <a id="back" href="{% url 'laporan:laporan-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
+                            <input onsubmit="myFunction()" id="save" type="submit" class="card-link btn btn-success m-1" value="Save Data">
+                            <button id="loading" class="btn btn-success" type="button" style="display: none" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Loading...
+                            </button>
+                        {% else %}
+                            <a href="{% url 'laporan:laporan-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
+                            <a href="{% url 'ekskul:input-anggota' ekskul.slug %}" class="card-link btn btn-primary m-1">Input Anggota {{ ekskul.nama }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    </section>
+</main>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+<script>
+    $(document).ready(() => {
+        $('#id_kehadiran_santri').selectize({
+            sortField: 'text',
+            maxItems: null,
+        });
+    });
+</script> -->
+<script type="text/javascript">
+    $('#unselect_all').hide()
+    $('#select_all').click(function() {
+        $('#id_kehadiran_santri option').prop('selected', true);
+        $('#unselect_all').show()
+        $(this).hide()
+    });
+
+    $('#unselect_all').click(function() {
+        $('#id_kehadiran_santri option').prop('selected', false);
+        $('#select_all').show()
+        $(this).hide()
+    });
+
+
+</script>
+{% include 'script.html' %}
+{% endblock %}

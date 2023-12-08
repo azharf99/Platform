@@ -1,0 +1,569 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>PMBP - SMAS IT AL BINAA</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="{% static 'img/favicon.png' %}" rel="icon">
+  <link href="{% static 'img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/quill/quill.snow.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/simple-datatables/style.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'css/asha-style.css' %}" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: Arsha
+  * Updated: Sep 18 2023 with Bootstrap v5.3.2
+  * Template URL: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top ">
+    <div class="container d-flex align-items-center">
+
+      <h1 class="logo me-auto"><a href="{% url 'app-index' %}">PMBP</a></h1>
+      <!-- Uncomment below if you prefer to use an image logo -->
+      <!-- <a href="index.html" class="logo me-auto"><img src="assets/img/logo' %}" alt="" class="img-fluid"></a>-->
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
+          <li><a class="nav-link scrollto" href="#about">About</a></li>
+          <li><a class="nav-link scrollto" href="#services">Fitur</a></li>
+          <li><a class="nav-link   scrollto" href="#portfolio">Prestasi</a></li>
+          <li><a class="nav-link scrollto" href="#team">Team</a></li>
+          <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
+          <li><a class="getstarted scrollto" href="{% url 'dashboard' %}">Go to Dashboard</a></li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+
+    </div>
+  </header><!-- End Header -->
+
+  <!-- ======= Hero Section ======= -->
+  <section id="hero" class="d-flex align-items-center">
+
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 d-flex flex-column justify-content-center pt-4 pt-lg-0 order-2 order-lg-1" data-aos="fade-up" data-aos-delay="200">
+          <h1>PENGEMBANGAN MINAT, BAKAT DAN PEMBINAAN PRESTASI</h1>
+          <h2>SMAS IT AL BINAA BEKASI</h2>
+          <div class="d-flex justify-content-center justify-content-lg-start">
+            <a href="{% url 'dashboard' %}" class="btn-get-started scrollto">Go to Dashboard</a>
+            <a href="https://www.youtube.com/watch?v=6QODSy04Lzo" class="glightbox btn-watch-video"><i class="bi bi-play-circle"></i><span>Watch Video</span></a>
+          </div>
+        </div>
+        <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-in" data-aos-delay="200">
+          <img src="{% static 'img/hero.png' %}" class="img-fluid animated" alt="">
+        </div>
+      </div>
+    </div>
+
+  </section><!-- End Hero -->
+
+  <main id="main"> 
+
+    <!-- ======= About Us Section ======= -->
+    <section id="about" class="about">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h2>About Us</h2>
+        </div>
+
+        <div class="row content">
+          <div class="col-lg-6">
+            <p>
+              Kami adalah wadah untuk santri SMAS IT Al Binaa dalam pengembangan dan pembinaan tiga hal, yaitu:
+            </p>
+            <ul>
+              <li><i class="ri-check-double-line"></i> Pengembangan Minat</li>
+              <li><i class="ri-check-double-line"></i> Pengembangan Bakat</li>
+              <li><i class="ri-check-double-line"></i> Pembinaan Prestasi</li>
+            </ul>
+          </div>
+          <div class="col-lg-6 pt-4 pt-lg-0">
+            <p>
+              Aplikasi digital ini berisi informasi komprehensif mengenai ketiga hal tersebut yang dapat diakses oleh seluruh
+              stakeholder sekolah/pesantren.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End About Us Section -->
+
+    
+
+    <!-- ======= Skills Section ======= -->
+    <section id="skills" class="skills">
+      <div class="container" data-aos="fade-up">
+
+        <div class="row">
+          <div class="col-lg-6 pt-4 pt-lg-0 content" data-aos="fade-left" data-aos-delay="100">
+            <h3>Teknologi yang digunakan di website ini</h3>
+            <p class="fst-italic">
+
+            <div class="skills-content">
+
+              <div class="progress">
+                <span class="skill">HTML <i class="val">40%</i></span>
+                <div class="progress-bar-wrap">
+                  <div class="progress-bar" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+
+              <div class="progress">
+                <span class="skill">CSS <i class="val">20%</i></span>
+                <div class="progress-bar-wrap">
+                  <div class="progress-bar" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+
+              <div class="progress">
+                <span class="skill">JavaScript <i class="val">10%</i></span>
+                <div class="progress-bar-wrap">
+                  <div class="progress-bar" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+
+              <div class="progress">
+                <span class="skill">Python <i class="val">30%</i></span>
+                <div class="progress-bar-wrap">
+                  <div class="progress-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End Skills Section -->
+
+    <!-- ======= Services Section ======= -->
+    <section id="services" class="services section-bg">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h2>Fitur</h2>
+          <p>Fitu yang disediakan di apliasi website ini yaitu:</p>
+        </div>
+
+        <div class="row">
+          <div class="col-xl-3 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+            <div class="icon-box">
+              <div class="icon"><i class="bx bxl-dribbble"></i></div>
+              <h4><a href="">Data, Laporan dan Nilai Ekskul/SC</a></h4>
+              <p>Pembina dapat kostumisasi data ekskul, input anggota, upload laporan dan input nilai.
+                Orang tua hanya dapat melihat data siswa.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-xl-3 col-md-6 d-flex align-items-stretch mt-4 mt-md-0" data-aos="zoom-in" data-aos-delay="200">
+            <div class="icon-box">
+              <div class="icon"><i class="bx bx-file"></i></div>
+              <h4><a href="">Digitalisasi Proposal</a></h4>
+              <p>Pembina bisa mengajukan proposal secara online yang terhubung langsung ke Wkasek PMBP,
+                Kepala Sekolah dan Bendahara Sekolah
+              </p>
+            </div>
+          </div>
+
+          <div class="col-xl-3 col-md-6 d-flex align-items-stretch mt-4 mt-xl-0" data-aos="zoom-in" data-aos-delay="300">
+            <div class="icon-box">
+              <div class="icon"><i class="bx bx-diamond"></i></div>
+              <h4><a href="">Catatan Prestasi</a></h4>
+              <p>Menyediakan data komprehensif terkait prestasi yang sudah diraih oleh siswa dan guru.</p>
+            </div>
+          </div>
+
+          <div class="col-xl-3 col-md-6 d-flex align-items-stretch mt-4 mt-xl-0" data-aos="zoom-in" data-aos-delay="300">
+            <div class="icon-box">
+              <div class="icon"><i class="bx bx-tachometer"></i></div>
+              <h4><a href="">Keamanan Tinggi</a></h4>
+              <p>Website dirancang dengan tingkat kemanan tinggi sehingga meminimalkan potensi serangan siber.</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Services Section -->
+
+    <!-- ======= Cta Section ======= -->
+    <section id="cta" class="cta">
+      <div class="container" data-aos="zoom-in">
+
+        <div class="row">
+          <div class="col-lg-9 text-center text-lg-start">
+            <h3>Coba Aplikasinya Sekarang...</h3>
+            </div>
+          <div class="col-lg-3 cta-btn-container text-center">
+            <a class="cta-btn align-middle" href="{% url 'dashboard' %}">Go to Dashboard</a>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End Cta Section -->
+
+    <!-- ======= Portfolio Section ======= -->
+    <section id="portfolio" class="portfolio">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h2>Prestasi</h2>
+          </div>
+
+        
+        <div class="row portfolio-container" data-aos="fade-up" data-aos-delay="200">
+            {% for data in prestasi %}
+          <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+            <div class="portfolio-img"><img src="{{data.dokumentasiprestasi_set.last.foto.url}}" class="img-fluid" alt=""></div>
+            <div class="portfolio-info">
+              <h4>{{data.nama_lomba}}</h4>
+              <p>{{data.peraih_prestasi}}</p>
+              <a href="{{data.dokumentasiprestasi_set.last.foto.url}}" data-gallery="portfolioGallery" class="portfolio-lightbox preview-link" title="{{data.nama_lomba}} {{data.tahun_lomba}} - {{data.peraih_prestasi}} "><i class="bx bx-play-circle"></i></a>
+              <a href="{% url 'prestasi:prestasi-index' %}" class="details-link" title="More Details"><i class="bx bx-link"></i></a>
+            </div>
+          </div>
+            {% endfor %}
+            <div class="text-center p-2">
+              <a href="{% url 'prestasi:prestasi-index' %}" class="btn btn-sm btn-primary">Lihat lebih banyak  &#62;&#62;</a>
+            </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Portfolio Section -->
+
+    <!-- ======= Team Section ======= -->
+    <section id="team" class="team section-bg">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h2>Team</h2>
+          <p>Berikut adalah tim yang terlibat dalam PMBP</p>
+        </div>
+
+        <div class="row">
+
+          <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="100">
+            <div class="member d-flex align-items-start">
+              <div class="pic"><img src="{% static 'img/team/agung.jpg' %}" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Agung Wahyu Adhy, Lc., M.Pd</h4>
+                <span>Kepala Sekolah</span>
+                <p>Penasihat Aplikasi</p>
+                <div class="social">
+                  <a href=""><i class="ri-twitter-fill"></i></a>
+                  <a href=""><i class="ri-facebook-fill"></i></a>
+                  <a href=""><i class="ri-instagram-fill"></i></a>
+                  <a href=""> <i class="ri-linkedin-box-fill"></i> </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="200">
+            <div class="member d-flex align-items-start">
+              <div class="pic"><img src="{% static 'img/team/chevi.jpg' %}" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Chevi Indrayadi</h4>
+                <span>Bendahara Sekolah</span>
+                <p>Sponsor dana aplikasi</p>
+                <div class="social">
+                  <a href=""><i class="ri-twitter-fill"></i></a>
+                  <a href=""><i class="ri-facebook-fill"></i></a>
+                  <a href=""><i class="ri-instagram-fill"></i></a>
+                  <a href=""> <i class="ri-linkedin-box-fill"></i> </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mt-4" data-aos="zoom-in" data-aos-delay="300">
+            <div class="member d-flex align-items-start">
+              <div class="pic"><img src="{% static 'img/team/panji.jpg' %}" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Panji Asmara, S.Pd</h4>
+                <span>Wakasek PMBP</span>
+                <p>Pembina Aplikasi</p>
+                <div class="social">
+                  <a href=""><i class="ri-twitter-fill"></i></a>
+                  <a href=""><i class="ri-facebook-fill"></i></a>
+                  <a href=""><i class="ri-instagram-fill"></i></a>
+                  <a href=""> <i class="ri-linkedin-box-fill"></i> </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 mt-4" data-aos="zoom-in" data-aos-delay="400">
+            <div class="member d-flex align-items-start">
+              <div class="pic"><img src="{% static 'img/team/azhar.jpg' %}" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Azhar Faturohman Ahidin, S.Si</h4>
+                <span>Staff Wakasek PMBP</span>
+                <p><em>Fullstack Developer</em> Aplikasi</p>
+                <div class="social">
+                  <a href=""><i class="ri-twitter-fill"></i></a>
+                  <a href=""><i class="ri-facebook-fill"></i></a>
+                  <a href=""><i class="ri-instagram-fill"></i></a>
+                  <a href=""> <i class="ri-linkedin-box-fill"></i> </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Team Section -->
+
+    <!-- ======= Frequently Asked Questions Section ======= -->
+    <section id="faq" class="faq section-bg">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h2>Frequently Asked Questions</h2>
+          <p>Ini adalah sekumpulan pertanyaan umum dan jawabannya</p>
+        </div>
+
+        <div class="faq-list">
+          <ul>
+            <li data-aos="fade-up" data-aos-delay="100">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" class="collapse" data-bs-target="#faq-list-1">Apa itu PMBP? <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+              <div id="faq-list-1" class="collapse show" data-bs-parent=".faq-list">
+                <p>
+                  PMBP singkatan dari Pengembangan Minat, Bakat dan Pembinaan Prestasi. Hal ini merupakan salah satu bidang wakil kepala sekolah di SMAS IT Al Binaa. 
+                </p>
+              </div>
+            </li>
+
+            <li data-aos="fade-up" data-aos-delay="200">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-2" class="collapsed">Apa saja tugas dan tanggung jawab bidang PMBP? <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+              <div id="faq-list-2" class="collapse" data-bs-parent=".faq-list">
+                <ol>
+                  <li>Menyaring dan menggembangkan minat dan bakat peserta didik</li>
+                  <li>Berpartisipasi aktif dalam program pendidikan nasional dalam pengembangan diri peserta didik</li>
+                  <li>Mempersiapkan peserta didik siap bersaing dalam ajang perlombaan non akademik</li>
+                </ol>
+              </div>
+            </li>
+
+            <li data-aos="fade-up" data-aos-delay="300">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-3" class="collapsed">Apa saja ekskul/SC yang ada di SMAS IT AL BInaa <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+              <div id="faq-list-3" class="collapse" data-bs-parent=".faq-list">
+                <ol>
+                  <li class="p-0">Pramuka</li>
+                  <li class="p-0">Basket</li>
+                  <li class="p-0">Sepak Bola</li>
+                  <li class="p-0">Futsal</li>
+                  <li class="p-0">Bola Voli</li>
+                  <li class="p-0">Badminton</li>
+                  <li class="p-0">Tenis Meja</li>
+                  <li class="p-0">Desain Grafis</li>
+                  <li class="p-0">Life Skill Sablon</li>
+                  <li class="p-0">Koding</li>
+                  <li class="p-0">Kodingplasma</li>
+                  <li class="p-0">Kaligrafi</li>
+                  <li class="p-0">Jurnalistik</li>
+                  <li class="p-0">Bulan Sabit Merah Remaja</li>
+                  <li class="p-0">Bahasa Inggris</li>
+                  <li class="p-0">Fisika</li>
+                  <li class="p-0">Kimia</li>
+                  <li class="p-0">Bahasa Arab</li>
+                  <li class="p-0">Literasi</li>
+                  <li class="p-0">Hifzhul Hadits</li>
+                  <li class="p-0">Matematika</li>
+                  <li class="p-0">Karya Ilmiyah Remaja</li>
+                  <li class="p-0">Mustholahul Hadits</li>
+                </ol>
+              </div>
+            </li>
+        
+          </ul>
+        </div>
+
+      </div>
+    </section><!-- End Frequently Asked Questions Section -->
+
+    <!-- ======= Contact Section ======= -->
+    <section id="contact" class="contact">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h2>Contact</h2>
+          <p>Jika ada yang ingin ditanyakan silahkan sapa kami.</p>
+        </div>
+
+        <div class="row">
+
+          <div class="col-lg-5 d-flex align-items-stretch">
+            <div class="info">
+              <div class="address">
+                <i class="bi bi-geo-alt"></i>
+                <h4>Location:</h4>
+                <p>Jl. Raya Pebayuran, Desa Kertasari, Kec. Pebayuran, Kab. Bekasi, Jawa Barat, Indonesia</p>
+              </div>
+
+              <div class="email">
+                <i class="bi bi-envelope"></i>
+                <h4>Email:</h4>
+                <p>smaitalbinaa.ekskul@outlook.com</p>
+              </div>
+
+              <div class="phone">
+                <i class="bi bi-phone"></i>
+                <h4>Call:</h4>
+                <p>+6285701570100</p>
+              </div>
+
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15865.548720740535!2d107.27179795503615!3d-6.212559363274788!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69820f88da5f89%3A0x8712b03af3ca3f17!2sAl-Binaa%20Islamic%20Boarding%20School!5e0!3m2!1sid!2sid!4v1701597855972!5m2!1sid!2sid" frameborder="0" style="border:0; width: 100%; height: 290px;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+
+          </div>
+
+          <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
+            <form action="{% static 'forms/contact.php' %}" method="post" role="form" class="php-email-form">
+              {% csrf_token %}
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label for="name">Your Name</label>
+                  <input type="text" name="name" class="form-control" id="name" required>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="email">Your Email</label>
+                  <input type="email" class="form-control" name="email" id="email" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="subject">Topic/Subject</label>
+                <input type="text" class="form-control" name="subject" id="subject" required>
+              </div>
+              <div class="form-group">
+                <label for="message">Message</label>
+                <textarea class="form-control" name="message" rows="10" required></textarea>
+              </div>
+              <div class="my-3">
+                <div class="loading">Loading</div>
+                <div class="error-message"></div>
+                <div class="sent-message">Your message has been sent. Thank you!</div>
+              </div>
+              <div class="text-center"><button type="submit">Send Message</button></div>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Contact Section -->
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+    
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-3 col-md-6 footer-contact">
+            <h3>PMBP SMAS IT Al BINAA</h3>
+            <p>
+              Jl. Raya Pebayuran, Desa Kertasari, Kec. Pebayuran <br>
+              Kab. Bekasi, Jawa Barat<br>
+              Indonesia <br><br>
+              <strong>Phone:</strong> +62 857 0157 0100<br>
+              <strong>Email:</strong> smaitalbinaa.ekskul@outlook.com<br>
+            </p>
+          </div>
+
+          <div class="col-lg-3 col-md-6 footer-links">
+            <h4>Useful Links</h4>
+            <ul>          
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#about">About us</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#services">Fitur</a></li>
+              <li><i class="bx bx-chevron-right"></i><a href="#portfolio">Prestasi</a></li>
+              <li><i class="bx bx-chevron-right"></i><a href="#team">Team</a></li>
+              <li><i class="bx bx-chevron-right"></i><a href="#contact">Contact</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="https://albinaa.sch.id/">Al Binaa</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="https://albinaa.sch.id/informasi-penerimaan-santri-baru/">PSB Al Binaa</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-3 col-md-6 footer-links">
+            <h4>Our Social Networks</h4>
+            <p>Tetap terhubung dengan kami</p>
+            <div class="social-links mt-3">
+              <a href="https://www.twitter.com/albinaa_ibs/" class="twitter"><i class="bx bxl-twitter"></i></a>
+              <a href="https://www.facebook.com/albinaa.ibs/" class="facebook"><i class="bx bxl-facebook"></i></a>
+              <a href="https://www.instagram.com/smaitalbinaa/" class="instagram"><i class="bx bxl-instagram"></i></a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container footer-bottom clearfix">
+      <div class="copyright">
+        &copy; Copyright <strong><span>PMBP</span></strong>. All Rights Reserved
+      </div>
+      <div class="credits">
+        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/ -->
+        <!-- Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> -->
+      </div>
+    </div>
+  </footer><!-- End Footer -->
+
+  <div id="preloader"></div>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'vendor/waypoints/noframework.waypoints.js' %}"></script>
+  <script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'js/asha-main.js' %}"></script>
+
+</body>
+
+</html>

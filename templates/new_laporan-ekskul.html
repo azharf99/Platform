@@ -1,0 +1,114 @@
+{% extends 'new_base.html' %}
+{% block content %}
+{% load static %}
+{% include 'new_navbar.html'%}
+{% include 'new_sidebar.html'%}
+<main id="main" class="main">
+    <section class="section dashboard">
+        <div class="pagetitle">
+            <h1>Rekap Kehadiran {{ object_list.first.nama_ekskul.get_tipe_display }} {{ object_list.first.nama_ekskul }} SMA IT Al Binaa</h1>
+            <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Home</a></li>
+                  <li class="breadcrumb-item">{{ object_list.first.nama_ekskul.get_tipe_display }}</li>
+                  <li class="breadcrumb-item active">Rekap Kehadiran</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="text-center">
+            {% if bulan_ini %}
+            <h4> {{ bulan_ini }}</h4>
+            {% endif %}
+            {% for pembina in object_list.first.nama_ekskul.pembina.all %}
+            {% if object_list.first.nama_ekskul.pembina.count > 1 %}
+            <h6> Pembina {{ forloop.counter }}: {{ pembina }} </h6>
+            {% else %}
+            <h6 class="m-0">Pembina : {{ pembina }}</h6>
+            {% endif %}
+            {% endfor %}
+            <h6 class="m-0"> Jadwal Bimbingan : {{ object_list.first.nama_ekskul.jadwal }} {{ object_list.first.nama_ekskul.waktu }}</h6>
+        </div>
+
+        <div class="d-flex justify-content-center gap-2 m-3">
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'laporan:laporan-input' object_list.first.nama_ekskul.slug %}" class="btn btn-primary"> + Input Laporan</a>
+            {% endif %}
+        </div>
+
+
+        <div class="col-sm mt-3">
+            <table class="table table-hover w-100">
+                <thead>
+                <tr>
+                    <th scope="col">Tgl</th>
+                    <th scope="col">Kehadiran anggota</th>
+                    <th scope="col">Foto</th>
+                    <th scope="col">Aksi</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if object_list %}
+                {% for report in object_list %}
+                <tr>
+                    <td>{{ report.tanggal_pembinaan|date:"j M y"}}</td>
+                    <td><strong>{{ report.kehadiran_santri.count }} SANTRI</strong>
+                    </td>
+                    <td>
+                        <img class="m-1" src="{{ report.foto.url }}" height="100px" width="100px">
+
+                    </td>
+                    <td>
+                        <a href="{% url 'laporan:laporan-detail' report.nama_ekskul.slug report.id %}" class="btn btn-sm btn-primary my-1" title="View">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                            </svg>
+                        </a>
+                        {% if request.user.is_authenticated %}
+                        <a href="{% url 'laporan:laporan-edit' report.nama_ekskul.slug report.id %}" class="btn btn-sm btn-warning my-1" title="Edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                            </svg>
+                        </a>
+                        <a href="{% url 'laporan:laporan-delete' report.nama_ekskul.slug report.id %}" class="btn btn-sm btn-danger my-1" title="Hapus">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center fw-bold text-danger">Maaf, belum ada laporan kehadiran untuk bulan ini ({{ bulan_ini}}). Jika Anda input laporan untuk bulan yang lalu, silahkan filter untuk melihat hasilnya.</td>
+                </tr>
+                {% endif %}
+                </tbody>
+            </table>
+            <div class="pagination container justify-content-center">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="btn btn-sm btn-outline-primary">&laquo; First</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-outline-primary">Previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm btn-outline-primary">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-sm btn-outline-primary">Last &raquo;</a>
+        {% endif %}
+    </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+</section>
+</main>
+
+{% endblock %}

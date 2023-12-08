@@ -1,0 +1,90 @@
+{% extends 'new_base.html' %}
+{% block content %}
+{% load static %}
+{% include 'new_navbar.html'%}
+{% include 'new_sidebar.html'%}
+
+<main id="main" class="main">
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Home</a></li>
+      <li class="breadcrumb-item">{{object.get_tipe_display}}</li>
+      <li class="breadcrumb-item active">Edit</li>
+    </ol>
+  </nav>
+    <div class="container">
+
+      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+        <div class="container py-5">
+          <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                            <a href="{% url 'ekskul:data-detail' ekskul.slug %}" class="btn btn-sm btn-primary">Lihat Hasil</a>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+              <div class="card mb-3">
+
+                <div class="card-body">
+
+                  <div class="pt-2 pb-2">
+                    <h5 class="card-title text-center pb-0 fs-4">Edit {{object.get_tipe_display}} {{ object.nama_ekskul }}</h5>
+                  </div>
+
+                  <form class="row g-3 needs-validation" method="post" action="" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+
+                    <div class="col-12">
+                        {{ form }}
+                    </div>
+
+                    
+                    <div class="col-12">
+                        <button class="btn btn-primary w-100" type="submit">Update Data</button>
+                    </div>
+
+                    <div class="col-12 text-center">
+                        <a href="{% url 'dashboard' %}" class="btn btn-danger d-block">Kembali</a>
+                    </div>
+                  </form>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+  <!-- End #main -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+    <script>
+        $(document).ready( () => {
+            $('#id_pembina').selectize({
+                sortField: 'text',
+                maxItems: null,
+            });
+        });
+    </script>
+
+
+{% endblock %}
+
+    

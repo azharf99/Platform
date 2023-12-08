@@ -1,0 +1,107 @@
+{% extends 'new_base.html' %} 
+{% block content %} 
+{% load static %} 
+{% include 'new_navbar.html'%} 
+{% include 'new_sidebar.html'%}
+
+<main id="main" class="main">
+  <section class="section dashboard">
+    <div class="pagetitle">
+      <h1>Data OSN 2023 SMA IT Al Binaa</h1>
+      {% if request.user.is_superuser %} {% endif %}
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Home</a>
+          </li>
+          <li class="breadcrumb-item">OSN 2024</li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="container text-center">
+      <div class="d-flex flex-wrap justify-content-center">
+        <a
+          href="{% url 'osn:bidang-osn-input' %}"
+          class="btn btn-sm btn-dark mb-3"
+          >Input Bidang</a
+        >
+        <div class="row">
+          <!-- Sales Card -->
+          {% if object_list %} {% for data in object_list %}
+          <div class="col-xxl-4 col-md-4">
+            <div class="card border-success">
+              <div class="card-header p-0 text-bg-success">
+                <h2>{{ data }}</h2>
+              </div>
+              <div class="card-body text-start">
+                <p class="card-title mb-2">Ustadz {{ data.pembimbing }}</p>
+                <p class="card-text p-0 m-0">
+                  Jumlah siswa OSN : {{ data.siswaosn_set.count }}
+                </p>
+                <p class="card-text p-0 m-0">
+                  Jumlah laporan OSN : {{ data.laporanosn_set.count }}
+                </p>
+                <p class="p-0 m-0">
+                  Jadwal Pertemuan: {{ data.jadwal_bimbingan }}
+                </p>
+              </div>
+              <div class="card-footer border-success">
+                {% if request.user.is_authenticated %} 
+                {% if request.user.is_superuser or request.user.teacher == data.pembimbing %}
+                <a
+                  href="{% url 'osn:detail-bidang-osn' data.slug %}"
+                  class="btn btn-sm btn-info m-1"
+                  >Detail Bidang</a
+                >
+                <a
+                  href="{% url 'osn:bidang-osn-edit' data.id %}"
+                  class="btn btn-sm btn-warning m-1"
+                  >Edit Bidang</a
+                >
+                <a
+                  href="{% url 'osn:siswa-osn-input' data.slug %}"
+                  class="btn btn-sm btn-success m-1"
+                  >Input siswa OSN</a
+                >
+                <a
+                  href="{% url 'osn:laporan-osn-input' data.slug %}"
+                  class="btn btn-sm btn-secondary m-1"
+                  >Input laporan OSN</a
+                >
+                <a
+                  href="{% url 'osn:laporan-osnk-print' data.slug %}"
+                  class="btn btn-sm btn-primary m-1"
+                  >Cetak Laporan OSN-K</a
+                >
+                <a
+                  href="{% url 'osn:laporan-osnp-print' data.slug %}"
+                  class="btn btn-sm btn-primary m-1"
+                  >Cetak Laporan OSN-P</a
+                >
+                {% else %}
+                <a
+                  href="{% url 'osn:detail-bidang-osn' data.slug %}"
+                  class="btn btn-sm btn-info m-1"
+                  >Detail Bidang OSN</a
+                >
+                {% endif %} 
+                {% else %}
+                <a
+                  href="{% url 'osn:detail-bidang-osn' data.slug %}"
+                  class="btn btn-sm btn-info m-1"
+                  >Detail Bidang OSN</a
+                >
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %} 
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+{% endblock %}

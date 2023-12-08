@@ -1,0 +1,97 @@
+{% extends 'new_base.html' %}
+{% block content %}
+{% load static %}
+{% include 'new_navbar.html'%}
+{% include 'new_sidebar.html'%}
+
+<main id="main" class="main">
+    <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Home</a></li>
+          <li class="breadcrumb-item">{{ekskul.tipe}}</li>
+          <li class="breadcrumb-item active">Input Anggota</li>
+        </ol>
+    </nav>
+    <div class="container">
+      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-6 col-md-8 d-flex flex-column align-items-center justify-content-center">
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                            <a href="{% url 'ekskul:data-detail' ekskul.slug %}" class="btn btn-sm btn-primary">Lihat Hasil</a>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+              <div class="card mb-3">
+                <div class="pt-3 pb-2">
+                  <h5 class="card-title text-center pb-0 fs-4">Input Anggota {{ekskul.tipe}} {{ ekskul.nama_ekskul }}</h5>
+                </div>
+
+                <div class="card-body">
+
+
+                  <form class="row g-3 needs-validation" method="post" action="" novalidate id="form">
+                    {% csrf_token %}
+
+                    <div class="col-12">
+                      <label for="id_ekskul_siswa">{{ekskul.tipe}} siswa:</label>
+                      <div class="input-group has-validation">
+                        <select name="ekskul_siswa" class="form-control" required id="id_ekskul_siswa">
+                            <option value="{{ ekskul.id }}">{{ ekskul.nama_ekskul}}</option>
+                        </select>
+                        <div class="invalid-feedback">Please choose the option.</div>
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                        {{ form }}
+                    </div>
+
+                    
+                    <div class="col-12">
+                        <button class="btn btn-primary w-100" type="submit">Input Data</button>
+                    </div>
+
+                    <div class="col-12 text-center">
+                        <a href="{% url 'dashboard' %}" class="btn btn-danger d-block">Kembali</a>
+                    </div>
+                  </form>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </div>
+    </section>
+  </main>
+  <!-- End #main -->
+
+
+  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+    <script>
+        $(document).ready(function () {
+            $('#input-anggota').selectize({
+                sortField: 'text'
+            });
+        });
+    </script>
+
+
+{% endblock %}
