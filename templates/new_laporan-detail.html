@@ -1,0 +1,76 @@
+{% extends 'new_base.html' %}
+{% block content %}
+{% load static %}
+{% include 'new_navbar.html'%}
+{% include 'new_sidebar.html'%}
+{% load humanize %}
+
+<main id="main" class="main">
+        <section class="section dashboard">
+          <div class="pagetitle">
+            <h1 class="m-3">Detail Laporan {{ object.nama_ekskul }}</h1>
+            <nav>
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Home</a></li>
+                  <li class="breadcrumb-item">{{object.nama_ekskul.get_tipe_display}}</li>
+                  <li class="breadcrumb-item active">{{object.nama_ekskul}}</li>
+                </ol>
+            </nav>
+          </div>
+    <div class="text-center">
+        <a href="{% url 'laporan:laporan-ekskul' object.nama_ekskul.slug %}" class="btn btn-danger mb-2">&lt; Kembali</a>
+    </div>
+
+    <div class="container">
+        <table class="table table-hover w-100">
+            <tbody>
+            {% if object %}
+                <tr>
+                    <td>Nama {{object.nama_ekskul.tipe}}</td>
+                    <td class="text-end">:</td>
+                    <td>{{ object.nama_ekskul }}</td>
+                </tr>
+                <tr>
+                    <td>Pembina {{ object.nama_ekskul.tipe }}</td>
+                    <td class="text-end">:</td>
+                    <td>{{ object.pembina_ekskul }}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Pembinaan</td>
+                    <td class="text-end">:</td>
+                    <td>{{ object.tanggal_pembinaan|date:"j F Y" }}</td>
+                </tr>
+                <tr>
+                    <td>Santri yang hadir</td>
+                    <td class="text-end">:</td>
+                    <td>
+                        {% for santri in object.kehadiran_santri.all %}
+                            <p>{{ santri.siswa.nama_siswa }} ({{ santri.siswa.get_kelas_display }})</p>
+                        {% endfor %}
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>Catatan Pembinaan</td>
+                    <td class="text-end">:</td>
+                    <td>{{ object.catatan_pembinaan }}</td>
+                </tr>
+                <tr>
+                    <td>Foto pembinaan</td>
+                    <td class="text-end">:</td>
+                    <td>
+                        <img class="m-1" src="{{ object.foto.url }}" height="100%" width="100%">
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center fw-bold text-danger">Maaf, belum ada data :(</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+    </section>
+    </main> 
+
+{% endblock %}

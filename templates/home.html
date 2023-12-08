@@ -1,22 +1,92 @@
 {% extends 'base.html' %}
 {% block content %}
-    {% load static %}
-    <div class="mt-5 pt-1 text-center">
-        {% if request.user.is_authenticated %}
-            <h1 class="mt-4 mb-1">السلام عليكم</h1>
-            <h2 class="my-1">أَهْلًا وَسَهْلًا يا أستاذ  </h2>
-            <h2 class="my-1">{{ request.user.teacher }}</h2>
-        {% else %}
-            <h1 class="mt-4 mb-1">السلام عليكم. كيف حالك؟</h1>
+{% load static %}
+
+<section id="home" class="container vw-100 vh-100">
+    <div class="text-center pt-5">
+        {% if messages %}
+        <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
         {% endif %}
-
         <img class="m-1" src="{% static 'images/web-logo.gif' %}" width="350" alt="logo-sma">
-
-
-
-
-
     </div>
+</section>
 
+<section id="menu" class="container vw-100 vh-100 pt-2">
+    <div class="container text-center my-5 pt-5">
+        {% if home_data %}
+        <h2 class="text-center pt-4">{{ home_data.first.nama_bidang }}</h2>
+        <p class="card-text">{{ home_data.first.deskripsi }}</p>
+        <div class="d-flex flex-wrap justify-content-center">
+            {% for app_datum in app_data %}
+            {% if app_datum.app == home_data.first %}
+            <a href="{% with app_datum.url as link %}{% url link %}{% endwith %}" class="m-1 btn btn-{{ app_datum.color }} text-start">
+                <div class="d-flex flex-column text-center align-items-center" style="width:80px">
+                    <i class="{{ app_datum.icon }}"></i>
+                    <span>{{ app_datum }}</span>
+                </div>
+            </a>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% if request.user.is_authenticated %}
+<section id="userlog" class="container vw-100 vh-100 pt-4">
+    <div class="list-group mt-5 pt-2">
+        {% for log in logs %}
+        <a href="#" class="list-group-item list-group-item-action" aria-current="true">
+            <h6 class="mb-1">{{ log.user }}</h6>
+            <small>{{ log.created_at }} ({{ log.created_at|timesince }} yang lalu)</small>
+            <p class="mb-1">{{ log.message }}</p>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% else %}
+<section id="login" class="container vw-100 vh-100 pt-2">
+    <div class="container w-75 mt-5 pt-4">
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="text-center my-5">
+                <img class="" src="{% static 'images/login.svg' %}" alt="login" width="50%" height="50%">
+            </div>
+            {% if messages %}
+            <ul class="messages text-danger">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <div class="input-group mb-3">
+                <label for="username" class="visually-hidden">Username</label>
+                <span class="input-group-text rounded-start" id="basic-addon1">@</span>
+                <input type="text" name="username" class="form-control" id="username" placeholder="Username" aria-describedby="basic-addon1" required>
+            </div>
+            <div class="input-group mb-3">
+                <label for="password" class="visually-hidden">Password</label>
+                <span class="input-group-text rounded-start" id="basic-addon2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+                    </svg>
+                </span>
+                <input type="password" name="pass" class="form-control" id="password" placeholder="Password" aria-describedby="basic-addon2" required>
+            </div>
+            <button type="submit" class="w-100 btn btn-primary my-2">Login</button>
+        </form>
+    </div>
+    <div class="text-center">
+        <p>
+            Belum punya akun? Silahkan <a href="{% url 'register' %}" class="btn btn-sm btn-success">Daftar</a> aja.
+        </p>
+    </div>
+</section>
+{% endif %}
 
 {% endblock %}

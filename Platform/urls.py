@@ -27,6 +27,7 @@ import userlog.views
 
 def struktur(request):
     return render(request, 'struktur.html')
+
 def unduh(request):
     return render(request, 'unduh.html')
 
@@ -41,7 +42,7 @@ def restricted(request):
 urlpatterns = [
     path('', deskripsi.views.home_view, name='app-index'),
     path("robots.txt",TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
-    path('menu', deskripsi.views.menu_view, name='menu'),
+    path('menu/', deskripsi.views.menu_view, name='menu'),
     path('log/', userlog.views.index, name='log-index'),
     path('admin/', admin.site.urls),
     path('login/', ekskul.views.login_view, name='login'),
@@ -52,8 +53,9 @@ urlpatterns = [
     path('profil/edit', ekskul.views.edit_profil_view, name='edit-profil'),
     path('logout/', ekskul.views.logout_view, name='logout'),
     path('ekskul/', deskripsi.views.ekskul_view, name='ekskul-page'),
-    path('proposal/', include('proposal.urls')),
     path('laporan/', include('laporan.urls')),
+    path('dashboard/', include('dashboard.urls')),
+    path('proposal/', include('proposal.urls')),
     path('nilai/', include('nilai.urls')),
     path('data/', include('ekskul.urls')),
     path('inventaris/', include('inventaris.urls')),

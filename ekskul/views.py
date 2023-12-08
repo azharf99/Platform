@@ -23,6 +23,7 @@ from django.views.generic import ListView, DetailView, CreateView, DeleteView, U
 
 class EkskulIndexView(ListView):
     model = Extracurricular
+    template_name = 'new_extracurricular_list.html'
     paginate_by = 9
 
     def get_queryset(self):
@@ -37,6 +38,7 @@ class EkskulIndexView(ListView):
 
 class EkskulDetailView(DetailView):
     model = Extracurricular
+    template_name = 'new_data-detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(EkskulDetailView, self).get_context_data(**kwargs)
@@ -45,6 +47,7 @@ class EkskulDetailView(DetailView):
 
 class DataSantriView(ListView):
     model = StudentOrganization
+    template_name = 'new_studentorganization_list.html'
 
     def get_queryset(self):
         query = self.request.GET.get('q')
@@ -62,7 +65,7 @@ class DataSantriView(ListView):
 class InputAnggotaView(LoginRequiredMixin, CreateView):
     model = StudentOrganization
     form_class = InputAnggotaEkskulForm
-    template_name = 'input-anggota-ekskul.html'
+    template_name = 'new_input-anggota-ekskul.html'
     login_url = '/login/'
 
     def post(self, request, *args, **kwargs):
@@ -97,7 +100,7 @@ class DeleteAnggotaView(LoginRequiredMixin, DeleteView):
     login_url = '/login/'
     model = StudentOrganization
     success_url = reverse_lazy('ekskul:data-index')
-    template_name = 'delete-anggota.html'
+    template_name = 'new_delete-anggota.html'
 
     def get(self, request, *args, **kwargs):
         ekskul = get_object_or_404(Extracurricular, slug=self.kwargs.get('slug'))
@@ -124,7 +127,7 @@ class DeleteAnggotaView(LoginRequiredMixin, DeleteView):
 
 class UpdateEskkulView(LoginRequiredMixin, UpdateView):
     model = Extracurricular
-    template_name = 'edit-ekskul.html'
+    template_name = 'new_edit-ekskul.html'
     form_class = EkskulForm
 
     def get(self, request, *args, **kwargs):
@@ -155,7 +158,7 @@ def login_view(request):
 
     if request.method == "POST":
         username = request.POST.get('username').rstrip()
-        password = request.POST.get('pass').rstrip()
+        password = request.POST.get('password').rstrip()
 
         try:
             user = User.objects.get(username=username)
@@ -172,11 +175,11 @@ def login_view(request):
                 app="EKSKUL",
                 message="Berhasil melakukan login ke aplikasi"
             )
-            return redirect('app-index')
+            return redirect('dashboard')
         else:
             messages.warning(request, "Username atau Password salah!")
     context = {}
-    return render(request, 'login.html', context)
+    return render(request, 'new_login.html', context)
 
 @login_required(login_url='/login/')
 def profil_view(request):

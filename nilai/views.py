@@ -17,7 +17,7 @@ from userlog.models import UserLog
 
 class NilaiIndexView(ListView):
     model = Extracurricular
-    template_name = 'nilai.html'
+    template_name = 'new_nilai.html'
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -38,7 +38,7 @@ def nilai_detail(request, slug):
         'nilai': nilai,
         'forms': forms,
     }
-    return render(request, 'nilai-detail.html', context)
+    return render(request, 'new_nilai-detail.html', context)
 
 
 def nilai_kelas_view(request):
@@ -102,7 +102,7 @@ def nilai_input(request, slug):
                     app="NILAI",
                     message="Berhasil menambahkan data nilai ekskul {} atas nama {}".format(ekskul, data.siswa.siswa.nama_siswa)
                 )
-                return redirect('nilai:nilai-detail', ekskul.slug)
+                return redirect('nilai:nilai-input', ekskul.slug)
             else:
                 messages.error(request, "Isi data dengan benar!")
 
@@ -112,41 +112,44 @@ def nilai_input(request, slug):
         'ekskul': ekskul,
         'siswa': siswa,
         'forms': forms,
+        'edit' : False,
     }
-    return render(request, 'nilai-input.html', context)
+    return render(request, 'new_nilai-input.html', context)
 
 
 @login_required(login_url='/login/')
 def nilai_edit(request, slug, pk):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
-    nilai = Penilaian.objects.get(id=pk)
+    siswa = Penilaian.objects.get(id=pk)
     all = ekskul.pembina.all().values_list('user_id', flat=True)
     if request.user.id not in all and not request.user.is_superuser:
         return HttpResponseRedirect(reverse('restricted'))
 
     if request.method == "POST":
-        forms = NilaiEditForm(request.POST, instance=nilai)
+        forms = NilaiEditForm(request.POST, instance=siswa)
         if forms.is_valid():
             forms.save()
             UserLog.objects.create(
                 user=request.user.teacher,
                 action_flag="CHANGE",
                 app="NILAI",
-                message="Berhasil mengubah data nilai ekskul {} atas nama {}".format(ekskul, nilai.siswa.siswa.nama_siswa)
+                message="Berhasil mengubah data nilai ekskul {} atas nama {}".format(ekskul, siswa.siswa.siswa.nama_siswa)
             )
             return redirect('nilai:nilai-detail', ekskul.slug)
         else:
-            forms = NilaiEditForm(instance=nilai)
+            forms = NilaiEditForm(instance=siswa)
             messages.error(request, "Isi data dengan benar!")
     else:
-        forms = NilaiEditForm(instance=nilai)
+        forms = NilaiEditForm(instance=siswa)
 
     context = {
         'ekskul': ekskul,
         'forms': forms,
-        'nilai': nilai,
+        'siswa': siswa,
+        'edit' : True,
+
     }
-    return render(request, 'nilai-edit.html', context)
+    return render(request, 'new_nilai-input.html', context)
 
 
 @login_required(login_url='/login/')
@@ -169,5 +172,5 @@ def nilai_delete(request, slug, pk):
         'ekskul': ekskul,
         'data': data,
     }
-    return render(request, 'nilai-delete.html', context)
+    return render(request, 'new_nilai-delete.html', context)
 

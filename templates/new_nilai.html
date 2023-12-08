@@ -1,10 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'new_base.html' %} 
+{% block content %} {% load static %} 
+{% include 'new_navbar.html'%} 
+{% include 'new_sidebar.html'%}
+<main id="main" class="main">
+  <section class="section dashboard">
+    <div class="pagetitle">
+        <h1>Nilai Ekstrakurikuler dan <em>Study Club</em> SMA IT Al Binaa</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Home</a></li>
+          <li class="breadcrumb-item">Ekstrakurikuler & SC</li> 
+          <li class="breadcrumb-item active">Nilai Ekskul & SC</li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="text-center">
+        <a href="{% url 'nilai:nilai-per-kelas' %}" class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-view-list" viewBox="0 0 16 16">
+                <path d="M3 4.5h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1H3zM1 2a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 2zm0 12a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 14z"/>
+            </svg>
+            Lihat Nilai Berdasarkan Kelas?
+        </a>
+        <a href="{% url 'nilai:print-to-excel' %}" class="btn btn-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+            </svg>
+            Download All (Excel)
+        </a>
+        <a class="m-3 btn btn-danger" href="{% url 'menu' %}">&lt; Kembali</a>
+    </div>
+
+    <div class="container text-center">
+        <div class="d-flex flex-wrap justify-content-center">
+            {% if object_list %}
+                {% for data in object_list %}
+                    <div class="card border-warning m-2" style="width: 18rem; height: 100%;">
+                        <div class="card-header p-0 text-bg-warning">
+                            {% if request.user.is_authenticated %}
+                            <p class="text-center m-0">{{ data.get_tipe_display }}</p>
+                            {% else %}
+                            <img src="{{data.logo.url}}" class="card-img-top" alt="Logo Ekskul">
+                            <p class="text-center m-0">{{ data.get_tipe_display }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ data.nama_ekskul }}</h5>
+                            {% for pembina in data.pembina.all %}
+                                <h6 class="card-subtitle mb-2">Ustadz {{ pembina }}</h6>
+                            {% endfor %}
+                            <p class="card-text p-0 m-0">Jumlah anggota : {{ data.studentorganization_set.count }}</p>
+                        </div>
+                        <div class="card-footer border-warning text-light">
+                            {% if request.user.is_authenticated %}
+                                {% if not request.user.is_superuser %}
+                                {% for pembina in data.pembina.all %}
+                                    {% if request.user.teacher.nama_pembina == pembina.nama_pembina  %}
+                                    <a href="{% url 'nilai:nilai-input' data.slug %}" class="btn btn-sm btn-primary">Input Nilai</a>
+                                    {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <a href="{% url 'nilai:nilai-input' data.slug %}" class="btn btn-sm btn-primary">Input Nilai</a>
+                                {% endif %}
+                            {% endif %}
+                            <a href="{% url 'nilai:nilai-detail' data.slug %}" class="btn btn-sm btn-success">Daftar Nilai</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+  </section>
+</main>
+
+{% endblock %}

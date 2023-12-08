@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
+from django.utils import timezone
 
 from laporan.models import Report
 from laporan.forms import FormLaporanKehadiran
@@ -17,7 +18,7 @@ token = settings.TOKEN
 
 class LaporanIndexView(ListView):
     model = Extracurricular
-    template_name = 'laporan.html'
+    template_name = 'new_laporan.html'
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -39,9 +40,6 @@ class PrintToPDFView(ListView):
         context = super(PrintToPDFView, self).get_context_data(**kwargs)
         locale.setlocale(locale.LC_ALL, 'id_ID')
         context['tanggal'] = datetime.datetime.now(timezone.get_default_timezone())
-        # data = Report.objects.values_list('kehadiran_santri__siswa__nama_siswa', flat=True)
-        # for d in set(data):
-        #     print(d)
         context['students'] = StudentOrganization.objects.filter(ekskul__slug=self.kwargs.get('slug')).order_by('siswa__kelas', 'siswa__nama_siswa').values_list('siswa__nama_siswa', 'siswa__kelas')
         context['angka'] = [x for x in range(15)]
         return context
@@ -58,12 +56,18 @@ def laporan_ekskul_print_versi2(request, slug):
 
 class LaporanEkskulView(ListView):
     model = Report
-    template_name = 'laporan-ekskul2.html'
+    template_name = 'new_laporan-ekskul.html'
     queryset = Report.objects.all()
     paginate_by = 10
 
     def get_queryset(self):
         return self.queryset.filter(nama_ekskul__slug=self.kwargs.get('slug')).order_by('-tanggal_pembinaan')
+    
+    def get_context_data(self, **kwargs):
+        context = super(LaporanEkskulView, self).get_context_data(**kwargs)
+        context['ekskul'] = Extracurricular.objects.filter(slug=self.kwargs.get('slug'))
+        context['bulan_ini'] = timezone.now().__format__("%B %Y")
+        return context
 
 def laporan_ekskul(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
@@ -113,7 +117,7 @@ def laporan_ekskul(request, slug):
 
 class LaporanDetailView(DetailView):
     model = Report
-    template_name = 'laporan-detail.html'
+    template_name = 'new_laporan-detail.html'
 
 
 @login_required(login_url='/login/')
@@ -144,6 +148,7 @@ def laporan_input(request, slug):
             FormLaporanKehadiran.foto = image
             if form.is_valid():
                 form.save()
+                messages.success(request, "Input Laporan berhasil!")
                 locale.setlocale(locale.LC_ALL, 'id_ID')
                 tanggal = datetime.date.fromisoformat(tanggal_pembinaan).strftime('%d %B %Y')
                 UserLog.objects.create(
@@ -167,7 +172,7 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
                 result = response.text
                 print(result)
 
-                return redirect('laporan:laporan-ekskul', ekskul.slug)
+                return redirect('laporan:laporan-input', ekskul.slug)
 
     else:
         form = FormLaporanKehadiran()
@@ -177,7 +182,7 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
         'filtered_student': filtered_student,
         'form': form,
     }
-    return render(request, 'laporan-input.html', context)
+    return render(request, 'new_laporan-input.html', context)
 
 
 @login_required(login_url='/login/')
@@ -192,17 +197,19 @@ def laporan_edit(request, slug, pk):
         form = FormLaporanKehadiran(request.POST, request.FILES, instance=laporan)
         if form.is_valid():
             form.save()
+            locale.setlocale(locale.LC_ALL, 'id_ID')
+            tanggal = datetime.date.fromisoformat(str(laporan.tanggal_pembinaan)).strftime('%d %B %Y')
             UserLog.objects.create(
                 user=request.user.teacher,
                 action_flag="CHANGE",
                 app="LAPORAN",
                 message="Berhasil mengubah data laporan pertemuan ekskul {} untuk tanggal {}".format(ekskul,
-                                                                                                     laporan.tanggal_pembinaan)
+                                                                                                     tanggal)
             )
 
             phone = request.user.teacher.no_hp
             message = f'''*[NOTIFIKASI LAPORAN EKSKUL]*
-Anda berhasil edit laporan pertemuan ekskul *{ekskul.nama_ekskul}* untuk tanggal *{laporan.tanggal_pembinaan}*.
+Anda berhasil edit laporan pertemuan ekskul *{ekskul.nama_ekskul}* untuk tanggal *{tanggal}*.
 Detail laporan:
 https://pmbp.smasitalbinaa.com/laporan/{ekskul.slug}
 
@@ -220,9 +227,10 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
         form = FormLaporanKehadiran(instance=laporan)
     context = {
         'ekskul': ekskul,
+        'edit': True,
         'form': form,
     }
-    return render(request, 'laporan-edit.html', context)
+    return render(request, 'new_laporan-input.html', context)
 
 
 @login_required(login_url='/login/')
@@ -234,17 +242,20 @@ def laporan_delete(request, slug, pk):
         return HttpResponseRedirect(reverse('restricted'))
 
     if request.method == 'POST':
+        locale.setlocale(locale.LC_ALL, 'id_ID')
+        tanggal = datetime.date.fromisoformat(str(laporan.tanggal_pembinaan)).strftime('%d %B %Y')
+
         UserLog.objects.create(
             user=request.user.teacher,
             action_flag="DELETE",
             app="LAPORAN",
             message="Berhasil menghapus data laporan pertemuan ekskul {} untuk tanggal {}".format(ekskul,
-                                                                                                  laporan.tanggal_pembinaan)
+                                                                                                  tanggal)
         )
 
         phone = request.user.teacher.no_hp
         message = f'''*[NOTIFIKASI LAPORAN EKSKUL]*
-Anda berhasil edit laporan pertemuan ekskul *{ekskul.nama_ekskul}* untuk tanggal *{laporan.tanggal_pembinaan}*.
+Anda berhasil hapus laporan pertemuan ekskul *{ekskul.nama_ekskul}* untuk tanggal *{tanggal}*.
 Detail laporan:
 https://pmbp.smasitalbinaa.com/laporan/{ekskul.slug}
 
@@ -262,4 +273,4 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
         'laporan': laporan,
     }
 
-    return render(request, 'laporan-delete.html', context)
+    return render(request, 'new_laporan-delete.html', context)

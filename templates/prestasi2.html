@@ -14,7 +14,7 @@
         <div class="d-flex flex-wrap justify-content-around align-items-start">
         {% for data in object_list %}
         <div class="card m-1 p-0" style="width: 18rem;">
-            <img src="{{data.dokumentasiprestasi_set.first.foto.url}}" class="card-img-top" alt="Foto Prestasi">
+            <img src="{{data.dokumentasiprestasi_set.last.foto.url}}" class="card-img-top" alt="Foto Prestasi">
             <div class="card-body">
                 <h5 class="card-title">{{ data.peraih_prestasi.title }}</h5>
                 <p class="card-text">{{ data.kategori_kemenangan.capitalize }} {{ data.bidang_lomba.title }} {{ data.nama_lomba.title }} {{ data.tahun_lomba}}</p>

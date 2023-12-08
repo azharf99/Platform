@@ -8,7 +8,7 @@ class FormLaporanKehadiran(forms.ModelForm):
         widgets = {
             'nama_ekskul': forms.Select(attrs={'class': 'form-select'}),
             'pembina_ekskul': forms.Select(attrs={'class': 'form-select'}),
-            'tanggal_pembinaan': forms.DateInput(attrs={'class': 'form-control'}),
+            'tanggal_pembinaan': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'catatan_pembinaan': forms.Textarea(attrs={'class': 'form-control'}),
             'kehadiran_santri': forms.SelectMultiple(attrs={'class': 'form-select'}),
         }

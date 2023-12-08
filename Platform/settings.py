@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'prestasi.apps.PrestasiConfig',
     'userlog.apps.UserlogConfig',
     'osn.apps.OsnConfig',
+    'dashboard.apps.DashboardConfig',
 
 
 ]
@@ -133,7 +134,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'id-ID'
+LANGUAGE_CODE = 'en-US'
 
 TIME_ZONE = 'Asia/Jakarta'
 
@@ -149,6 +150,7 @@ STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
+    BASE_DIR / 'assets',
 
 ]
 

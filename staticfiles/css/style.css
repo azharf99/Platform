@@ -1,43 +1,50 @@
 #bottom{
-position: fixed;
-bottom:0;
-width: 100%
-}
-
-.wrapper{
-text-align: center;
-background-color: LightGray;
-display: flex;
-border-radius: 10px;
-margin: 1rem;
-justify-content: center;
-}
-
-.tombol{
-color: white;
-display: flex;
-justify-content: center;
-background-color: blue;
-width: 80px;
-height: 70px;
-align-items: center;
-border-radius: 10px;
-margin: 0.5rem;
-}
-
-.tombol a{
-text-decoration:none;
-}
-
-.tombol a svg{
-color: white;
-}
-
-.tombol a p{
-color: white;
-}
-
-.tombol:hover{
-background-color: violet;
-}
-
+  position: fixed;
+  bottom:0;
+  width: 100%
+  }
+  
+  .wrapper{
+  text-align: center;
+  background-color: #cce6ff;
+  display: flex;
+  border-radius: 10px;
+  margin: 1rem;
+  justify-content: center;
+  }
+  
+  .tombol{
+  color: white;
+  display: flex;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  align-items: center;
+  border-radius: 10px;
+  margin: 0.5rem;
+  }
+  
+  .tombol a{
+  text-decoration:none;
+  padding: 0.9rem 1.2rem 0.9rem 1.2rem;
+  border-radius: 10px;
+  background-color: #3399ff;
+  }
+  
+  .tombol a i{
+  color: white;
+  }
+  
+  .tombol a p{
+  color: white;
+  }
+  
+  .tombol:hover a{
+  background-color: #3333ff;
+  cursor: pointer;
+  }
+  
+  .tombol:hover a i{
+  color: #ffffb3;
+  }
+  

@@ -14,9 +14,18 @@ from osn.forms import FormInputBidang, FormInputSiswa, FormInputLaporanOSN, Form
 # Create your views here.
 class OsnIndexView(ListView):
     model = BidangOSN
-    queryset = BidangOSN.objects.all().order_by('nama_bidang')
     context_object_name = 'data'
-    template_name = 'osn.html'
+    template_name = 'new_osn.html'
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            if self.request.user.teacher.bidangosn_set.count() > 0:
+                return BidangOSN.objects.filter(pembimbing=self.request.user.teacher).order_by('nama_bidang')
+            else:
+                return BidangOSN.objects.all().order_by('nama_bidang')
+
+        else:
+            return BidangOSN.objects.all().order_by('nama_bidang')
 
 
 @login_required(login_url='/login/')
@@ -38,7 +47,7 @@ def bidang_osn_input(request):
         'tipe': True,
         'name': 'Input Bidang OSN',
     }
-    return render(request, 'osn-input.html', context)
+    return render(request, 'new_osn-input.html', context)
 
 
 
@@ -61,10 +70,9 @@ def bidang_osn_edit(request, pk):
         forms = FormInputBidang(instance=data)
     context = {
         'forms': forms,
-        'tipe' : True,
         'name': 'Edit Bidang OSN',
     }
-    return render(request, 'osn-input.html', context)
+    return render(request, 'new_osn-input.html', context)
 
 
 @login_required(login_url='/login/')
@@ -80,11 +88,11 @@ def bidang_osn_delete(request, pk):
     context = {
         'data': data,
     }
-    return render(request, 'osn-delete.html', context)
+    return render(request, 'new_osn-delete.html', context)
 
 class DetailBidangOSNView(DetailView):
     model = BidangOSN
-    template_name = 'osn-detail.html'
+    template_name = 'new_osn-detail.html'
     context_object_name = 'data'
 
     def get_context_data(self, **kwargs):
@@ -115,7 +123,7 @@ def siswa_osn_input(request, slug):
         'slug': slug,
         'name': "Input Siswa OSN",
     }
-    return render(request, 'osn-input.html', context)
+    return render(request, 'new_osn-input.html', context)
 
 
 @login_required(login_url='/login/')
@@ -130,11 +138,12 @@ def siswa_osn_delete(request, slug, pk):
     context = {
         'data': data,
     }
-    return render(request, 'osn-delete.html', context)
+    return render(request, 'new_osn-delete.html', context)
 
 
 @login_required(login_url='/login/')
 def laporan_osn_input(request, slug):
+    siswa_osn = SiswaOSN.objects.filter(bidang_osn__slug=slug)
     if request.method == "POST":
         forms = FormInputLaporanOSN(request.POST, request.FILES)
         if forms.is_valid():
@@ -149,8 +158,9 @@ def laporan_osn_input(request, slug):
         'forms': forms,
         'slug': slug,
         'name': "Input Laporan OSN",
+        'siswa_osn': siswa_osn,
     }
-    return render(request, 'osn-input.html', context)
+    return render(request, 'new_osn-input.html', context)
 
 
 
@@ -174,7 +184,7 @@ def laporan_osn_edit(request, slug, pk):
         'slug': slug,
         'name': "Edit Laporan OSN",
     }
-    return render(request, 'osn-input.html', context)
+    return render(request, 'new_osn-input.html', context)
 
 
 @login_required(login_url='/login/')
@@ -189,7 +199,7 @@ def laporan_osn_delete(request, slug, pk):
     context = {
         'data': data,
     }
-    return render(request, 'osn-delete.html', context)
+    return render(request, 'new_osn-delete.html', context)
 
 
 def cetak_laporan_osnk(request, slug):

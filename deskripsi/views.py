@@ -1,44 +1,51 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
+from django.shortcuts import redirect
 from django.db.models import Q
 from deskripsi.models import DeskripsiEkskul, DeskripsiHome
-from userlog.models import UserLog
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
+# from userlog.models import UserLog
+from prestasi.models import Prestasi
+# from django.contrib.auth import authenticate, login
+# from django.contrib import messages
 
 # Create your views here.
 
 def home_view(request):
-    home_data = DeskripsiHome.objects.all()
-    app_data = DeskripsiEkskul.objects.filter(status=True)
-    logs = UserLog.objects.all().order_by('-created_at')[:10]
+    # if request.user.is_authenticated:
+    #     return redirect('dashboard')
+    # home_data = DeskripsiHome.objects.all()
+    # app_data = DeskripsiEkskul.objects.filter(status=True)
+    # logs = UserLog.objects.all().order_by('-created_at')[:10]
+    prestasi = Prestasi.objects.all().order_by('-created_at', '-tahun_lomba', 'peraih_prestasi')[:6]
 
-    if request.method == "POST":
-        username = request.POST.get('username').rstrip()
-        password = request.POST.get('pass').rstrip()
+    # if request.method == "POST":
+    #     username = request.POST.get('username').rstrip()
+    #     password = request.POST.get('pass').rstrip()
 
 
-        user = authenticate(request, username=username, password=password)
+    #     user = authenticate(request, username=username, password=password)
 
-        if user is not None:
-            login(request, user)
-            messages.success(request, "Login berhasil! Selamat datang..")
-            UserLog.objects.create(
-                user=request.user.teacher,
-                action_flag="LOGIN",
-                app="EKSKUL",
-                message="Berhasil melakukan login ke aplikasi"
-            )
-            return redirect('app-index')
-        else:
-            messages.warning(request, "Username atau Password salah!")
+    #     if user is not None:
+    #         login(request, user)
+    #         messages.success(request, "Login berhasil! Selamat datang..")
+    #         UserLog.objects.create(
+    #             user=request.user.teacher,
+    #             action_flag="LOGIN",
+    #             app="EKSKUL",
+    #             message="Berhasil melakukan login ke aplikasi"
+    #         )
+    #         return redirect('app-index')
+    #     else:
+    #         messages.warning(request, "Username atau Password salah!")
 
     context = {
-        'home_data': home_data,
-        'app_data': app_data,
-        'page': 'home',
-        'logs': logs,
+        # 'home_data': home_data,
+        # 'app_data': app_data,
+        # 'page': 'home',
+        # 'logs': logs,
+        'prestasi': prestasi,
     }
-    return render(request, 'home.html', context)
+    return render(request, 'new_home.html', context)
+    # return render(request, 'new_home.html')
 
 
 def ekskul_view(request):
@@ -47,7 +54,7 @@ def ekskul_view(request):
     context = {
         'ekskul_data': ekskul_data
     }
-    return render(request, 'ekskul.html', context)
+    return render(request, 'new_ekskul.html', context)
 
 
 def menu_view(request):

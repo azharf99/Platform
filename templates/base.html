@@ -4,22 +4,45 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta
-            name="description"
-            content="Aplikasi yang dibuat untuk mendukung upaya digitalisasi
-            dokumen/administrasi sekolah khususnya di bidang Ekstrakurikuler.">
-    <title>SMA IT Al Binaa SuperApp</title>
+    <meta name="description" content="Pengembangan Minat, Bakat dan Pembinaan Prestasi SMA IT Al Binaa">
+    <title>PMBP SMA IT Al Binaa</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/png">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
-<body class="text-bg-light">
-<nav>
-    <div class="d-flex justify-content-center w-100 text-bg-light fixed-top text-center">
-        <img class="m-2" src="{% static 'images/Binaaul-Mustaqbal.png' %}" alt="logo-sma" width="36" height="30">
-        <img class="m-2" src="{% static 'images/albinaa-vision.png' %}" alt="logo-albinaa-vision" width="80" height="30">
-        <a href="{% url 'app-index' %}" class="text-decoration-none text-dark m-2 fw-bold">
-            <h4 class="my-0">SIAPP</h4>
+<body>
+<nav class="navbar text-bg-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand ms-3" href="{% url 'app-index' %}">
+            <img class="m-1" src="{% static 'images/Binaaul-Mustaqbal.png' %}" alt="logo-sma" width="36" height="30">
+            <img class="m-1" src="{% static 'images/albinaa-vision.png' %}" alt="logo-albinaa-vision" width="80" height="30">
         </a>
+        {% if request.user.is_authenticated %}
+        <ul class="nav nav-pills me-4">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="{% url 'profil' %}" role="button" aria-expanded="false">
+                    <img src="{{ request.user.teacher.foto.url }}" height="30px" width="30px" style="border-radius: 50%;">
+                    {{ request.user.teacher.nama_pembina | truncatewords:1 }}
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'profil' %}">Akun saya</a></li>
+                    <li><a class="dropdown-item" href="{% url 'edit-profil' %}">Pengaturan Akun</a></li>
+                    <li><a class="dropdown-item" href="{% url 'username-change' %}">Ubah Username</a></li>
+                    <li><a class="dropdown-item" href="{% url 'password' %}">Ubah Password</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+        {% else %}
+        <div>
+            <a class="btn btn-sm btn-primary me-1" href="{% url 'login' %}">Login</a>
+            <a class="btn btn-sm btn-success me-3" href="{% url 'register' %}">Register</a>
+        </div>
+        {% endif %}
     </div>
 </nav>
 
@@ -29,48 +52,66 @@
     {% endblock %}
 </main>
 
-<nav>
-    <div class="d-flex justify-content-center w-100 text-bg-primary fixed-bottom text-center">
-        <a href="{% url 'app-index' %}" class="text-bg-primary p-2 rounded text-decoration-none my-2 mx-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
-                <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
-            </svg>
-            <p class="my-0">Beranda</p>
-        </a>
-        <a href="{% url 'menu' %}" class="text-bg-primary p-2 rounded text-decoration-none my-2 mx-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-menu-app" viewBox="0 0 16 16">
-                <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0h2A1.5 1.5 0 0 1 5 1.5v2A1.5 1.5 0 0 1 3.5 5h-2A1.5 1.5 0 0 1 0 3.5v-2zM1.5 1a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5h-2zM0 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8zm1 3v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2H1zm14-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2h14zM2 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
-            </svg>
-            <p class="my-0">Menu</p>
-        </a>
+<nav id="bottom">
+    <div class="wrapper">
+        <div class="tombol">
+            {% if page %}
+            <a href="#home">
+                {% else %}
+                <a href="{% url 'app-index' %}">
+                    {% endif %}
+                    <i class="bi bi-house fs-4"></i>
+                    <!--                <p class="m-0">Beranda</p>-->
+                </a>
+        </div>
+
+        <div class="tombol">
+            {% if page %}
+            <a href="#menu">
+                {% else %}
+                <a href="{% url 'menu' %}">
+                    {% endif %}
+                    <i class="bi bi-grid fs-4 text-white"></i>
+                    <!--                    <p class="m-0">Menu</p>-->
+                </a>
+        </div>
+
         {% if request.user.is_authenticated %}
-        <a href="{% url 'log-index' %}" class="text-bg-primary p-2 rounded text-decoration-none my-2 mx-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
-                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
-            </svg>
-            <p class="my-0">Notifikasi</p>
-        </a>
-        <a href="{% url 'profil' %}" class="text-bg-primary p-2 rounded text-decoration-none my-2 mx-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
-                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
-            </svg>
-            <p class="my-0">Akun</p>
-        </a>
+        <div class="tombol">
+            {% if page %}
+            <a href="#userlog">
+                {% else %}
+                <a href="{% url 'log-index' %}">
+                    {% endif %}
+                    <i class="bi bi-clock-history fs-4 text-white"></i>
+                    <!--                <p class="m-0">Activity</p>-->
+                </a>
+        </div>
+
+        <div class="tombol">
+            <a href="{% url 'profil' %}">
+                <i class="bi bi-person fs-4 text-white"></i>
+                <!--                <p class="m-0">Akun</p>-->
+            </a>
+        </div>
         {% else %}
-        <a href="{% url 'login' %}" class="text-bg-primary p-2 rounded text-decoration-none my-2 mx-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
-              <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z"/>
-              <path fill-rule="evenodd" d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
-            </svg>
-            <p class="my-0">Login</p>
-        </a>
+        <div class="tombol">
+            {% if page %}
+            <a href="#login">
+                {% else %}
+                <a href="{% url 'login' %}">
+                    {% endif %}
+                    <i class="bi bi-box-arrow-in-right fs-4 text-white"></i>
+                    <!--                <p class="m-0">Login</p>-->
+                </a>
+        </div>
+
         {% endif %}
     </div>
 </nav>
 
-<footer class="text-center text-secondary mb-5 mt-2 pb-5 small">SMA IT Al Binaa</footer>
+<footer class="text-center text-secondary mb-5 mt-2 pb-5 small">&copy; SMA IT Al Binaa</footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
 </body>
 </html>

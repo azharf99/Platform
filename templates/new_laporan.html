@@ -46,29 +46,40 @@
                 </p>
               </div>
               <div class="card-footer border-success">
-                {% if request.user.is_superuser %}
-                <a
-                  href="{% url 'laporan:laporan-input' data.slug %}"
-                  class="btn btn-sm btn-danger m-1"
-                  >Input Kehadiran</a
-                >
-                <a
-                  href="{% url 'laporan:laporan-print' data.slug %}"
-                  class="btn btn-sm btn-success m-1"
-                  >Print Laporan</a
-                >
-                <a
-                  href="{% url 'laporan:laporan-ekskul' data.slug %}"
-                  class="btn btn-sm btn-warning m-1"
-                  >Rekap Laporan</a
-                >
-                {% else %}
+                {% if request.user.is_authenticated %}
+                  {% if not request.user.is_superuser %}
+                    {% for pembina in data.pembina.all %}
+                      {% if request.user.teacher.nama_pembina == pembina.nama_pembina  %}
+                      <a
+                        href="{% url 'laporan:laporan-input' data.slug %}"
+                        class="btn btn-sm btn-danger m-1"
+                        >Input Kehadiran</a
+                      >
+                      <a
+                        href="{% url 'laporan:laporan-print' data.slug %}"
+                        class="btn btn-sm btn-success m-1"
+                        >Print Laporan</a
+                      >
+                      {% endif %}
+                      {% endfor %}
+                      {% else %}
+                      <a
+                        href="{% url 'laporan:laporan-input' data.slug %}"
+                        class="btn btn-sm btn-danger m-1"
+                        >Input Kehadiran</a
+                      >
+                      <a
+                        href="{% url 'laporan:laporan-print' data.slug %}"
+                        class="btn btn-sm btn-success m-1"
+                        >Print Laporan</a
+                      >
+                  {% endif %}
+                {% endif %}
                 <a
                   href="{% url 'laporan:laporan-ekskul' data.slug %}"
                   class="btn btn-sm btn-secondary m-1"
                   >Rekap Laporan</a
                 >
-                {% endif %}
               </div>
             </div>
           </div>

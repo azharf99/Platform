@@ -17,7 +17,7 @@ import xlsxwriter
 # Create your views here.
 class PrestasiIndexView(ListView):
     model = Prestasi
-    queryset = Prestasi.objects.all().order_by('-tahun_lomba', 'peraih_prestasi')
+    queryset = Prestasi.objects.all().order_by('-created_at', '-tahun_lomba', 'peraih_prestasi')
     paginate_by = 9
     template_name = 'prestasi2.html'
 

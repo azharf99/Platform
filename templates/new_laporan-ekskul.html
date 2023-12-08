@@ -6,11 +6,11 @@
 <main id="main" class="main">
     <section class="section dashboard">
         <div class="pagetitle">
-            <h1>Rekap Kehadiran {{ object_list.first.nama_ekskul.get_tipe_display }} {{ object_list.first.nama_ekskul }} SMA IT Al Binaa</h1>
+            <h1>Rekap Kehadiran {{ ekskul.first.get_tipe_display }} {{ ekskul.first }} SMA IT Al Binaa</h1>
             <nav>
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Home</a></li>
-                  <li class="breadcrumb-item">{{ object_list.first.nama_ekskul.get_tipe_display }}</li>
+                  <li class="breadcrumb-item">{{ ekskul.first.get_tipe_display }}</li>
                   <li class="breadcrumb-item active">Rekap Kehadiran</li>
                 </ol>
             </nav>
@@ -20,21 +20,16 @@
             {% if bulan_ini %}
             <h4> {{ bulan_ini }}</h4>
             {% endif %}
-            {% for pembina in object_list.first.nama_ekskul.pembina.all %}
-            {% if object_list.first.nama_ekskul.pembina.count > 1 %}
+            {% for pembina in ekskul.first.pembina.all %}
+            {% if ekskul.first.pembina.count > 1 %}
             <h6> Pembina {{ forloop.counter }}: {{ pembina }} </h6>
             {% else %}
             <h6 class="m-0">Pembina : {{ pembina }}</h6>
             {% endif %}
             {% endfor %}
-            <h6 class="m-0"> Jadwal Bimbingan : {{ object_list.first.nama_ekskul.jadwal }} {{ object_list.first.nama_ekskul.waktu }}</h6>
+            <h6 class="m-0"> Jadwal Bimbingan : {{ ekskul.first.jadwal }} {{ ekskul.first.waktu }}</h6>
         </div>
 
-        <div class="d-flex justify-content-center gap-2 m-3">
-            {% if request.user.is_authenticated %}
-            <a href="{% url 'laporan:laporan-input' object_list.first.nama_ekskul.slug %}" class="btn btn-primary"> + Input Laporan</a>
-            {% endif %}
-        </div>
 
 
         <div class="col-sm mt-3">
@@ -82,7 +77,7 @@
                 {% endfor %}
                 {% else %}
                 <tr>
-                    <td colspan="4" class="text-center fw-bold text-danger">Maaf, belum ada laporan kehadiran untuk bulan ini ({{ bulan_ini}}). Jika Anda input laporan untuk bulan yang lalu, silahkan filter untuk melihat hasilnya.</td>
+                    <td colspan="4" class="text-center fw-bold text-danger">Maaf, belum ada laporan kehadiran untuk bulan ini {{bulan_ini}}. Jika Anda input laporan untuk bulan yang lalu, silahkan filter untuk melihat hasilnya.</td>
                 </tr>
                 {% endif %}
                 </tbody>
