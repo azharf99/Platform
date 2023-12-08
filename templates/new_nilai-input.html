@@ -7,6 +7,16 @@
 <main id="main" class="main">
     <section class="section dashboard">
         <div class="pagetitle">
+            {% if edit %}
+            <h1>Edit Nilai {{ ekskul.nama_ekskul }}</h1>
+            <nav>
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Home</a></li>
+                <li class="breadcrumb-item">{{ekskul.get_tipe_display}}</li>
+                <li class="breadcrumb-item active">Edit Nilai</li>
+                </ol>
+            </nav>
+            {% else %}
             <h1>Input Nilai {{ ekskul.nama_ekskul }}</h1>
             <nav>
                 <ol class="breadcrumb">
@@ -15,6 +25,7 @@
                 <li class="breadcrumb-item active">Input Nilai</li>
                 </ol>
             </nav>
+            {% endif %}
         </div>
     </section>
     <div class="container">
