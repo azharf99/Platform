@@ -1,0 +1,184 @@
+{% extends 'new_base.html' %}
+{% block content %}
+{% include 'new_navbar.html'%}
+{% include 'new_sidebar.html'%}
+{% load static %}
+{% load humanize %}
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Daftar Proposal</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+        <li class="breadcrumb-item active">Proposal</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section dashboard">
+      <div class="row">
+
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+            <div class="card info-card sales-card">
+              <div class="card-body">
+                <h5 class="card-title">Jumlah Proposal Masuk</h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-file-earmark-word"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ object_list.count }}</h6>
+                    <span class="text-success small pt-1 fw-bold">{{ jumlah_diterima.count }}</span> <span class="text-muted small pt-2 ps-1">Diterima</span>
+                    <span class="text-warning small pt-1 fw-bold">{{ jumlah_pending.count }}</span> <span class="text-muted small pt-2 ps-1">Pending</span>
+                    <span class="text-danger small pt-1 fw-bold">{{ jumlah_ditolak.count }}</span> <span class="text-muted small pt-2 ps-1">Ditolak</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Download Template</h5>
+                <div class="activity">
+                  <a href="{% static 'template-proposal.docx' %}" class="btn btn-sm btn-outline-success m-1" target="_blank">
+                      <i class="bi bi-arrow-down-circle"></i>
+                      Template Proposal Event
+                  </a>
+                  <a href="{% static 'template-proposal-pengadaan.docx' %}" class="btn btn-sm btn-outline-success m-1" target="_blank">
+                      <i class="bi bi-arrow-down-circle"></i>
+                      Template Proposal Barang
+                  </a>
+                </div>
+              </div>
+            </div>
+        </div>
+        
+            <div class="col-xxl-4 col-xl-12">
+              <div class="card info-card revenue-card">
+                <div class="card-body">
+                  <h5 class="card-title">Dana Diajukan</span></h5>
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-cash-coin"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>IDR. {{jumlah.anggaran_biaya__sum|intword}}</h6>
+                      <span class="text-success small pt-1 fw-bold">IDR. {{dana_diterima.anggaran_biaya__sum|default:"0"|intword}}</span> <span class="text-muted small pt-2 ps-1">Diterima</span>
+                      <span class="text-warning small pt-1 fw-bold">IDR. {{dana_pending.anggaran_biaya__sum|default:"0"|intword}}</span> <span class="text-muted small pt-2 ps-1">Pending</span>
+                      <span class="text-danger small pt-1 fw-bold">IDR. {{dana_ditolak.anggaran_biaya__sum|default:"0"|intword}}</span> <span class="text-muted small pt-2 ps-1">Ditolak</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xxl-4 col-xl-12">
+              <div class="card info-card customers-card">
+                <div class="card-body">
+                    <div class="row justify-content-center pt-3">
+                        {% if proposal_inventaris %}
+                            {% for data in proposal_inventaris %}
+                            <div class="col-lg-6 col-md-4">
+                                <div class="card info-card customers-card">
+                                <div class="card-header">Proposal Inventaris {{forloop.revcounter}}</div>
+                                <div class="card-body">
+                                    <h1 class="card-title text-success">{{ data.judul_proposal }}</h1>
+                                    <p class="card-text p-0 m-0">PJ : {{ data.penanggungjawab }}</p>
+                                    <p class="card-text p-0 m-0">Biaya : Rp. {{ data.anggaran_biaya|intcomma }}</p>
+                                    <p class="card-text p-0 m-0">Status Wakasek: {{data.proposalinventarisstatus_set.first.get_is_wakasek_display|default:"-"}}</p>
+                                    <p class="card-text p-0 m-0">Status Kepsek: {{data.proposalinventarisstatuskepsek_set.first.get_is_kepsek_display|default:"-"}}</p>
+                                    <p class="card-text p-0 m-0">Status Bendahara: {{data.proposalinventarisstatusbendahara_set.first.get_is_bendahara_display|default:"-"}}</p>
+                                </div>
+                                <div class="card-footer border-primary text-light">
+                                    <a class="btn btn-sm btn-primary m-2" href="{{ data.upload_file.url }}" target="_blank">
+                                    <i class="bi bi-arrow-down-circle"></i> File
+                                    </a>
+                                    {% if request.user.is_authenticated %}
+                                        {% if request.user.username == 'agung_wa' %}
+                                            <a href="{% url 'proposal:proposal-approval-kepsek' data.id %}" class="btn btn-sm btn-success m-1">Approval Kepsek</a>
+                                        {% elif request.user.username == 'chevi_indrayadi' %}
+                                            <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1"><i class="bi bi-search"></i></a>
+                                            <a href="{% url 'proposal:proposal-approval-bendahara' data.id %}" class="btn btn-sm btn-success m-1">Approval Bendahara</a>
+                                        {% elif request.user.username == 'panji_asmara' %}
+                                            <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1"><i class="bi bi-search"></i></a>
+                                            <a href="{% url 'proposal:proposal-approval' data.id %}" class="btn btn-sm btn-success m-1">Approval</a>
+                                            <a href="{% url 'proposal:proposal-approval-transfer' data.id %}" class="btn btn-sm btn-primary m-1">Bukti Transfer</a>
+                                        {% elif data.proposalstatusbendahara_set.first.is_bendahara == "Accepted" %}
+                                            <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1"><i class="bi bi-search"></i></a>
+                                            <a href="{% url 'proposal:proposal-approval-transfer' data.id %}" class="btn btn-sm btn-success m-1">Bukti Transfer</a>
+                                        {% else %}
+                                            <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1"><i class="bi bi-search"></i></a>
+                                            <a href="{% url 'proposal:edit-proposal' data.id %}" class="btn btn-sm btn-warning m-1"><i class="bi bi-pencil-square"></i></a>
+                                            <a href="{% url 'proposal:delete-proposal' data.id %}" class="btn btn-sm btn-danger m-1"><i class="bi bi-trash"></i></a>
+                                        {% endif %}
+                                    {% else %}
+                                        <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1"><i class="bi bi-search"></i></a>
+                                    {% endif %}
+                                </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                            
+                        {% if object_list %}
+                        {% for data in object_list %}
+                            <div class="col-lg-4 col-md-6">
+                                <div class="card info-card customers-card">
+                                <div class="card-header">Proposal Lomba {{forloop.revcounter}}</div>
+                                <div class="card-body">
+                                    <h1 class="card-title text-success">{{ data.nama_event }}</h1>
+                                    <p class="card-subtitle mb-2 text-muted">{{ data.tanggal_pendaftaran|date:"j M Y" }} - {{ data.tanggal_pelaksanaan|date:"j M Y" }}</p>
+                                    <p class="card-subtitle mb-2 text-muted">{{ data.lokasi_event }}</p>
+                                    <p class="card-text p-0 m-0">PJ : {{ data.penanggungjawab }}</p>
+                                    <p class="card-text p-0 m-0">Biaya : Rp. {{ data.anggaran_biaya|intcomma }}</p>
+                                    <p class="card-text p-0 m-0">Status Wakasek: {{data.proposalstatus_set.first.get_is_wakasek_display|default:"-"}}</p>
+                                    <p class="card-text p-0 m-0">Status Kepsek: {{data.proposalstatuskepsek_set.first.get_is_kepsek_display|default:"-"}}</p>
+                                    <p class="card-text p-0 m-0">Status Bendahara: {{data.proposalstatusbendahara_set.first.get_is_bendahara_display|default:"-"}}</p>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="{% url 'proposal:detail-proposal' data.id %}" class="btn btn-sm btn-info m-1"><i class="bi bi-search"></i></a>
+                                    <a class="btn btn-sm btn-primary m-2" href="{{ data.upload_file.url }}" target="_blank">
+                                    <i class="bi bi-arrow-down-circle"></i> File
+                                    </a>
+                                    {% if request.user.is_authenticated %}
+                                        {% if request.user.username == 'agung_wa' %}
+                                            <a href="{% url 'proposal:proposal-approval-kepsek' data.id %}" class="btn btn-sm btn-success m-1">Approval Kepsek</a>
+
+                                        {% elif request.user.username == 'chevi_indrayadi' %}
+                                            <a href="{% url 'proposal:proposal-approval-bendahara' data.id %}" class="btn btn-sm btn-success m-1">Approval Bendahara</a>
+
+                                        {% elif request.user.username == 'panji_asmara' %}
+                                            <a href="{% url 'proposal:proposal-approval' data.id %}" class="btn btn-sm btn-success m-1">Approval</a>
+
+                                        {% elif data.proposalstatusbendahara_set.first.is_bendahara == "Accepted" %}
+                                            <a href="{% url 'proposal:proposal-approval-transfer' data.id %}" class="btn btn-sm btn-success m-1">Bukti Transfer</a>
+
+                                        {% elif data.penanggungjawab.nama_pembina == request.user.teacher or request.user.is_superuser %}
+                                            <a href="{% url 'proposal:edit-proposal' data.id %}" class="btn btn-sm btn-warning m-1"><i class="bi bi-pencil-square"></i></a>
+                                            <a href="{% url 'proposal:delete-proposal' data.id %}" class="btn btn-sm btn-danger m-1"><i class="bi bi-trash"></i></a>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+
+                </div>
+              </div>
+            </div>
+
+        </div>
+
+    </section>
+
+  </main><!-- End #main -->
+
+
+{% endblock %}

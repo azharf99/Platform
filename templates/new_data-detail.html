@@ -27,7 +27,7 @@
                 <div class="card info-card sales-card">
   
                   <div class="card-body">
-                    <h5 class="card-title">Logo {{object.nama_ekskul}}</h5>
+                    <h1 class="card-title">Logo {{object.nama_ekskul}}</h1>
                     <img src="{{ object.logo.url }}" alt="Logo Ekskul" style="max-height: 10rem; max-width: 10rem;">    
                   </div>
   
@@ -39,7 +39,7 @@
                 <div class="card info-card revenue-card">
   
                   <div class="card-body">
-                    <h5 class="card-title">{{ object.nama_ekskul }}</span></h5>
+                    <h1 class="card-title">{{ object.nama_ekskul }}</h1>
         
                     {% for pembina in object.pembina.all %}
                     <p>Ustadz {{ pembina.nama_pembina }}</p>

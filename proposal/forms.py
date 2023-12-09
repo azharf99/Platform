@@ -32,8 +32,8 @@ class ProposalEditForm(forms.ModelForm):
         widgets = {
             'nama_event': forms.TextInput(attrs={'class': 'form-control'}),
             'pembuat_event': forms.TextInput(attrs={'class': 'form-control'}),
-            'tanggal_pendaftaran': forms.DateInput(attrs={'class': 'form-control'}),
-            'tanggal_pelaksanaan': forms.DateInput(attrs={'class': 'form-control'}),
+            'tanggal_pendaftaran': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'tanggal_pelaksanaan': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'pelaksanaan': forms.Select(attrs={'class': 'form-control'}),
             'tingkat_event': forms.Select(attrs={'class': 'form-select'}),
             'lokasi_event': forms.TextInput(attrs={'class': 'form-control'}),

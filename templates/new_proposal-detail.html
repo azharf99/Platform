@@ -1,0 +1,234 @@
+{% extends 'new_base.html' %}
+{% block content %}
+{% load static %}
+{% include 'new_navbar.html'%}
+{% include 'new_sidebar.html'%}
+{% load humanize %}
+
+<main id="main" class="main">
+    <section class="section dashboard">
+      <div class="pagetitle">
+        <h1 class="text-center">Detail Proposal {{tipe}}</h5>
+        <nav>
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Home</a></li>
+              <li class="breadcrumb-item">Proposal</li>
+              <li class="breadcrumb-item active">Detail Proposal {{tipe}}</li>
+            </ol>
+        </nav>
+      </div>
+        <div class="row">
+  
+          <!-- Left side columns -->
+          <div class="col-lg-12">
+            <div class="row">
+  
+              <!-- Sales Card -->
+              <div class="col-xxl-4 col-md-6">
+                <div class="card info-card sales-card">
+  
+                  <div class="card-body">
+                      <h1 class="card-title">{{object.penanggungjawab}}</h1>
+                      <img src="{{ object.penanggungjawab.foto.url }}" alt="Logo Ekskul" style="max-height: 5rem; max-width: 10rem;" class="rounded-circle">    
+                  </div>
+  
+                </div>
+              </div><!-- End Sales Card -->
+  
+              <!-- Revenue Card -->
+              <div class="col-xxl-4 col-md-6">
+                <div class="card info-card revenue-card">
+  
+                  <div class="card-body">
+                    <h1 class="card-title">Rp. {{object.anggaran_biaya|intcomma}}</span></h1>
+                    <p>{{ object.nomor_rekening }}</p>
+                    <p>{{ object.nama_bank }}</p>
+                  </div>
+  
+                </div>
+              </div><!-- End Revenue Card -->
+  
+  
+              <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+  
+                  <div class="card-body">
+                    <h1 class="card-title text-center">{{object.nama_event}} {{object.judul_proposal}}</h1>
+  
+                    <table class="table table-hover w-100">
+                        <tbody>
+                        {% if tipe == 'lomba' %}
+                            <tr>
+                                <td>Nama Event</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.nama_event }}</td>
+                            </tr>
+                            <tr>
+                                <td>Penyelenggara Event</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.pembuat_event }}</td>
+                            </tr>
+                            <tr>
+                                <td>Tanggal Pendaftaran</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.tanggal_pendaftaran|date:"j F Y" }}</td>
+                            </tr>
+                            {% if object.tanggal_pelaksanaan %}
+                            <tr>
+                                <td>Tanggal Pelaksanaan</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.tanggal_pelaksanaan|date:"j F Y" }}</td>
+                            </tr>
+                            {% endif %}
+                            <tr>
+                                <td>Jenis Pelaksanaan Event</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.pelaksanaan }}</td>
+                            <tr>
+                                <td>Tingkat Event</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.tingkat_event }}</td>
+                            </tr>
+                            <tr>
+                                <td>Diajukan oleh</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.penanggungjawab }}</td>
+                            </tr>
+                            <tr>
+                                <td>No Rekening PJ</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.nomor_rekening }}</td>
+                            </tr>
+                            <tr>
+                                <td>Nama Bank</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.nama_bank }}</td>
+                            </tr>
+                            <tr>
+                                <td>Ekskul yang terlibat</td>
+                                <td class="text-end">:</td>
+                            {% if object.ekskul %}
+                                <td>{{ object.ekskul }}</td>
+                            {% else %}
+                                <td class="text-danger fw-bold">Tidak ada</td>
+                            {% endif %}
+                            </tr>
+                            <tr>
+                                <td>Santri yang terlibat</td>
+                                <td class="text-end">:</td>
+                                <td>
+                                    {% if object.santri.count %}
+                                        {% for santri in object.santri.all %}
+                                            <p>{{ santri.nama_siswa }} | {{ santri.kelas }}</p>
+                                        {% endfor %}
+                                    {% else %}
+                                        <p class="text-danger fw-bold">Tidak ada santri yang dilibatkan</p>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Anggaran Biaya</td>
+                                <td class="text-end">:</td>
+                                <td>Rp. {{ object.anggaran_biaya|intcomma }}</td>
+                            </tr>
+                            <tr>
+                                <td>Lampiran File</td>
+                                <td class="text-end">:</td>
+                                <td>
+                                    <a class="btn btn-sm btn-primary m-2" href="{{ object.upload_file.url }}" target="_blank">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-arrow-down-circle" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+                                        </svg>
+                                        Proposal
+                                    </a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td>Judul Proposal</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.judul_proposal }}</td>
+                            </tr>
+                            <tr>
+                                <td>Rencana Pembelian barang</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.tanggal_pembelian|date:"j F Y" }}</td>
+                            </tr>
+                            <tr>
+                                <td>Nama Toko</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.nama_toko }}</td>
+                            </tr>
+                            <tr>
+                                <td>Alamat Toko</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.alamat_toko }}</td>
+                            </tr>
+                            <tr>
+                                <td>Diajukan oleh</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.penanggungjawab }}</td>
+                            </tr>
+                            <tr>
+                                <td>No Rekening PJ</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.nomor_rekening }}</td>
+                            </tr>
+                            <tr>
+                                <td>Nama Bank</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.nama_bank }}</td>
+                            </tr>
+                            <tr>
+                                <td>Ekskul yang membutuhkan</td>
+                                <td class="text-end">:</td>
+                                <td>{{ object.ekskul }}</td>
+                            </tr>
+                            <tr>
+                                <td>Santri yang membutuhkan</td>
+                                <td class="text-end">:</td>
+                                <td>
+                                    {% if object.santri.count %}
+                                        {% for santri in object.santri.all %}
+                                            <p>{{ santri.nama_siswa.nama }} | {{ santri.nama_siswa.kelas }}</p>
+                                        {% endfor %}
+                                    {% else %}
+                                        <p class="text-danger fw-bold">Tidak ada santri yang dilibatkan</p>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Anggaran Biaya</td>
+                                <td class="text-end">:</td>
+                                <td>Rp. {{ object.anggaran_biaya|intcomma }}</td>
+                            </tr>
+                            <tr>
+                                <td>Lampiran File</td>
+                                <td class="text-end">:</td>
+                                <td>
+                                    <a class="btn btn-sm btn-primary m-2" href="{{ object.upload_file.url }}" target="_blank">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-arrow-down-circle" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+                                        </svg>
+                                        Proposal
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                  </div>
+  
+                </div>
+              </div><!-- End Recent Sales -->
+                
+            </div>
+          </div><!-- End Left side columns -->
+  
+          
+  
+        </div>
+      </section>
+
+</main>
+{% endblock %}

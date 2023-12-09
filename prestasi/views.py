@@ -18,16 +18,8 @@ import xlsxwriter
 class PrestasiIndexView(ListView):
     model = Prestasi
     queryset = Prestasi.objects.all().order_by('-created_at', '-tahun_lomba', 'peraih_prestasi')
-    paginate_by = 9
-    template_name = 'prestasi2.html'
-
-
-def index(request):
-    prestasi = Prestasi.objects.all().order_by('-tahun_lomba', 'peraih_prestasi')
-    context = {
-        'prestasi': prestasi
-    }
-    return render(request, 'prestasi.html', context)
+    paginate_by = 8
+    template_name = 'new_prestasi.html'
 
 
 def prestasi_detail(request, pk):
@@ -35,7 +27,7 @@ def prestasi_detail(request, pk):
     context = {
         'data': data,
     }
-    return render(request, 'prestasi-detail.html', context)
+    return render(request, 'new_prestasi-detail.html', context)
 
 
 def print_to_excel(request):
@@ -83,7 +75,7 @@ def prestasi_input(request):
     context = {
         'forms': forms,
     }
-    return render(request, 'prestasi-input.html', context)
+    return render(request, 'new_prestasi-input.html', context)
 
 
 @login_required(login_url="/login/")
@@ -111,7 +103,7 @@ def prestasi_edit(request, pk):
     context = {
         'forms': forms,
     }
-    return render(request, 'prestasi-input.html', context)
+    return render(request, 'new_prestasi-input.html', context)
 
 
 @login_required(login_url="/login/")
@@ -167,7 +159,7 @@ def dokumentasi_prestasi_input(request):
     context = {
         'forms': forms,
     }
-    return render(request, 'prestasi-foto-input.html', context)
+    return render(request, 'new_prestasi-input.html', context)
 
 
 @login_required(login_url="/login/")

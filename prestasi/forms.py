@@ -49,6 +49,7 @@ class DokumentasiPrestasiInputForm(forms.ModelForm):
         widgets = {
             'prestasi': forms.Select(attrs={'class': 'form-select'}),
             'foto': forms.FileInput(attrs={'class': 'form-control'}),
+            'keterangan': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
 
@@ -58,4 +59,5 @@ class DokumentasiPrestasiEditForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'prestasi': forms.Select(attrs={'class': 'form-select'}),
+            'keterangan': forms.Textarea(attrs={'class': 'form-control'}),
         }

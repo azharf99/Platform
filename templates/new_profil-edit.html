@@ -11,7 +11,7 @@
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
           <li class="breadcrumb-item">Users</li>
-          <li class="breadcrumb-item active">Profile</li>
+          <li class="breadcrumb-item active">{{name}}</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -26,12 +26,6 @@
               <img src="{{ teacher.foto.url }}" alt="Profile" class="rounded-circle">
               <h2 class="text-center">{{ teacher.nama_pembina }}</h2>
               <h3>{{ teacher.jabatan }}</h3>
-              <div class="social-links mt-2">
-                <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-                <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-                <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-                <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-              </div>
             </div>
           </div>
 
@@ -40,43 +34,38 @@
         <div class="col-xl-8">
 
           <div class="card">
-            <div class="card-body pt-3">
-              <!-- Bordered Tabs -->
-              <ul class="nav nav-tabs nav-tabs-bordered">
-
-                <li class="nav-item">
-                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">{{name}}</button>
-                </li>
-
-              </ul>
-              <div class="tab-content pt-2">
-
-                <div class="tab-pane fade show active profile-edit pt-3" id="profile-edit">
-
-                  <!-- Profile Edit Form -->
-                  <form method="post" action="" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {{form.as_div}}
-                    
-                    <div class="text-center py-3">
-                      <button type="submit" class="btn btn-primary">Save Changes</button>
+            <div class="card-header text-center">
+              Edit Profil
+          </div>
+            <div class="card-body">
+              <div class="container-fluid">
+                <div class="d-flex justify-content-center">
+                    <form enctype="multipart/form-data" method="post" action="">
+                        {% csrf_token %}
+                        {% if messages %}
+                            <ul class="messages text-danger fw-bold">
+                                {% for message in messages %}
+                                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {{ form }}
+                        </div>
+                      </div>
+                      
+                      
                     </div>
-                  </form><!-- End Profile Edit Form -->
-
-
-                </div>
-
-                
-
-              </div><!-- End Bordered Tabs -->
-
-            </div>
+                    <div class="card-footer text-center">
+                        {% if request.user.teacher.nama_lengkap %}
+                            <a href="{% url 'profil' %}" class="btn btn-danger">Back to Profil</a>
+                        {% endif %}
+                        <input class="btn btn-success" type="submit" value="Simpan Perubahan">
+                    </div>
           </div>
 
         </div>
       </div>
     </section>
-
   </main><!-- End #main -->
 
   {% endblock %}

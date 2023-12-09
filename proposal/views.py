@@ -14,7 +14,7 @@ token = settings.TOKEN
 # Create your views here.
 class ProposalIndexView(ListView):
     model = Proposal
-    template_name = 'proposal.html'
+    template_name = 'new_proposal.html'
     paginate_by = 5
     queryset = Proposal.objects.all().order_by('-created_at')
 
@@ -24,12 +24,16 @@ class ProposalIndexView(ListView):
         # Add in a QuerySet of all the books
         context["proposal_inventaris"] = ProposalInventaris.objects.all().order_by('-created_at')
         context["jumlah"] = Proposal.objects.aggregate(Sum('anggaran_biaya'))
-        context["jumlah_diterima"] = Proposal.objects.filter(proposalstatusbendahara__is_bendahara="Accepted").aggregate(Sum('anggaran_biaya'))
+        context["jumlah_diterima"] = Proposal.objects.filter(proposalstatusbendahara__is_bendahara="Accepted")
+        context["jumlah_pending"] = Proposal.objects.filter(proposalstatusbendahara__is_bendahara="Pending")
+        context["dana_diterima"] = Proposal.objects.filter(proposalstatusbendahara__is_bendahara="Accepted").aggregate(Sum('anggaran_biaya'))
+        context["dana_pending"] = Proposal.objects.filter(proposalstatusbendahara__is_bendahara="Pending").aggregate(Sum('anggaran_biaya'))
+        context["dana_ditolak"] = Proposal.objects.filter(proposalstatus__is_wakasek="Rejected").aggregate(Sum('anggaran_biaya'))
         return context
 
 class ProposalDetailView(DetailView):
     model = Proposal
-    template_name = 'proposal-detail.html'
+    template_name = 'new_proposal-detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -94,8 +98,7 @@ Syukron.
 _Ini adalah pesan otomatis, jangan dibalas._'''
                 url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
 
-                response = requests.get(url)
-                print(response.text)
+                requests.get(url)
 
                 phone = '081293034867' #no ust panji
                 message = f'''*[NOTIFIKASI]*
@@ -118,8 +121,7 @@ Syukron.
 _Ini adalah pesan otomatis, jangan dibalas._'''
                 url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
 
-                response = requests.get(url)
-                print(response.text)
+                requests.get(url)
 
                 return redirect('proposal:proposal-index')
             else:
@@ -131,7 +133,7 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
         'forms': forms,
         'name' : 'Lomba',
     }
-    return render(request, 'proposal-input.html', context)
+    return render(request, 'new_proposal-input.html', context)
 
 @login_required(login_url='/login/')
 def proposal_edit(request, pk):
@@ -158,8 +160,7 @@ Syukron.
 _Ini adalah pesan otomatis, jangan dibalas._'''
             url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
 
-            response = requests.get(url)
-            print(response.text)
+            requests.get(url)
             return redirect('proposal:proposal-index')
         else:
             forms = ProposalForm(instance=data)
@@ -171,7 +172,7 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
         'forms': forms,
     }
 
-    return render(request, 'proposal-edit.html', context)
+    return render(request, 'new_proposal-input.html', context)
 
 @login_required(login_url='/login/')
 def proposal_delete(request, pk):
@@ -204,7 +205,7 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
     context = {
         'data': data,
     }
-    return render(request, 'proposal-delete.html', context)
+    return render(request, 'new_proposal-delete.html', context)
 
 
 @login_required(login_url='/login/')
@@ -288,13 +289,15 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
             'nama_event': status.nama_event
         }
     }
-    return render(request, 'proposal-approval.html', context)
+    return render(request, 'new_proposal-approval.html', context)
+
+
 @login_required(login_url='/login/')
 def proposal_approval_kepsek(request, pk):
     if not request.user.username == "agung_wa":
         return redirect('restricted')
-    status = Proposal.objects.get(id=pk)
-    data = ProposalStatusKepsek.objects.get(proposal=status.id)
+    status = get_object_or_404(Proposal, id=pk)
+    data = get_object_or_404(ProposalStatusKepsek, proposal_id=status.id)
     if request.method == "POST":
         if data.status_wakasek.is_wakasek == "Accepted":
             forms = StatusProposalKepsekForm(request.POST, request.FILES, instance=data)
@@ -378,7 +381,7 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
         'status': status,
         'data': data,
     }
-    return render(request, 'proposal-approval.html', context)
+    return render(request, 'new_proposal-approval.html', context)
 
 @login_required(login_url='/login/')
 def proposal_approval_bendahara(request, pk):
@@ -463,7 +466,7 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
         'forms': forms,
         'status': status,
     }
-    return render(request, 'proposal-approval.html', context)
+    return render(request, 'new_proposal-approval.html', context)
 
 
 def proposal_bukti_transfer(request, pk):
@@ -719,7 +722,7 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
         },
         'tipe': 'inventaris',
     }
-    return render(request, 'proposal-approval.html', context)
+    return render(request, 'new_proposal-approval.html', context)
 
 @login_required(login_url='/login/')
 def proposal_inventaris_approval_kepsek(request, pk):
@@ -811,7 +814,7 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
         'data': data,
         'tipe': 'inventaris',
     }
-    return render(request, 'proposal-approval.html', context)
+    return render(request, 'new_proposal-approval.html', context)
 
 @login_required(login_url='/login/')
 def proposal_inventaris_approval_bendahara(request, pk):
@@ -892,4 +895,4 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
         'status': status,
         'tipe': 'inventaris',
     }
-    return render(request, 'proposal-approval.html', context)
+    return render(request, 'new_proposal-approval.html', context)

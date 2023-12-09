@@ -1,0 +1,157 @@
+{% extends 'new_base.html' %}
+{% block content %}
+{% load static %}
+{% include 'new_navbar.html'%}
+{% include 'new_sidebar.html'%}
+{% load humanize %}
+
+<main id="main" class="main">
+    <section class="section dashboard">
+      <div class="pagetitle">
+        <h1 class="text-center">Detail Prestasi</h5>
+        <nav>
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Home</a></li>
+              <li class="breadcrumb-item">Prestasi</li>
+              <li class="breadcrumb-item active">Detail Prestasi</li>
+            </ol>
+        </nav>
+        <a href="{% url 'prestasi:prestasi-index' %}" class="btn btn-sm btn-danger">&lt; Kembali</a>
+      </div>
+      <div class="row">
+  
+          <!-- Left side columns -->
+          <div class="col-lg-12">
+            <div class="row">
+  
+              <!-- Sales Card -->
+              <div class="col-xxl-4 col-md-6">
+                <div class="card info-card sales-card">
+  
+                  <div class="card-body">
+                      <h1 class="card-title">{{ data.peraih_prestasi }} - {{ data.kelas_peraih_prestasi }}</h1>
+                      <img src="{{data.dokumentasiprestasi_set.last.foto.url}}" alt="Logo Ekskul" style="max-height: 5rem; max-width: 10rem;" class="rounded-circle">    
+                  </div>
+  
+                </div>
+              </div><!-- End Sales Card -->
+  
+              <!-- Revenue Card -->
+              <div class="col-xxl-4 col-md-6">
+                <div class="card info-card revenue-card">
+  
+                  <div class="card-body">
+                    <h1 class="card-title">{{ data.kategori_kemenangan }}</span></h1>
+                    <p>{{ data.nama_lomba }} - {{ data.bidang_lomba }} - {{ data.kategori }}</p>
+                    <p>{{ data.tahun_lomba}}</p>
+                  </div>
+  
+                </div>
+              </div><!-- End Revenue Card -->
+  
+  
+              <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+  
+                  <div class="card-body">
+                    <h5 class="card-title text-center">{{ data.kategori_kemenangan }} {{ data.nama_lomba }} {{ data.tahun_lomba}}</h5>
+  
+                    <div class="container">
+                        <table class="table table-hover w-100">
+                            <tbody>
+                            {% if data %}
+                                <tr>
+                                    <td>Peraih Juara</td>
+                                    <td class="text-end">:</td>
+                                    <td>{{ data.peraih_prestasi }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Kategori Lomba</td>
+                                    <td class="text-end">:</td>
+                                    <td>{{ data.kategori }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Jenis Lomba</td>
+                                    <td class="text-end">:</td>
+                                    <td>{{ data.jenis_lomba }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Tahun Lomba</td>
+                                    <td class="text-end">:</td>
+                                    <td>{{ data.tahun_lomba}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Nama Lomba</td>
+                                    <td class="text-end">:</td>
+                                    <td>{{ data.nama_lomba }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Penyelenggara Lomba</td>
+                                    <td class="text-end">:</td>
+                                    <td>{{ data.Penyelenggara_lomba }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Sekolah</td>
+                                    <td class="text-end">:</td>
+                                    <td>{{ data.sekolah }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Bidang Lomba</td>
+                                    <td class="text-end">:</td>
+                                    <td>{{ data.bidang_lomba }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Predikat Kemenangan</td>
+                                    <td class="text-end">:</td>
+                                    <td>{{ data.kategori_kemenangan }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Sertifikat</td>
+                                    <td class="text-end">:</td>
+                                    <td>
+                                        {% if data.sertifikat_1 %}
+                                            <a class="btn btn-sm btn-warning m-2" href="{{ data.sertifikat_1.url }}" target="_blank">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-arrow-down-circle" viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+                                                </svg>
+                                                Sertifikat 1
+                                            </a>
+                                        {% else %}
+                                            <p class="text-danger fw-bold m-1">Sertifikat 1 tidak tersedia</p>
+                                        {% endif %}
+                                        {% if data.sertifikat_2 %}
+                                            <a class="btn btn-sm btn-warning m-2" href="{{ data.sertifikat_2.url }}" target="_blank">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-arrow-down-circle" viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+                                                </svg>
+                                                Sertifikat 2
+                                        {% else %}
+                                            <p class="text-danger fw-bold m-1">Sertifikat 2 tidak tersedia</p>
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center fw-bold text-danger">Maaf, belum ada data inventaris :(</td>
+                                </tr>
+                            {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                  </div>
+  
+                </div>
+              </div><!-- End Recent Sales -->
+                
+            </div>
+          </div><!-- End Left side columns -->
+  
+          
+  
+        </div>
+      </section>
+
+</main>
+
+{% endblock %}

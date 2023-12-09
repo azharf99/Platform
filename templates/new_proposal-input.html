@@ -8,8 +8,8 @@
     <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Home</a></li>
-          <li class="breadcrumb-item">{{ekskul.get_tipe_display}}</li>
-          <li class="breadcrumb-item active">Input Anggota</li>
+          <li class="breadcrumb-item">Proposal</li>
+          <li class="breadcrumb-item active">Pengajuan Proposal {{ name }}</li>
         </ol>
     </nav>
     <div class="container">
@@ -36,38 +36,22 @@
 
               <div class="card mb-3">
                 <div class="pt-3 pb-2">
-                  <h5 class="card-title text-center pb-0 fs-4">Input Anggota {{ekskul.tipe}} {{ ekskul.nama_ekskul }}</h5>
+                  <h1 class="card-title text-center pb-0 fs-4">Pengajuan Proposal {{ name }}</h1>
                 </div>
 
                 <div class="card-body">
-
-
-                  <form class="row g-3 needs-validation" method="post" action="" novalidate id="form">
-                    {% csrf_token %}
-
-                    <div class="col-12">
-                      <label for="id_ekskul_siswa">{{ekskul.tipe}} siswa:</label>
-                      <div class="input-group has-validation">
-                        <select name="ekskul_siswa" class="form-control" required id="id_ekskul_siswa">
-                            <option value="{{ ekskul.id }}">{{ ekskul.nama_ekskul}}</option>
-                        </select>
-                        <div class="invalid-feedback">Please choose the option.</div>
-                      </div>
-                    </div>
-
-                    <div class="col-12">
-                        {{ form }}
-                    </div>
-
-                    
-                    <div class="col-12">
-                        <button class="btn btn-primary w-100" type="submit">Input Data</button>
-                    </div>
-
-                    <div class="col-12 text-center">
-                        <a href="{% url 'dashboard' %}" class="btn btn-danger d-block">Kembali</a>
-                    </div>
-                  </form>
+                    <form action="" method="post" enctype="multipart/form-data" id="form">
+                        {% csrf_token %}
+                        {{ forms.as_p }}
+                        <div class="text-center">
+                            <a id="back" href="{% url 'proposal:proposal-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
+                            <input id="save" type="submit" class="card-link btn btn-success m-1" value="Save Data">
+                            <button id="loading" class="btn btn-success" type="button" style="display: none" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Tunggu sebentar...
+                            </button>
+                        </div>
+                    </form>
 
                 </div>
               </div>
@@ -87,11 +71,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
     <script>
         $(document).ready(function () {
-            $('#input-anggota').selectize({
+            $('#id_penanggungjawab').selectize({
                 sortField: 'text'
+            });
+        });
+        $(document).ready(function () {
+            $('#id_ekskul').selectize({
+                sortField: 'text'
+            });
+        });
+        $(document).ready(function () {
+            $('#id_santri').selectize({
+                sortField: 'text',
+                maxItems: null,
             });
         });
     </script>
 
-
+{% include 'script.html' %}
 {% endblock %}

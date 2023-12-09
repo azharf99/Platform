@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.urls import reverse_lazy
+from django.contrib import sessions
 
 from ekskul.models import Extracurricular, Student, StudentOrganization, Teacher, User
 from ekskul.forms import InputAnggotaEkskulForm, PembinaEkskulForm, EkskulForm, CustomUserCreationForm, UsernameChangeForm, CustomPasswordChangeForm
@@ -154,16 +155,17 @@ def input_pembina(request):
 @csrf_protect
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect("app-index")
+        return redirect("dashboard")
 
     if request.method == "POST":
         username = request.POST.get('username').rstrip()
         password = request.POST.get('password').rstrip()
-
-        try:
-            user = User.objects.get(username=username)
-        except:
-            messages.error(request, "username tidak ada. anda perlu hubungi operator jika ingin mendaftar")
+        remember = request.POST.get('remember')
+        
+        if remember:
+            request.session.set_expiry(1209600)
+        else:
+            request.session.set_expiry(300)
 
         user = authenticate(request, username=username, password=password)
 
@@ -194,6 +196,7 @@ def profil_view(request):
 def edit_profil_view(request):
     try:
         teacher = Teacher.objects.get(user_id=request.user.id)
+        form = PembinaEkskulForm(instance=teacher)
         if request.method == "POST":
             form = PembinaEkskulForm(request.POST, request.FILES, instance=teacher)
             if form.is_valid():
@@ -208,8 +211,6 @@ def edit_profil_view(request):
             else:
                 messages.error(request, "Input data dengan benar!")
                 form = PembinaEkskulForm(request.POST, request.FILES, instance=teacher)
-        else:
-            form = PembinaEkskulForm(instance=teacher)
         context = {
             'form': form,
             'teacher': teacher,
