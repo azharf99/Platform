@@ -29,7 +29,7 @@ class PembinaEkskulForm(forms.ModelForm):
         model = Teacher
         fields = ['nama_pembina', 'niy', 'jenis_kelamin', 'jabatan', 'email', 'no_hp', 'alamat', 'foto']
         widgets = {
-            'nama_pembina': forms.TextInput(attrs={'class': 'form-control'}),
+            'nama_pembina': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
             'niy': forms.NumberInput(attrs={'class': 'form-control'}),
             'jenis_kelamin': forms.Select(attrs={'class': 'form-select'}),
             'jabatan': forms.TextInput(attrs={'class': 'form-control'}),
@@ -37,7 +37,6 @@ class PembinaEkskulForm(forms.ModelForm):
             'no_hp': forms.NumberInput(attrs={'class': 'form-control'}),
             'alamat': forms.TextInput(attrs={'class': 'form-control'}),
             'user': forms.Select(attrs={'class': 'form-select'}),
-            'foto': forms.FileInput(attrs={'class': 'form-control', 'required': True}),
         }
 
 
@@ -70,3 +69,8 @@ class CustomPasswordChangeForm(PasswordChangeForm):
     class Meta:
         model = get_user_model()
         fields = ['old_password', 'new_password1', 'new_password2']
+        widgets = {
+            'old_password': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'new_password1': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'new_password2': forms.PasswordInput(attrs={'class': 'form-control'}),
+        }

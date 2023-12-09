@@ -25,8 +25,8 @@
                     {% if object_list %}
                     {% for ekskul in object_list %}
                     <!-- Sales Card -->
-                    <div class="col-xxl-4 col-md-4 p-2">
-                        <div class="card m-2" style="width: 18rem; height: 100%;">
+                    <div class="col-xxl-3 col-lg-4 col-md-6">
+                        <div class="card">
                             <div class="card-header p-0 text-bg-primary">
                             <img src="{{ekskul.logo.url}}" class="card-img-top" alt="Logo Ekskul">
                             <p class="text-center m-0">{{ ekskul.get_tipe_display }}</p>
@@ -59,7 +59,6 @@
                 </div>
             </div>
         </div>
-      </section>
-
+    </section>
 </main>
 {% endblock %}

@@ -183,15 +183,13 @@ def login_view(request):
 
 @login_required(login_url='/login/')
 def profil_view(request):
-    try:
-        user = request.user
-        teacher = Teacher.objects.get(user_id=user.id)
-        context = {
-            'teacher': teacher,
-        }
-    except:
-        return redirect('login')
-    return render(request, 'profil.html', context)
+    teacher = get_object_or_404(Teacher, user_id = request.user.id)
+    context = {
+        'teacher': teacher,
+        'name': "Overview",
+    }
+    return render(request, 'new_profil.html', context)
+
 @login_required(login_url='/login/')
 def edit_profil_view(request):
     try:
@@ -214,10 +212,12 @@ def edit_profil_view(request):
             form = PembinaEkskulForm(instance=teacher)
         context = {
             'form': form,
+            'teacher': teacher,
+            'name': "Edit Profile",
         }
     except:
         return redirect('login')
-    return render(request, 'profil-edit.html', context)
+    return render(request, 'new_profil-edit.html', context)
 
 
 def logout_view(request):
