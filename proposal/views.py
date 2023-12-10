@@ -1,5 +1,5 @@
 import requests
-from django.conf import settings
+
 from django.db.models import Sum, Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
@@ -9,7 +9,8 @@ from django.views.generic import DetailView, ListView
 from proposal.forms import ProposalForm, ProposalEditForm, StatusProposalForm, StatusProposalKepsekForm, StatusProposalBendaharaForm, ProposalInventarisForm, ProposalInventarisEditForm, StatusProposalInventarisForm, StatusProposalInventarisKepsekForm, StatusProposalInventarisBendaharaForm
 from proposal.models import Proposal, ProposalStatus, ProposalStatusBendahara, ProposalStatusKepsek, ProposalInventaris, ProposalInventarisStatus, ProposalInventarisStatusKepsek, ProposalInventarisStatusBendahara
 from userlog.models import UserLog
-token = settings.TOKEN
+from dashboard.whatsapp import send_whatsapp_proposal, send_whatsapp_proposal_wakasek, send_whatsapp_proposal_approval, send_whatsapp_proposal_kepsek, send_whatsapp_proposal_review, send_whatsapp_proposal_bendahara, send_whatsapp_proposal_finish
+
 
 # Create your views here.
 class ProposalIndexView(ListView):
@@ -90,38 +91,8 @@ def proposal_input(request):
                     app="PROPOSAL",
                     message="Berhasil mengajukan proposal acara {} dengan anggaran sebesar {} dan penanggung jawab {}".format(p.nama_event, p.anggaran_biaya, p.penanggungjawab)
                 )
-                phone = request.user.teacher.no_hp
-                message = f'''*[NOTIFIKASI]*
-Anda berhasil mengajukan proposal acara *{p.nama_event}* dengan anggaran dana *{p.anggaran_biaya}* dan penanggung jawab *{p.penanggungjawab}*.
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                requests.get(url)
-
-                phone = '081293034867' #no ust panji
-                message = f'''*[NOTIFIKASI]*
-Assalamu'alaikum {"Ustadz Panji Asmara, S.Pd."}, ada proposal acara baru yang masuk dengan rincian:
-
-*Nama proposal : {p.nama_event}*
-*Anggaran dana : {p.anggaran_biaya}*
-*Penanggung jawab : {p.penanggungjawab}*
-
-Mohon sekiranya ustadz dapat meninjau proposal acara tersebut pada aplikasi.
-
-Link App:
-https://pmbp.smasitalbinaa.com/proposal
-
-Link Approval:
-https://pmbp.smasitalbinaa.com/proposal/approval/{p.id}
-
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                requests.get(url)
+                send_whatsapp_proposal(request.user.teacher.no_hp, p, 'mengajukan', p.nama_event)
+                send_whatsapp_proposal_wakasek('081293034867', p, '', "Ustadz Panji Asmara, S.Pd.", p.nama_event)
 
                 return redirect('proposal:proposal-index')
             else:
@@ -152,15 +123,7 @@ def proposal_edit(request, pk):
                 message="Berhasil mengubah data proposal acara {}".format(data)
             )
 
-            phone = request.user.teacher.no_hp
-            message = f'''*[NOTIFIKASI]*
-Anda berhasil mengubah data proposal acara *{data.nama_event}* dengan anggaran dana *{data.anggaran_biaya}* dan penanggung jawab *{data.penanggungjawab}*.
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-            url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-            requests.get(url)
+            send_whatsapp_proposal(request.user.teacher.no_hp, data, 'mengedit', data.nama_event)
             return redirect('proposal:proposal-index')
         else:
             forms = ProposalForm(instance=data)
@@ -188,16 +151,7 @@ def proposal_delete(request, pk):
             message="Berhasil menghapus data proposal acara {}".format(data)
         )
 
-        phone = request.user.teacher.no_hp
-        message = f'''*[NOTIFIKASI]*
-Anda berhasil menghapus data proposal acara *{data.nama_event}*.
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-        url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-        response = requests.get(url)
-        print(response.text)
+        send_whatsapp_proposal(request.user.teacher.no_hp, data, 'menghapus', data.nama_event)
 
         data.delete()
         return redirect('proposal:proposal-index')
@@ -212,8 +166,8 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
 def proposal_approval(request, pk):
     if not request.user.username == "panji_asmara":
         return redirect('restricted')
-    status = Proposal.objects.get(id=pk)
-    data = get_object_or_404(ProposalStatus, proposal=status.id)
+    proposal = Proposal.objects.get(id=pk)
+    data = get_object_or_404(ProposalStatus, proposal=proposal.id)
     if request.method == "POST":
         forms = StatusProposalForm(request.POST, request.FILES, instance=data)
         if forms.is_valid():
@@ -222,62 +176,12 @@ def proposal_approval(request, pk):
                 user=request.user.teacher,
                 action_flag="APPROVAL",
                 app="PROPOSAL_WAKASEK",
-                message="Wakasek berhasil melakukan approval pada proposal acara {} dengan status {}".format(status, data.is_wakasek)
+                message="Wakasek berhasil melakukan approval pada proposal acara {} dengan status {}".format(proposal, data.is_wakasek)
             )
 
-            phone = request.user.teacher.no_hp
-            message = f'''*[NOTIFIKASI]*
-Anda berhasil melakukan approval proposal acara *{status.nama_event}* dengan status *{data.is_wakasek}* dan komentar *{data.alasan_wakasek}*.
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-            url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-            response = requests.get(url)
-            print(response.text)
-
-            phone = '081398176123' #no kepsek
-            message = f'''*[NOTIFIKASI]*
-Assalamu'alaikum {"Agung Wahyu Adhy, Lc."}, Ada proposal acara baru yang masuk dengan rincian:
-
-*Nama proposal : {status.nama_event}*
-*Anggaran dana : {status.anggaran_biaya}*
-*Penanggung jawab : {status.penanggungjawab}*
-*Keputusan Wakasek saat ini: {data.is_wakasek}*
-*Komentar dari Wakasek: {data.alasan_wakasek}*
-
-Mohon sekiranya ustadz dapat meninjau proposal acara tersebut pada aplikasi.
-
-Link Apps:
-https://pmbp.smasitalbinaa.com/
-Silahkan login terlebih dahulu, lalu pilih *Menu* dan pilih *Proposal*.
-
-Link Approval:
-https://pmbp.smasitalbinaa.com/proposal/approval/kepsek/{status.id}
-
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-            url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-            response = requests.get(url)
-            print(response.text)
-
-            phone = status.penanggungjawab.no_hp
-            message = f'''*[NOTIFIKASI]*
-Proposal acara anda dengan judul *{status.nama_event}* telah *ditinjau oleh Wakasek Ekstrakurikuler*.
-Status Proposal : {data.is_wakasek}
-Komentar Wakasek: {data.alasan_wakasek}
-Mohon sekiranya Anda dapat meninjau status proposal acara tersebut pada aplikasi.
-https://pmbp.smasitalbinaa.com/proposal
-
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-            url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-            response = requests.get(url)
-            print(response.text)
+            send_whatsapp_proposal_approval(request.user.teacher.no_hp, data, proposal.nama_event, data.is_wakasek, data.alasan_wakasek)
+            send_whatsapp_proposal_kepsek('081398176123', proposal, data, '', "Ustadz Agung Wahyu Adhy, Lc., M.Pd.", proposal.nama_event)
+            send_whatsapp_proposal_review(request.user.teacher.no_hp, proposal.nama_event, data)
 
             return redirect('proposal:proposal-index')
     else:
@@ -285,8 +189,8 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
     context = {
         'forms': forms,
         'status': {
-            'id' : status.id,
-            'nama_event': status.nama_event
+            'id' : proposal.id,
+            'nama_event': proposal.nama_event
         }
     }
     return render(request, 'new_proposal-approval.html', context)
@@ -296,8 +200,8 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
 def proposal_approval_kepsek(request, pk):
     if not request.user.username == "agung_wa":
         return redirect('restricted')
-    status = get_object_or_404(Proposal, id=pk)
-    data = get_object_or_404(ProposalStatusKepsek, proposal_id=status.id)
+    proposal = get_object_or_404(Proposal, id=pk)
+    data = get_object_or_404(ProposalStatusKepsek, proposal_id=proposal.id)
     if request.method == "POST":
         if data.status_wakasek.is_wakasek == "Accepted":
             forms = StatusProposalKepsekForm(request.POST, request.FILES, instance=data)
@@ -307,66 +211,12 @@ def proposal_approval_kepsek(request, pk):
                     user=request.user.teacher,
                     action_flag="APPROVAL",
                     app="PROPOSAL_KEPSEK",
-                    message="Kepala Sekolah berhasil melakukan approval pada proposal acara {} dengan status {}".format(status, data.is_kepsek)
+                    message="Kepala Sekolah berhasil melakukan approval pada proposal acara {} dengan status {}".format(proposal, data.is_kepsek)
                 )
 
-                phone = request.user.teacher.no_hp
-                message = f'''*[NOTIFIKASI]*
-Anda berhasil melakukan approval proposal acara *{status.nama_event}* dengan status *{data.is_kepsek}* dan komentar *{data.alasan_kepsek}*.
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                print(response.text)
-
-                phone = '085295188663' #no bendahara
-                message = f'''*[NOTIFIKASI]*
-Assalamu'alaikum {"Ustadz Chevi Indrayadi, S.Si"}, Ada proposal acara baru yang masuk dengan rincian:
-
-*Nama proposal : {status.nama_event}*
-*Anggaran dana : {status.anggaran_biaya}*
-*Penanggung jawab : {status.penanggungjawab}*
-
-*Keputusan Wakasek saat ini: {data.status_wakasek.is_wakasek}*
-*Komentar dari Wakasek: {data.status_wakasek.alasan_wakasek}*
-
-*Keputusan Kepala Sekolah saat ini: {data.is_kepsek}*
-*Komentar dari Kepala Sekolah: {data.alasan_kepsek}*
-
-Mohon sekiranya ustadz dapat meninjau proposal acara tersebut pada aplikasi.
-
-Link Apps:
-https://pmbp.smasitalbinaa.com/
-Silahkan login terlebih dahulu, lalu pilih *Menu* dan pilih *Proposal*.
-
-Link Approval:
-https://pmbp.smasitalbinaa.com/proposal/approval/bendahara/{status.id}
-
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                print(response.text)
-
-                phone = status.penanggungjawab.no_hp
-                message = f'''*[NOTIFIKASI]*
-Proposal acara anda dengan judul *{status.nama_event}* telah *ditinjau oleh Wakasek dan Kepala Sekolah*.
-Status Proposal : {data.is_kepsek}
-Komentar Kepsek : {data.alasan_kepsek}
-Mohon sekiranya Anda dapat meninjau status proposal acara tersebut pada aplikasi.
-https://pmbp.smasitalbinaa.com/proposal
-
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                print(response.text)
+                send_whatsapp_proposal_approval(request.user.teacher.no_hp, data, proposal.nama_event, data.is_kepsek, data.alasan_kepsek)
+                send_whatsapp_proposal_bendahara('085295188663', proposal, data, '', "Ustadz Chevi Indrayadi, S.Si", proposal.nama_event)
+                send_whatsapp_proposal_review(request.user.teacher.no_hp, proposal.nama_event, data)
 
                 return redirect('proposal:proposal-index')
         else:
@@ -378,7 +228,7 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
 
     context = {
         'forms': forms,
-        'status': status,
+        'status': proposal,
         'data': data,
     }
     return render(request, 'new_proposal-approval.html', context)
@@ -387,8 +237,8 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
 def proposal_approval_bendahara(request, pk):
     if not request.user.username == "chevi_indrayadi":
         return redirect('restricted')
-    status = Proposal.objects.get(id=pk)
-    data = ProposalStatusBendahara.objects.get(proposal=status.id)
+    proposal = Proposal.objects.get(id=pk)
+    data = ProposalStatusBendahara.objects.get(proposal=proposal.id)
 
     if request.method == "POST":
         if data.status_kepsek.is_kepsek == "Accepted":
@@ -399,61 +249,12 @@ def proposal_approval_bendahara(request, pk):
                     user=request.user.teacher,
                     action_flag="APPROVAL",
                     app="PROPOSAL_BENDAHARA",
-                    message="Bendahara berhasil melakukan approval pada proposal acara {} dengan status {}".format(status, data.is_bendahara)
+                    message="Bendahara berhasil melakukan approval pada proposal acara {} dengan status {}".format(proposal, data.is_bendahara)
                 )
 
-                phone = request.user.teacher.no_hp
-                message = f'''*[NOTIFIKASI]*
-Anda berhasil melakukan approval proposal acara *{status.nama_event}* dengan status *{data.is_bendahara}* dan komentar *{data.alasan_bendahara}*.
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                print(response.text)
-
-                phone = '081293034867' #no ust panji
-                message = f'''*[NOTIFIKASI]*
-Assalamu'alaikum {'Ustadz Panji Asmara, S.Pd.'}, Proposal acara *{status.nama_event}*
-
-*Telah di-approve oleh Bendahara dan dana dikirim melalui nomer rekening Ustadz Panji atau PJ yang bersangkutan.*
-
-Mohon sekiranya ustadz dapat meninjau proposal acara tersebut pada aplikasi.
-
-Link App:
-https://pmbp.smasitalbinaa.com/proposal
-
-Bukti transfer dana:
-https://pmbp.smasitalbinaa.com/proposal/approval/transfer/{status.id}
-
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                print(response.text)
-
-                phone = status.penanggungjawab.no_hp
-                message = f'''*[NOTIFIKASI]*
-Proposal acara anda dengan judul *{status.nama_event}* telah *ditinjau oleh Wakasek, Kepala Sekolah dan Bendahara*.
-Status Proposal     : {data.is_bendahara}
-Komentar Bendahara  : {data.alasan_bendahara}
-Mohon sekiranya Anda dapat meninjau status proposal acara tersebut pada aplikasi.
-
-https://pmbp.smasitalbinaa.com/proposal
-
-Bukti transfer dana (jika sudah ada):
-https://pmbp.smasitalbinaa.com/proposal/approval/transfer/{status.id}
-
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                print(response.text)
+                send_whatsapp_proposal_approval(request.user.teacher.no_hp, data, proposal.nama_event, data.is_kepsek, data.alasan_kepsek)
+                send_whatsapp_proposal_finish(proposal.penanggungjawab.no_hp, proposal, '', proposal.penanggungjawab, proposal.nama_event)
+                send_whatsapp_proposal_finish('081293034867', proposal, '', 'Ustadz Panji Asmara, S.Pd.', proposal.nama_event)
                 
                 return redirect('proposal:proposal-index')
         else:
@@ -464,7 +265,7 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
 
     context = {
         'forms': forms,
-        'status': status,
+        'status': proposal,
     }
     return render(request, 'new_proposal-approval.html', context)
 
@@ -525,36 +326,8 @@ def proposal_inventaris_input(request):
                     message="Berhasil mengajukan proposal inventaris/pengadaan {} dengan anggaran sebesar {} dan penanggung jawab {}".format(p.judul_proposal, p.anggaran_biaya, p.penanggungjawab)
                 )
 
-                phone = request.user.teacher.no_hp
-                message = f'''*[NOTIFIKASI]*
-Anda berhasil mengajukan proposal pengadaan barang *{p.judul_proposal}* dengan anggaran dana *{p.anggaran_biaya}* dan penanggung jawab *{p.penanggungjawab}*.
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                print(response.text)
-
-                phone = '081293034867' #no ust panji
-                message = f'''*[NOTIFIKASI]*
-Assalamu'alaikum {"Ustadz Panji Asmara, S.Pd."}, ada proposal acara baru yang masuk dengan rincian:
-
-*Nama proposal : {p.judul_proposal}*
-*Anggaran dana : {p.anggaran_biaya}*
-*Penanggung jawab : {p.penanggungjawab}*
-
-Mohon sekiranya ustadz dapat meninjau proposal pengadaan barang tersebut pada aplikasi.
-
-Link Approval:
-https://pmbp.smasitalbinaa.com/proposal/approval/{p.id}
-
-Syukron.
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                print(response.text)
+                send_whatsapp_proposal(request.user.teacher.no_hp, p, 'mengajukan', p.judul_proposal)
+                send_whatsapp_proposal_wakasek('081293034867', p, '/inventaris', "Ustadz Panji Asmara, S.Pd.", p.judul_proposal)
 
                 return redirect('proposal:proposal-index')
             else:
@@ -584,16 +357,8 @@ def proposal_inventaris_edit(request, pk):
                 app="PROPOSAL",
                 message="Berhasil mengubah data proposal inventaris/pengadaan {}".format(data)
             )
-            phone = request.user.teacher.no_hp
-            message = f'''*[NOTIFIKASI]*
-Anda berhasil mengubah proposal pengadaan barang *{data.judul_proposal}* dengan anggaran dana *{data.anggaran_biaya}* dan penanggung jawab *{data.penanggungjawab}*.
-Syukron.
 
-_Ini adalah pesan otomatis, jangan dibalas._'''
-            url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-            response = requests.get(url)
-            print(response.text)
+            send_whatsapp_proposal(request.user.teacher.no_hp, data, 'mengubah', data.judul_proposal)
 
             return redirect('proposal:proposal-index')
         else:
@@ -621,16 +386,8 @@ def proposal_inventaris_delete(request, pk):
             app="PROPOSAL",
             message="Berhasil menghapus data proposal inventaris/pengadaan {}".format(data)
         )
-        phone = request.user.teacher.no_hp
-        message = f'''*[NOTIFIKASI]*
-Anda berhasil menghapus proposal pengadaan barang *{data.judul_proposal}* dengan anggaran dana *{data.anggaran_biaya}* dan penanggung jawab *{data.penanggungjawab}*.
-Syukron.
 
-_Ini adalah pesan otomatis, jangan dibalas._'''
-        url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-        response = requests.get(url)
-        print(response.text)
+        send_whatsapp_proposal(request.user.teacher.no_hp, data, 'menghapus', data.judul_proposal)
 
         data.delete()
         return redirect('proposal:proposal-index')
@@ -644,8 +401,8 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
 def proposal_inventaris_approval(request, pk):
     if not request.user.username == "panji_asmara":
         return redirect('restricted')
-    status = ProposalInventaris.objects.get(id=pk)
-    data = get_object_or_404(ProposalInventarisStatus, proposal=status.id)
+    proposal = ProposalInventaris.objects.get(id=pk)
+    data = get_object_or_404(ProposalInventarisStatus, proposal=proposal.id)
     if request.method == "POST":
         forms = StatusProposalInventarisForm(request.POST, request.FILES, instance=data)
         if forms.is_valid():
@@ -654,62 +411,12 @@ def proposal_inventaris_approval(request, pk):
                 user=request.user.teacher,
                 action_flag="APPROVAL",
                 app="PROPOSAL_WAKASEK",
-                message="Wakasek berhasil melakukan approval pada proposal inventaris/pengadaan {} dengan status {}".format(status, data.is_wakasek)
+                message="Wakasek berhasil melakukan approval pada proposal inventaris/pengadaan {} dengan status {}".format(proposal, data.is_wakasek)
             )
 
-            phone = request.user.teacher.no_hp
-            message = f'''*[NOTIFIKASI]*
-Anda berhasil melakukan approval proposal inventaris/pengadaan *{status.judul_proposal}* dengan status *{data.is_wakasek}* dan komentar *{data.is_wakasek}*.
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-            url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-            response = requests.get(url)
-            print(response.text)
-
-            phone = '081398176123' #no Kepsek
-            message = f'''*[NOTIFIKASI]*
-Ada proposal inventaris/pengadaan baru yang masuk dengan rincian:
-
-*Nama proposal : {status.judul_proposal}*
-*Anggaran dana : {status.anggaran_biaya}*
-*Penanggung jawab : {status.penanggungjawab}*
-*Keputusan Wakasek saat ini: {data.is_wakasek}*
-*Komentar dari Wakasek: {data.status_wakasek}*
-
-Mohon sekiranya ustadz dapat meninjau proposal inventaris/pengadaan tersebut pada aplikasi.
-
-Link Apps:
-https://pmbp.smasitalbinaa.com/
-Silahkan login terlebih dahulu, lalu pilih *Menu* dan pilih *Proposal*.
-
-Link Approval:
-https://pmbp.smasitalbinaa.com/proposal/inventaris/approval/kepsek/{status.id}
-
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-            url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-            response = requests.get(url)
-            print(response.text)
-
-            phone = status.penanggungjawab.no_hp
-            message = f'''*[NOTIFIKASI]*
-Proposal inventaris/pengadaan anda dengan judul *{status.judul_proposal}* telah *ditinjau oleh Wakasek Ekstrakurikuler*.
-Status Proposal : {data.is_wakasek}
-Komentar Wakasek: {data.alasan_wakasek}
-Mohon sekiranya Anda dapat meninjau status proposal inventaris/pengadaan tersebut pada aplikasi.
-https://pmbp.smasitalbinaa.com/proposal
-
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-            url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-            response = requests.get(url)
-            print(response.text)
+            send_whatsapp_proposal_approval(request.user.teacher.no_hp, proposal.judul_proposal, data.is_wakasek, data.alasan_wakasek)
+            send_whatsapp_proposal_kepsek('081398176123', proposal, data, '/inventaris', 'Ustadz Agung Wahyu Adhy, Lc., M.Pd.', proposal.judul_proposal)
+            send_whatsapp_proposal_review(proposal.penanggungjawab.no_hp, proposal.judul_proposal, data)
 
             return redirect('proposal:proposal-index')
     else:
@@ -717,8 +424,8 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
     context = {
         'forms': forms,
         'status': {
-            'id' : status.id,
-            'nama_event': status.judul_proposal
+            'id' : proposal.id,
+            'nama_event': proposal.judul_proposal
         },
         'tipe': 'inventaris',
     }
@@ -728,8 +435,8 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
 def proposal_inventaris_approval_kepsek(request, pk):
     if not request.user.username == "agung_wa":
         return redirect('restricted')
-    status = ProposalInventaris.objects.get(id=pk)
-    data = ProposalInventarisStatus.objects.get(proposal=status.id)
+    proposal = ProposalInventaris.objects.get(id=pk)
+    data = ProposalInventarisStatusKepsek.objects.get(proposal=proposal.id)
     if request.method == "POST":
         if data.status_wakasek.is_wakasek == "Accepted":
             forms = StatusProposalInventarisKepsekForm(request.POST, request.FILES, instance=data)
@@ -739,66 +446,12 @@ def proposal_inventaris_approval_kepsek(request, pk):
                     user=request.user.teacher,
                     action_flag="APPROVAL",
                     app="PROPOSAL_KEPSEK",
-                    message="Kepala Sekolah berhasil melakukan approval pada proposal inventaris/pengadaan {} dengan status {}".format(status, data.is_kepsek)
+                    message="Kepala Sekolah berhasil melakukan approval pada proposal inventaris/pengadaan {} dengan status {}".format(proposal, data.is_kepsek)
                 )
 
-                phone = request.user.teacher.no_hp
-                message = f'''*[NOTIFIKASI]*
-Anda berhasil melakukan approval proposal inventaris/pengadaan *{status.judul_proposal}* dengan status *{data.is_kepsek}* dan komentar *{data.is_kepsek}*.
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                print(response.text)
-
-                phone = '085295188663' #no Bendahara
-                message = f'''*[NOTIFIKASI]*
-Ada proposal inventaris/pengadaan baru yang masuk dengan rincian:
-
-*Nama proposal : {status.judul_proposal}*
-*Anggaran dana : {status.anggaran_biaya}*
-*Penanggung jawab : {status.penanggungjawab}*
-
-*Keputusan Wakasek saat ini: {data.is_wakasek}*
-*Komentar dari Wakasek: {data.status_wakasek}*
-
-*Keputusan Kepala Sekolah saat ini: {data.is_kepsek}*
-*Komentar dari Kepala Sekolah: {data.is_kepsek}*
-
-Mohon sekiranya ustadz dapat meninjau proposal inventaris/pengadaan tersebut pada aplikasi.
-
-Link Apps:
-https://pmbp.smasitalbinaa.com/
-Silahkan login terlebih dahulu, lalu pilih *Menu* dan pilih *Proposal*.
-
-Link Approval:
-https://pmbp.smasitalbinaa.com/proposal/inventaris/approval/kepsek/{status.id}
-
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                print(response.text)
-
-                phone = status.penanggungjawab.no_hp
-                message = f'''*[NOTIFIKASI]*
-Proposal inventaris/pengadaan anda dengan judul *{status.judul_proposal}* telah *ditinjau oleh Kepala Sekolah*.
-Status Proposal : {data.is_kepsek}
-Komentar Kepsek: {data.is_wakasek}
-Mohon sekiranya Anda dapat meninjau status proposal inventaris/pengadaan tersebut pada aplikasi.
-https://pmbp.smasitalbinaa.com/proposal
-
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                print(response.text)
+                send_whatsapp_proposal_approval(request.user.teacher.no_hp, proposal.judul_proposal, data.is_kepsek, data.alasan_kepsek)
+                send_whatsapp_proposal_bendahara('085295188663', proposal, data, '/inventaris', 'Ustadz Chevi Indrayadi, S.Si', proposal.judul_proposal)
+                send_whatsapp_proposal_review(proposal.penanggungjawab.no_hp, proposal.judul_proposal, data)
 
                 return redirect('proposal:proposal-index')
         else:
@@ -810,7 +463,7 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
 
     context = {
         'forms': forms,
-        'status': status,
+        'status': proposal,
         'data': data,
         'tipe': 'inventaris',
     }
@@ -820,8 +473,8 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
 def proposal_inventaris_approval_bendahara(request, pk):
     if not request.user.username == "chevi_indrayadi":
         return redirect('restricted')
-    status = ProposalInventaris.objects.get(id=pk)
-    data = ProposalInventarisStatusBendahara.objects.get(proposal=status.id)
+    proposal = ProposalInventaris.objects.get(id=pk)
+    data = ProposalInventarisStatusBendahara.objects.get(proposal=proposal.id)
 
     if request.method == "POST":
         if data.status_kepsek.is_kepsek == "Accepted":
@@ -832,56 +485,12 @@ def proposal_inventaris_approval_bendahara(request, pk):
                     user=request.user.teacher,
                     action_flag="APPROVAL",
                     app="PROPOSAL_BENDAHARA",
-                    message="Bendahara berhasil melakukan approval pada proposal inventaris/pengadaan {} dengan status {}".format(status, data.is_bendahara)
+                    message="Bendahara berhasil melakukan approval pada proposal inventaris/pengadaan {} dengan status {}".format(proposal, data.is_bendahara)
                 )
 
-                phone = request.user.teacher.no_hp #no Bendahara
-                message = f'''*[NOTIFIKASI]*
-Anda berhasil melakukan approval proposal inventaris/pengadaan *{status.judul_proposal}* dengan status *{data.is_bendahara}* dan komentar *{data.is_bendahara}*.
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                print(response.text)
-
-                phone = '081293034867' #no ust panji
-                message = f'''*[NOTIFIKASI]*
-Proposal *{status.judul_proposal}* *Telah di-approve oleh Bendahara dan dana dikirim melalui nomer rekening Ustadz Panji atau PJ yang bersangkutan.*
-
-Mohon sekiranya ustadz dapat meninjau proposal tersebut pada aplikasi.
-
-Bukti transfer dana:
-https://pmbp.smasitalbinaa.com/proposal/approval/transfer/{status.id}
-
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                print(response.text)
-
-                phone = status.penanggungjawab.no_hp #no PJ proposal
-                message = f'''*[NOTIFIKASI]*
-Proposal inventaris/pengadaan anda dengan judul *{status.judul_proposal}* telah *ditinjau oleh Wakasek, Kepala Sekolah dan Bendahara*.
-Status Proposal     : {data.is_bendahara}
-Komentar Bendahara  : {data.alasan_bendahara}
-Mohon sekiranya Anda dapat meninjau status proposal inventaris/pengadaan tersebut pada aplikasi.
-
-https://pmbp.smasitalbinaa.com/proposal
-
-Bukti transfer dana (jika sudah ada):
-https://pmbp.smasitalbinaa.com/proposal/approval/transfer/{status.id}
-
-Syukron.
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                print(response.text)
+                send_whatsapp_proposal_approval(request.user.teacher.no_hp, proposal.judul_proposal, data.is_bendahara, data.alasan_bendahara)
+                send_whatsapp_proposal_finish('081293034867', proposal, '/approval', 'Panji Asmara, S.Pd', proposal.judul_proposal)
+                send_whatsapp_proposal_finish(proposal.penanggungjawab.no_hp, proposal, '', proposal.penanggungjawab, proposal.judul_proposal)
 
                 return redirect('proposal:proposal-index')
         else:
@@ -892,7 +501,7 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
 
     context = {
         'forms': forms,
-        'status': status,
+        'status': proposal,
         'tipe': 'inventaris',
     }
     return render(request, 'new_proposal-approval.html', context)

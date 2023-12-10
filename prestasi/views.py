@@ -6,6 +6,7 @@ from django.views.generic import ListView
 
 from prestasi.forms import PrestasiInputForm, PrestasiEditForm, DokumentasiPrestasiEditForm, DokumentasiPrestasiInputForm
 from prestasi.models import Prestasi, DokumentasiPrestasi
+from dashboard.whatsapp import send_whatsapp_input_anggota
 from django.contrib import messages
 
 from userlog.models import UserLog
@@ -65,6 +66,7 @@ def prestasi_input(request):
                 app="PRESTASI",
                 message="Berhasil menambahkan data prestasi {}".format(data)
             )
+            send_whatsapp_input_anggota(request.user.teacher.no_hp, data, 'data Prestasi', 'prestasi', 'menambahkan')
             return redirect('prestasi:prestasi-index')
         else:
             forms = PrestasiInputForm(request.POST, request.FILES)
@@ -93,6 +95,7 @@ def prestasi_edit(request, pk):
                 app="PRESTASI",
                 message="Berhasil mengubah data prestasi {}".format(data)
             )
+            send_whatsapp_input_anggota(request.user.teacher.no_hp, data, 'data Prestasi', 'prestasi', 'mengubah')
             return redirect('prestasi:prestasi-index')
         else:
             forms = PrestasiEditForm(request.POST)
@@ -118,6 +121,7 @@ def prestasi_delete(request, pk):
             app="PRESTASI",
             message="Berhasil menghapus data prestasi {}".format(data)
         )
+        send_whatsapp_input_anggota(request.user.teacher.no_hp, data, 'data Prestasi', 'prestasi', 'menghapus')
         data.delete()
         return redirect('prestasi:prestasi-index')
 
@@ -149,6 +153,7 @@ def dokumentasi_prestasi_input(request):
                 app="PRESTASI_DOKUMENTASI",
                 message="Berhasil menambahkan foto/dokumentasi prestasi dengan id {}".format(data)
             )
+            send_whatsapp_input_anggota(request.user.teacher.no_hp, data, 'foto/dokumentasi untuk Prestasi', 'prestasi', 'menambahkan')
             return redirect('prestasi:prestasi-index')
         else:
             forms = DokumentasiPrestasiInputForm(request.POST, request.FILES)
@@ -177,6 +182,7 @@ def dokumentasi_prestasi_edit(request, pk):
                 app="PRESTASI_DOKUMENTASI",
                 message="Berhasil mengubah foto/dokumentasi prestasi {}".format(data)
             )
+            send_whatsapp_input_anggota(request.user.teacher.no_hp, data, 'foto/dokumentasi untuk Prestasi', 'prestasi', 'mengubah')
             return redirect('prestasi:prestasi-index')
         else:
             forms = DokumentasiPrestasiEditForm(request.POST, request.FILES)
@@ -202,6 +208,7 @@ def dokumentasi_prestasi_delete(request, pk):
             app="PRESTASI_DOKUMENTASI",
             message="Berhasil menghapus foto/dokumentasi prestasi {}".format(data)
         )
+        send_whatsapp_input_anggota(request.user.teacher.no_hp, data, 'foto/dokumentasi untuk Prestasi', 'prestasi', 'menghapus')
         data.delete()
         return redirect('prestasi:prestasi-index')
 

@@ -102,7 +102,7 @@
                     <p class="text-danger ">Maaf, Silahkan input data anggota ekskul terlebih dahulu agar anda dapat input laporan. Terima kasih. :)</p>
                 {% endif %}
                 <div class="text-center">
-                    {% if filtered_student %}
+                    {% if filtered_student or edit %}
                         <a id="back" href="{% url 'laporan:laporan-index' %}" class="card-link btn btn-danger m-1">Kembali</a>
                         <input onsubmit="myFunction()" id="save" type="submit" class="card-link btn btn-success m-1" value="Save Data">
                         <button id="loading" class="btn btn-success" type="button" style="display: none" disabled>

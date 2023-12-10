@@ -9,7 +9,8 @@ from django.views.generic import ListView, DetailView, CreateView
 
 from osn.models import BidangOSN, SiswaOSN, LaporanOSN
 from osn.forms import FormInputBidang, FormInputSiswa, FormInputLaporanOSN, FormEditLaporanOSN
-
+from userlog.models import UserLog
+from dashboard.whatsapp import send_whatsapp_input_anggota, send_whatsapp_laporan_osn
 
 # Create your views here.
 class OsnIndexView(ListView):
@@ -19,11 +20,12 @@ class OsnIndexView(ListView):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            if self.request.user.teacher.bidangosn_set.count() > 0:
+            if self.request.user.is_superuser:
+                return BidangOSN.objects.all().order_by('nama_bidang')
+            elif self.request.user.teacher.bidangosn_set.count() > 0:
                 return BidangOSN.objects.filter(pembimbing=self.request.user.teacher).order_by('nama_bidang')
             else:
                 return BidangOSN.objects.all().order_by('nama_bidang')
-
         else:
             return BidangOSN.objects.all().order_by('nama_bidang')
 
@@ -34,8 +36,16 @@ def bidang_osn_input(request):
         return redirect('restricted')
     if request.method == "POST":
         forms = FormInputBidang(request.POST)
+        nama_bidang = request.POST.get('nama_bidang')
         if forms.is_valid():
             forms.save()
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="INPUT",
+                app="OSN",
+                message="Berhasil input bidang OSN {}".format(nama_bidang)
+            )
+            send_whatsapp_input_anggota(request.user.teacher.no_hp, nama_bidang, 'bidang OSN', 'osn', 'input nama')
             return redirect('osn:osn-index')
         else:
             forms = FormInputBidang(request.POST)
@@ -52,16 +62,24 @@ def bidang_osn_input(request):
 
 
 @login_required(login_url='/login/')
-def bidang_osn_edit(request, pk):
-    if not request.user.is_superuser:
-        return redirect('restricted')
 
+def bidang_osn_edit(request, pk):
     data = get_object_or_404(BidangOSN, id=pk)
+    # Jika bukan pembina dan bukan admin, akses terlarang
+    if (not data.pembimbing == request.user.teacher) and (not request.user.is_superuser):
+        return redirect('restricted')
 
     if request.method == "POST":
         forms = FormInputBidang(request.POST, instance=data)
         if forms.is_valid():
             forms.save()
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="EDIT",
+                app="OSN",
+                message="Berhasil edit bidang OSN {}".format(data.nama_bidang)
+            )
+            send_whatsapp_input_anggota(request.user.teacher.no_hp, data.nama_bidang, 'bidang OSN', 'osn', 'mengubah')
             return redirect('osn:osn-index')
         else:
             forms = FormInputBidang(instance=data)
@@ -83,7 +101,15 @@ def bidang_osn_delete(request, pk):
     data = get_object_or_404(BidangOSN, id=pk)
 
     if request.method == "POST":
+        UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="EDIT",
+                app="OSN",
+                message="Berhasil menghapus bidang OSN {}".format(data.nama_bidang)
+        )
+        send_whatsapp_input_anggota(request.user.teacher.no_hp, data.nama_bidang, 'bidang OSN', 'osn', 'menghapus')
         data.delete()
+        return redirect('osn:osn-index')
 
     context = {
         'data': data,
@@ -112,6 +138,14 @@ def siswa_osn_input(request, slug):
             messages.error(request, "Siswa sudah ada di data. Slahkan pilih yang lain")
         elif forms.is_valid():
             forms.save()
+            data = SiswaOSN.objects.filter(nama_siswa_id=nama_siswa_id, bidang_osn__slug=slug)
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="INPUT",
+                app="OSN",
+                message="Berhasil menambahkan siswa {} ke bidang OSN {}".format(data.nama_siswa, data.bidang_osn)
+            )
+            send_whatsapp_input_anggota(request.user.teacher.no_hp, data.bidang_osn, 'bidang OSN', 'osn', f'menambahkan siswa {data.nama_siswa} ke')
             return redirect('osn:detail-bidang-osn', slug)
         else:
             forms = FormInputSiswa(request.POST)
@@ -132,6 +166,13 @@ def siswa_osn_delete(request, slug, pk):
     data = get_object_or_404(SiswaOSN, bidang_osn__slug=slug, nama_siswa_id=pk)
 
     if request.method == "POST":
+        UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="INPUT",
+                app="OSN",
+                message="Berhasil menghapus siswa {} dari bidang OSN {}".format(data.nama_siswa, data.bidang_osn)
+        )
+        send_whatsapp_input_anggota(request.user.teacher.no_hp, data.bidang_osn, 'bidang OSN', 'osn', f'menghapus siswa {data.nama_siswa} dari')
         data.delete()
         return redirect('osn:detail-bidang-osn', slug)
 
@@ -144,10 +185,21 @@ def siswa_osn_delete(request, slug, pk):
 @login_required(login_url='/login/')
 def laporan_osn_input(request, slug):
     siswa_osn = SiswaOSN.objects.filter(bidang_osn__slug=slug)
+    tanggal_pembinaan = request.POST.get('tanggal_pembinaan')
     if request.method == "POST":
         forms = FormInputLaporanOSN(request.POST, request.FILES)
         if forms.is_valid():
             forms.save()
+            locale.setlocale(locale.LC_ALL, 'id_ID')
+            tanggal = datetime.date.fromisoformat(str(tanggal_pembinaan)).strftime('%d %B %Y')
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="INPUT",
+                app="OSN",
+                message="Berhasil menambahkan laporan OSN {} untuk tanggal {}".format(siswa_osn.bidang_osn, tanggal)
+            )
+            
+            send_whatsapp_laporan_osn(request.user.teacher.no_hp, siswa_osn.bidang_osn, 'input', tanggal)
             return redirect('osn:detail-bidang-osn', slug)
         else:
             forms = FormInputLaporanOSN(request.POST, request.FILES)
@@ -173,6 +225,16 @@ def laporan_osn_edit(request, slug, pk):
         forms = FormEditLaporanOSN(request.POST, request.FILES, instance=data)
         if forms.is_valid():
             forms.save()
+            locale.setlocale(locale.LC_ALL, 'id_ID')
+            tanggal = datetime.date.fromisoformat(str(data.tanggal_pembinaan)).strftime('%d %B %Y')
+            UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="INPUT",
+                app="OSN",
+                message="Berhasil mengubah laporan OSN {} untuk tanggal {}".format(data.bidang_osn, tanggal)
+            )
+            
+            send_whatsapp_laporan_osn(request.user.teacher.no_hp, data.bidang_osn, 'mengubah', tanggal)
             return redirect('osn:detail-bidang-osn', slug)
         else:
             forms = FormEditLaporanOSN(instance=data)
@@ -193,6 +255,16 @@ def laporan_osn_delete(request, slug, pk):
     data = get_object_or_404(LaporanOSN, bidang_osn__slug=slug, id=pk)
 
     if request.method == "POST":
+        locale.setlocale(locale.LC_ALL, 'id_ID')
+        tanggal = datetime.date.fromisoformat(str(data.tanggal_pembinaan)).strftime('%d %B %Y')
+        UserLog.objects.create(
+                user=request.user.teacher,
+                action_flag="INPUT",
+                app="OSN",
+                message="Berhasil mengubah laporan OSN {} untuk tanggal {}".format(data.bidang_osn, tanggal)
+        )
+            
+        send_whatsapp_laporan_osn(request.user.teacher.no_hp, data.bidang_osn, 'mengubah', tanggal)
         data.delete()
         return redirect('osn:detail-bidang-osn', slug)
 

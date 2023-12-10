@@ -11,6 +11,7 @@ from ekskul.models import Extracurricular, StudentOrganization
 from nilai.forms import NilaiForm, NilaiEditForm
 from nilai.models import Penilaian
 from userlog.models import UserLog
+from dashboard.whatsapp import send_whatsapp_input_anggota
 
 
 # Create your views here.
@@ -71,6 +72,7 @@ def print_to_excel(request):
         app="NILAI",
         message="Berhasil download data nilai semua ekskul/sc dalam format Excel"
     )
+    send_whatsapp_input_anggota(request.user.teacher.no_hp, 'ekskul/SC', 'Nilai', 'nilai', 'download')
 
     return FileResponse(buffer, as_attachment=True, filename='Nilai Ekskul SMA IT Al Binaa.xlsx')
 
@@ -102,6 +104,7 @@ def nilai_input(request, slug):
                     app="NILAI",
                     message="Berhasil menambahkan data nilai ekskul {} atas nama {}".format(ekskul, data.siswa.siswa.nama_siswa)
                 )
+                send_whatsapp_input_anggota(request.user.teacher.no_hp, data.siswa.siswa.nama_siswa, f'Nilai {ekskul}', f'nilai/{ekskul.slug}', 'input')
                 return redirect('nilai:nilai-input', ekskul.slug)
             else:
                 messages.error(request, "Isi data dengan benar!")
@@ -135,6 +138,7 @@ def nilai_edit(request, slug, pk):
                 app="NILAI",
                 message="Berhasil mengubah data nilai ekskul {} atas nama {}".format(ekskul, siswa.siswa.siswa.nama_siswa)
             )
+            send_whatsapp_input_anggota(request.user.teacher.no_hp, siswa.siswa.siswa.nama_siswa, f'Nilai {ekskul}', f'nilai/{ekskul.slug}', 'mengubah')
             return redirect('nilai:nilai-detail', ekskul.slug)
         else:
             forms = NilaiEditForm(instance=siswa)
@@ -166,6 +170,7 @@ def nilai_delete(request, slug, pk):
             app="NILAI",
             message="Berhasil menghapus data nilai ekskul {} atas nama {}".format(ekskul, data.siswa.siswa.nama_siswa)
         )
+        send_whatsapp_input_anggota(request.user.teacher.no_hp, data.siswa.siswa.nama_siswa, f'Nilai {ekskul}', f'nilai/{ekskul.slug}', 'menghapus')
         data.delete()
         return redirect('nilai:nilai-detail', ekskul.slug)
     context = {

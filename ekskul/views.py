@@ -15,6 +15,7 @@ from ekskul.models import Extracurricular, Student, StudentOrganization, Teacher
 from ekskul.forms import InputAnggotaEkskulForm, PembinaEkskulForm, EkskulForm, CustomUserCreationForm, UsernameChangeForm, CustomPasswordChangeForm
 from userlog.models import UserLog
 from nilai.models import Penilaian
+from dashboard.whatsapp import send_whatsapp_input_anggota, send_whatsapp_login
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 
@@ -90,6 +91,7 @@ class InputAnggotaView(LoginRequiredMixin, CreateView):
             app="EKSKUL",
             message=f"Berhasil menambahkan anggota baru ekskul {ekskul}"
         )
+        send_whatsapp_input_anggota(self.request.user.teacher.no_hp, ekskul.nama_ekskul, ekskul.tipe, f'data/{ekskul.slug}', 'input anggota')
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -124,6 +126,7 @@ class DeleteAnggotaView(LoginRequiredMixin, DeleteView):
             app="EKSKUL",
             message=f"Berhasil menghapus anggota baru ekskul {ekskul}"
         )
+        send_whatsapp_input_anggota(self.request.user.teacher.no_hp, ekskul.nama_ekskul, ekskul.tipe, f'data/{ekskul.slug}', 'menghapus anggota')
         return super().form_valid(form)
 
 class UpdateEskkulView(LoginRequiredMixin, UpdateView):
@@ -139,12 +142,14 @@ class UpdateEskkulView(LoginRequiredMixin, UpdateView):
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
+        ekskul = self.get_object()
         UserLog.objects.create(
             user=self.request.user.teacher,
             action_flag="CHANGE",
             app="EKSKUL",
             message=f"Berhasil mengedit data ekskul {self.object}"
         )
+        send_whatsapp_input_anggota(self.request.user.teacher.no_hp, ekskul.nama_ekskul, ekskul.tipe, f'data/{ekskul.slug}', 'mengedit data')
         return super().form_valid(form)
 
 @login_required(login_url='/login/')
@@ -165,7 +170,7 @@ def login_view(request):
         if remember:
             request.session.set_expiry(1209600)
         else:
-            request.session.set_expiry(300)
+            request.session.set_expiry(0)
 
         user = authenticate(request, username=username, password=password)
 
@@ -177,6 +182,7 @@ def login_view(request):
                 app="EKSKUL",
                 message="Berhasil melakukan login ke aplikasi"
             )
+            send_whatsapp_login(request.user.teacher.no_hp, 'login', 'Selamat datang di Aplikasi PMBP')
             return redirect('dashboard')
         else:
             messages.warning(request, "Username atau Password salah!")
@@ -228,6 +234,7 @@ def logout_view(request):
         app="EKSKUL",
         message="Berhasil logout dari aplikasi",
     )
+    send_whatsapp_login(request.user.teacher.no_hp, 'logout', 'Kami sedih anda tinggalkan :(, namun tidak apa-apa, jangan lupa kembali ya')
     logout(request)
     return redirect('app-index')
 
@@ -275,6 +282,7 @@ def edit_username(request):
         forms = UsernameChangeForm(request.POST, instance=request.user)
         if forms.is_valid():
             forms.save()
+            send_whatsapp_input_anggota(request.user.teacher.no_hp, 'anda', 'Profil', 'profil', 'mengubah')
             return redirect('profil')
 
     context = {
@@ -295,6 +303,7 @@ def edit_password(request):
             forms.save()
             user = authenticate(request, username=request.user.username, password=password)
             login(request, user)
+            send_whatsapp_input_anggota(request.user.teacher.no_hp, 'anda', 'Password', 'profil', 'mengubah')
             return redirect('profil')
 
     context = {

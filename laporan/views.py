@@ -4,6 +4,7 @@ import requests
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, reverse
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
@@ -13,8 +14,7 @@ from laporan.models import Report
 from laporan.forms import FormLaporanKehadiran
 from ekskul.models import Extracurricular, StudentOrganization, Teacher
 from userlog.models import UserLog
-
-token = settings.TOKEN
+from dashboard.whatsapp import send_whatsapp_laporan, send_whatsapp_print
 
 class LaporanIndexView(ListView):
     model = Extracurricular
@@ -29,7 +29,7 @@ class LaporanIndexView(ListView):
         else:
             return Extracurricular.objects.all().order_by('tipe', 'nama_ekskul')
 
-class PrintToPDFView(ListView):
+class PrintToPDFView(LoginRequiredMixin, ListView):
     model = Report
     template_name = 'laporan-print.html'
 
@@ -42,12 +42,27 @@ class PrintToPDFView(ListView):
         context['tanggal'] = datetime.datetime.now(timezone.get_default_timezone())
         context['students'] = StudentOrganization.objects.filter(ekskul__slug=self.kwargs.get('slug')).order_by('siswa__kelas', 'siswa__nama_siswa').values_list('siswa__nama_siswa', 'siswa__kelas')
         context['angka'] = [x for x in range(15)]
+        ekskul = get_object_or_404(Extracurricular, slug=self.kwargs.get('slug'))
+        UserLog.objects.create(
+                    user=(self.request.user.teacher or "Anonymous"),
+                    action_flag="ADD",
+                    app="LAPORAN",
+                    message="Berhasil mencetak laporan pertemuan ekskul {}".format(ekskul.nama_ekskul)
+                )
+        send_whatsapp_print(self.request.user.teacher.no_hp, 'mencetak', "ekskul/SC", ekskul.nama_ekskul)
         return context
 
-
+@login_required(login_url='/login/')
 def laporan_ekskul_print_versi2(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
     filtered_report = Report.objects.filter(nama_ekskul__slug=slug).order_by('tanggal_pembinaan')
+    UserLog.objects.create(
+                    user=(request.user.teacher or "Anonymous"),
+                    action_flag="ADD",
+                    app="LAPORAN",
+                    message="Berhasil mencetak laporan pertemuan ekskul {}".format(ekskul.nama_ekskul)
+                )
+    send_whatsapp_print(request.user.teacher.no_hp, 'mencetak', "ekskul/SC", ekskul.nama_ekskul)
     context = {
         'ekskul': ekskul,
         'filtered_report': filtered_report,
@@ -68,6 +83,7 @@ class LaporanEkskulView(ListView):
         context['ekskul'] = Extracurricular.objects.filter(slug=self.kwargs.get('slug'))
         context['bulan_ini'] = timezone.now().__format__("%B %Y")
         return context
+
 
 def laporan_ekskul(request, slug):
     ekskul = get_object_or_404(Extracurricular, slug=slug)
@@ -159,19 +175,7 @@ def laporan_input(request, slug):
                                                                                                             tanggal)
                 )
 
-                phone = request.user.teacher.no_hp
-                message = f'''*[NOTIFIKASI LAPORAN EKSKUL]*
-Anda berhasil input laporan pertemuan ekskul *{ekskul.nama_ekskul}* untuk tanggal *{tanggal}*.
-Detail laporan:
-https://pmbp.smasitalbinaa.com/laporan/{ekskul.slug}
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-                url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-                response = requests.get(url)
-                result = response.text
-                print(result)
-
+                send_whatsapp_laporan(request.user.teacher.no_hp, ekskul, 'menambahkan', tanggal)
                 return redirect('laporan:laporan-input', ekskul.slug)
 
     else:
@@ -207,18 +211,7 @@ def laporan_edit(request, slug, pk):
                                                                                                      tanggal)
             )
 
-            phone = request.user.teacher.no_hp
-            message = f'''*[NOTIFIKASI LAPORAN EKSKUL]*
-Anda berhasil edit laporan pertemuan ekskul *{ekskul.nama_ekskul}* untuk tanggal *{tanggal}*.
-Detail laporan:
-https://pmbp.smasitalbinaa.com/laporan/{ekskul.slug}
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-            url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-            response = requests.get(url)
-            result = response.text
-            print(result)
+            send_whatsapp_laporan(request.user.teacher.no_hp, ekskul, 'edit', tanggal)
             return redirect('laporan:laporan-ekskul', ekskul.slug)
         else:
             messages.error(request, "Mohon input data dengan benar!")
@@ -253,18 +246,7 @@ def laporan_delete(request, slug, pk):
                                                                                                   tanggal)
         )
 
-        phone = request.user.teacher.no_hp
-        message = f'''*[NOTIFIKASI LAPORAN EKSKUL]*
-Anda berhasil hapus laporan pertemuan ekskul *{ekskul.nama_ekskul}* untuk tanggal *{tanggal}*.
-Detail laporan:
-https://pmbp.smasitalbinaa.com/laporan/{ekskul.slug}
-
-_Ini adalah pesan otomatis, jangan dibalas._'''
-        url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-
-        response = requests.get(url)
-        result = response.text
-        print(result)
+        send_whatsapp_laporan(request.user.teacher.no_hp, ekskul, 'menghapus', tanggal)
 
         laporan.delete()
         return redirect('laporan:laporan-ekskul', ekskul.slug)
