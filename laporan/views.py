@@ -29,9 +29,34 @@ class LaporanIndexView(ListView):
         else:
             return Extracurricular.objects.all().order_by('tipe', 'nama_ekskul')
 
-class PrintToPDFView(LoginRequiredMixin, ListView):
+class PrintToPDFView(ListView):
+    model = Report
+    template_name = 'laporan-pdf.html'
+
+    def get_queryset(self):
+        return Report.objects.filter(nama_ekskul__slug=self.kwargs.get('slug'), tanggal_pembinaan__month=datetime.date.today().month-1).order_by('tanggal_pembinaan')
+
+    def get_context_data(self, **kwargs):
+        context = super(PrintToPDFView, self).get_context_data(**kwargs)
+        locale.setlocale(locale.LC_ALL, 'id_ID')
+        context['tanggal'] = datetime.datetime.now(timezone.get_default_timezone())
+        context['students'] = StudentOrganization.objects.filter(ekskul__slug=self.kwargs.get('slug')).order_by('siswa__kelas', 'siswa__nama_siswa').values_list('siswa__nama_siswa', 'siswa__kelas')
+        context['angka'] = [x for x in range(15)]
+        ekskul = get_object_or_404(Extracurricular, slug=self.kwargs.get('slug'))
+        if self.request.user.is_authenticated:
+            UserLog.objects.create(
+                        user=(self.request.user.teacher or "Anonymous"),
+                        action_flag="ADD",
+                        app="LAPORAN",
+                        message="Berhasil mencetak laporan pertemuan ekskul {}".format(ekskul.nama_ekskul)
+                    )
+            send_whatsapp_print(self.request.user.teacher.no_hp, 'mencetak', "ekskul/SC", ekskul.nama_ekskul)
+        return context
+    
+class PrintToPrintView(LoginRequiredMixin, ListView):
     model = Report
     template_name = 'laporan-print.html'
+    login_url = '/login/'
 
     def get_queryset(self):
         return Report.objects.filter(nama_ekskul__slug=self.kwargs.get('slug'), tanggal_pembinaan__month=datetime.date.today().month-1).order_by('tanggal_pembinaan')
@@ -44,11 +69,11 @@ class PrintToPDFView(LoginRequiredMixin, ListView):
         context['angka'] = [x for x in range(15)]
         ekskul = get_object_or_404(Extracurricular, slug=self.kwargs.get('slug'))
         UserLog.objects.create(
-                    user=(self.request.user.teacher or "Anonymous"),
-                    action_flag="ADD",
-                    app="LAPORAN",
-                    message="Berhasil mencetak laporan pertemuan ekskul {}".format(ekskul.nama_ekskul)
-                )
+                        user=(self.request.user.teacher),
+                        action_flag="ADD",
+                        app="LAPORAN",
+                        message="Berhasil mencetak laporan pertemuan ekskul {}".format(ekskul.nama_ekskul)
+        )
         send_whatsapp_print(self.request.user.teacher.no_hp, 'mencetak', "ekskul/SC", ekskul.nama_ekskul)
         return context
 

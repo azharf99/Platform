@@ -4,12 +4,12 @@ from laporan.models import Report
 class FormLaporanKehadiran(forms.ModelForm):
     class Meta:
         model = Report
-        fields = '__all__'
+        fields = ['nama_ekskul', 'pembina_ekskul', 'tanggal_pembinaan', 'kehadiran_santri', 'foto', 'catatan_pembinaan'] 
         widgets = {
             'nama_ekskul': forms.Select(attrs={'class': 'form-select'}),
             'pembina_ekskul': forms.Select(attrs={'class': 'form-select'}),
             'tanggal_pembinaan': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'catatan_pembinaan': forms.Textarea(attrs={'class': 'form-control'}),
+            'catatan_pembinaan': forms.TextInput(attrs={'class': 'form-control'}),
             'kehadiran_santri': forms.SelectMultiple(attrs={'class': 'form-select'}),
         }
 

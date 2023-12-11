@@ -55,19 +55,21 @@
                         class="btn btn-sm btn-danger m-1"
                         >Input Kehadiran</a
                       >
+                      <a id="saveAsPdfBtn" href="https://www.sejda.com/html-to-pdf?save-link=https://pmbp.smasitalbinaa.com{% url 'laporan:laporan-pdf' data.slug %}&pageSize=A4&delay=5&pageOrientation=portrait&pageMargin=50px" class="btn btn-sm btn-success">Save as PDF</a>
                       <a
-                        href="{% url 'laporan:laporan-print' data.slug %}"
-                        class="btn btn-sm btn-success m-1"
-                        >Print Laporan</a
+                      href="{% url 'laporan:laporan-print' data.slug %}"
+                      class="btn btn-sm btn-success m-1"
+                      >Print Laporan</a
                       >
                       {% endif %}
-                      {% endfor %}
-                      {% else %}
+                    {% endfor %}
+                  {% else %}
                       <a
-                        href="{% url 'laporan:laporan-input' data.slug %}"
-                        class="btn btn-sm btn-danger m-1"
-                        >Input Kehadiran</a
+                      href="{% url 'laporan:laporan-input' data.slug %}"
+                      class="btn btn-sm btn-danger m-1"
+                      >Input Kehadiran</a
                       >
+                      <a id="saveAsPdfBtn" href="https://www.sejda.com/html-to-pdf?save-link=https://pmbp.smasitalbinaa.com{% url 'laporan:laporan-pdf' data.slug %}&pageSize=A4&delay=5$pageOrientation=portrait&pageMargin=50px" class="btn btn-sm btn-success">Save as PDF</a>
                       <a
                         href="{% url 'laporan:laporan-print' data.slug %}"
                         class="btn btn-sm btn-success m-1"
@@ -90,5 +92,20 @@
     </div>
   </section>
 </main>
+
+
+<script>
+
+  data = document.getElementById('saveAsPdfBtn')
+document.getElementById('saveAsPdfBtn').addEventListener('click', function(e){
+  // var pageUrl = encodeURIComponent(data.href);
+  // console.log(pageUrl)
+
+  // var opts = ['save-link=' + pageUrl, 'pageOrientation=auto'];
+  // window.open('https://www.sejda.com/html-to-pdf?' + opts.join('&'));
+  window.open(pageUrl)
+  e.preventDefault();
+});
+</script>
 
 {% endblock %}

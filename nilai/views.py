@@ -48,7 +48,7 @@ def nilai_kelas_view(request):
     context = {
         'nilai': nilai,
     }
-    return render(request, 'nilai-berdasarkan-kelas.html', context)
+    return render(request, 'new_nilai-list.html', context)
 
 @login_required(login_url='/login/')
 def print_to_excel(request):

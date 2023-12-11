@@ -16,9 +16,8 @@ class FormInputBidang(forms.ModelForm):
 class FormInputSiswa(forms.ModelForm):
     class Meta:
         model = SiswaOSN
-        fields = '__all__'
+        fields = ['nama_siswa']
         widgets = {
-            'bidang_osn': forms.Select(attrs={'class': 'form-select'}),
             'nama_siswa': forms.Select(attrs={'class': 'form-select'}),
         }
 
@@ -26,10 +25,8 @@ class FormInputSiswa(forms.ModelForm):
 class FormInputLaporanOSN(forms.ModelForm):
     class Meta:
         model = LaporanOSN
-        fields = '__all__'
+        fields = ['tanggal_pembinaan', 'kehadiran_santri', 'foto_bimbingan', 'materi_pembinaan']
         widgets = {
-            'pembimbing_osn': forms.Select(attrs={'class': 'form-select'}),
-            'bidang_osn': forms.Select(attrs={'class': 'form-select'}),
             'tanggal_pembinaan': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'kehadiran_santri': forms.SelectMultiple(attrs={'class': 'form-select'}),
             'foto_bimbingan': forms.FileInput(attrs={'class': 'form-control'}),
@@ -40,11 +37,9 @@ class FormInputLaporanOSN(forms.ModelForm):
 class FormEditLaporanOSN(forms.ModelForm):
     class Meta:
         model = LaporanOSN
-        fields = '__all__'
+        fields = ['tanggal_pembinaan', 'kehadiran_santri', 'foto_bimbingan', 'materi_pembinaan']
         widgets = {
-            'pembimbing_osn': forms.Select(attrs={'class': 'form-select'}),
-            'bidang_osn': forms.Select(attrs={'class': 'form-select'}),
-            'tanggal_pembinaan': forms.DateInput(attrs={'class': 'form-control'}),
+            'tanggal_pembinaan': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'kehadiran_santri': forms.SelectMultiple(attrs={'class': 'form-select'}),
             'materi_pembinaan': forms.Textarea(attrs={'class': 'form-control'}),
         }

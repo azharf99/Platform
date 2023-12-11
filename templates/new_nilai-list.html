@@ -1,0 +1,66 @@
+{% extends 'new_base.html' %}
+{% block content %}
+{% load static %}
+{% include 'new_navbar.html'%}
+{% include 'new_sidebar.html'%}
+
+<main id="main" class="main">
+    <section class="section dashboard">
+        <div class="card recent-sales overflow-auto">
+            <div class="card-body">
+              <h1 class="card-title m-0 py-3 text-center">Nilai Ekstrakurikuler/<em>Study Club</em></h1>
+              <h2 class="card-title m-0 p-0 text-center">SMA IT Al Binaa</h2>
+              <div class="text-center">
+                <a href="{% url 'nilai:nilai-index' %}" class="btn btn-sm btn-warning"><i class="bi bi-eye"></i> Lihat Nilai per Ekskul</a>
+                <a href="{% url 'nilai:print-to-excel' %}" class="btn btn-sm btn-success"><i class="bi bi-arrow-down-square"></i> Download Excel</a>
+                <a class="m-3 btn btn-sm btn-danger" href="{% url 'dashboard' %}"><i class="bi bi-arrow-return-left"></i> Dashboard</a>
+              </div>
+                <nav>
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Home</a></li>
+                      <li class="breadcrumb-item">Ekstrakurikuler</li>
+                      <li class="breadcrumb-item active">Nilai Santri Ekskul/SC</li>
+                    </ol>
+                </nav>
+        
+            <table class="table table-hover datatables" id="daftar-siswa-ekskul">
+                <thead>
+                    <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">Ekskul</th>
+                        <th scope="col">Nama Santri</th>
+                        <th scope="col">Kelas</th>
+                        <th scope="col">Nilai</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if nilai %}
+                        {% for data in nilai %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ data.siswa.ekskul.nama_ekskul }}</td>
+                                <td>{{ data.siswa.siswa.nama_siswa }}</td>
+                                <td>{{ data.siswa.siswa.get_kelas_display }}</td>
+                                <td>{{ data.nilai }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center fw-bold text-danger">Maaf, belum ada data nilai :(</td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+            </table>
+            </div>
+            </div>
+      </section>
+
+</main>
+    
+<script type="module">
+    const dataTable = new simpleDatatables.DataTable("#daftar-siswa-ekskul", {
+            searchable: true,
+            fixedHeight: true,
+        });
+  </script>
+{% endblock %}

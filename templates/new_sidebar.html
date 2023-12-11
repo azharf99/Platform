@@ -70,6 +70,11 @@
             </a>
           </li>
           <li>
+            <a id="saveAsPdfBtn" href="https://www.sejda.com/html-to-pdf?save-link=https://pmbp.smasitalbinaa.com{% url 'laporan:laporan-pdf' data.slug %}&pageSize=A4&delay=5&pageOrientation=portrait&pageMargin=50px">
+              <i class="bi bi-circle"></i><span>Export to PDF</span>
+            </a>
+          </li>
+          <li>
             <a href="{% url 'laporan:laporan-print' data.slug %}">
               <i class="bi bi-circle"></i><span>Cetak Laporan {{data.nama_ekskul}}</span>
             </a>

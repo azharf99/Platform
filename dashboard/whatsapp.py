@@ -16,7 +16,7 @@ def send_whatsapp_login(phone, aksi, welcome):
     message = f'''*[NOTIFIKASI]*
 Anda berhasil {aksi}.
 {welcome}. Jika ada yang ditanyakan terkait aplikasi, silahkan hubungi:
-https://wa.me/+6285701570100
+https://wa.me/6285701570100
 
 _Ini adalah pesan otomatis, jangan dibalas._'''
     url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"

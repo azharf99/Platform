@@ -133,20 +133,23 @@ def siswa_osn_input(request, slug):
     if request.method == "POST":
         nama_siswa_id = request.POST.get('nama_siswa')
         forms = FormInputSiswa(request.POST)
-        if SiswaOSN.objects.filter(nama_siswa_id=nama_siswa_id, bidang_osn__slug=slug).exists():
+        if SiswaOSN.objects.filter(nama_siswa_id=nama_siswa_id).exists():
             forms = FormInputSiswa(request.POST)
-            messages.error(request, "Siswa sudah ada di data. Slahkan pilih yang lain")
+            messages.error(request, f"Siswa sudah ada di data di bidang OSN {slug} atau bidang lain. Slahkan pilih yang lain")
         elif forms.is_valid():
+            bidang = get_object_or_404(BidangOSN, slug=slug)
+            forms.instance.bidang_osn = bidang
             forms.save()
-            data = SiswaOSN.objects.filter(nama_siswa_id=nama_siswa_id, bidang_osn__slug=slug)
+            messages.success(request, "Data berhasil disimpan!")
+            data = get_object_or_404(SiswaOSN, nama_siswa_id=nama_siswa_id)
             UserLog.objects.create(
                 user=request.user.teacher,
                 action_flag="INPUT",
                 app="OSN",
                 message="Berhasil menambahkan siswa {} ke bidang OSN {}".format(data.nama_siswa, data.bidang_osn)
             )
-            send_whatsapp_input_anggota(request.user.teacher.no_hp, data.bidang_osn, 'bidang OSN', 'osn', f'menambahkan siswa {data.nama_siswa} ke')
-            return redirect('osn:detail-bidang-osn', slug)
+            send_whatsapp_input_anggota(request.user.teacher.no_hp, data.bidang_osn, 'siswa OSN', 'osn', f'menambahkan siswa {data.nama_siswa} ke')
+            return redirect('osn:siswa-osn-input', slug)
         else:
             forms = FormInputSiswa(request.POST)
             messages.error(request, "Yang kamu isi ada yang salah. Mohon cek ulang.")
@@ -189,18 +192,22 @@ def laporan_osn_input(request, slug):
     if request.method == "POST":
         forms = FormInputLaporanOSN(request.POST, request.FILES)
         if forms.is_valid():
+            bidang = get_object_or_404(BidangOSN, slug=slug)
+            forms.instance.pembimbing_osn = bidang.pembimbing
+            forms.instance.bidang_osn = bidang
             forms.save()
+            messages.success(request, "Data berhasil disimpan!")
             locale.setlocale(locale.LC_ALL, 'id_ID')
             tanggal = datetime.date.fromisoformat(str(tanggal_pembinaan)).strftime('%d %B %Y')
             UserLog.objects.create(
                 user=request.user.teacher,
                 action_flag="INPUT",
                 app="OSN",
-                message="Berhasil menambahkan laporan OSN {} untuk tanggal {}".format(siswa_osn.bidang_osn, tanggal)
+                message="Berhasil menambahkan laporan OSN {} untuk tanggal {}".format(bidang.nama_bidang, tanggal)
             )
             
-            send_whatsapp_laporan_osn(request.user.teacher.no_hp, siswa_osn.bidang_osn, 'input', tanggal)
-            return redirect('osn:detail-bidang-osn', slug)
+            send_whatsapp_laporan_osn(request.user.teacher.no_hp, bidang, 'input', tanggal)
+            return redirect('osn:laporan-osn-input', slug)
         else:
             forms = FormInputLaporanOSN(request.POST, request.FILES)
             messages.error(request, "Yang kamu isi ada yang salah. Mohon cek ulang.")
@@ -222,7 +229,7 @@ def laporan_osn_edit(request, slug, pk):
     data = get_object_or_404(LaporanOSN, bidang_osn__slug=slug, id=pk)
 
     if request.method == "POST":
-        forms = FormEditLaporanOSN(request.POST, request.FILES, instance=data)
+        forms = FormInputLaporanOSN(request.POST, request.FILES, instance=data)
         if forms.is_valid():
             forms.save()
             locale.setlocale(locale.LC_ALL, 'id_ID')
@@ -237,10 +244,10 @@ def laporan_osn_edit(request, slug, pk):
             send_whatsapp_laporan_osn(request.user.teacher.no_hp, data.bidang_osn, 'mengubah', tanggal)
             return redirect('osn:detail-bidang-osn', slug)
         else:
-            forms = FormEditLaporanOSN(instance=data)
+            forms = FormInputLaporanOSN(instance=data)
             messages.error(request, "Yang kamu isi ada yang salah. Mohon cek ulang.")
     else:
-        forms = FormEditLaporanOSN(instance=data)
+        forms = FormInputLaporanOSN(instance=data)
     context = {
         'forms': forms,
         'slug': slug,
@@ -261,10 +268,10 @@ def laporan_osn_delete(request, slug, pk):
                 user=request.user.teacher,
                 action_flag="INPUT",
                 app="OSN",
-                message="Berhasil mengubah laporan OSN {} untuk tanggal {}".format(data.bidang_osn, tanggal)
+                message="Berhasil menghapus laporan OSN {} untuk tanggal {}".format(data.bidang_osn, tanggal)
         )
             
-        send_whatsapp_laporan_osn(request.user.teacher.no_hp, data.bidang_osn, 'mengubah', tanggal)
+        send_whatsapp_laporan_osn(request.user.teacher.no_hp, data.bidang_osn, 'menghapus', tanggal)
         data.delete()
         return redirect('osn:detail-bidang-osn', slug)
 
@@ -279,8 +286,14 @@ def cetak_laporan_osnk(request, slug):
     tanggal = datetime.datetime.now(pytz.timezone('Asia/Jakarta'))
     data = get_object_or_404(BidangOSN, slug=slug)
     data_siswa = SiswaOSN.objects.filter(bidang_osn__slug=slug).order_by('nama_siswa__kelas', 'nama_siswa__nama')
-    data_laporan = LaporanOSN.objects.filter(bidang_osn__nama_bidang=data.nama_bidang).filter(tanggal_pembinaan__lt="2023-04-07").order_by('tanggal_pembinaan')
+    data_laporan = LaporanOSN.objects.filter(bidang_osn__nama_bidang=data.nama_bidang).filter(tanggal_pembinaan__lt="2024-03-03").order_by('tanggal_pembinaan')
     # angka = [x for x in range(15)]
+    UserLog.objects.create(
+                user="Seseorang",
+                action_flag="CETAK",
+                app="OSN",
+                message="Berhasil mencetak laporan OSN-K {}".format(data.bidang_osn)
+    )
     context = {
         # 'angka': angka,
         'level': "KABUPATEN",
@@ -297,8 +310,14 @@ def cetak_laporan_osnp(request, slug):
     tanggal = datetime.datetime.now(pytz.timezone('Asia/Jakarta'))
     data = get_object_or_404(BidangOSN, slug=slug)
     data_siswa = SiswaOSN.objects.filter(bidang_osn__slug=slug).order_by('nama_siswa__kelas', 'nama_siswa__nama')
-    data_laporan = LaporanOSN.objects.filter(bidang_osn__nama_bidang=data.nama_bidang).filter(tanggal_pembinaan__gt="2023-04-06").filter(tanggal_pembinaan__lt="2023-06-09").order_by('tanggal_pembinaan')
+    data_laporan = LaporanOSN.objects.filter(bidang_osn__nama_bidang=data.nama_bidang).filter(tanggal_pembinaan__gt="2024-03-03").filter(tanggal_pembinaan__lt="2023-06-09").order_by('tanggal_pembinaan')
     # angka = [x for x in range(15)]
+    UserLog.objects.create(
+                user="Seseorang",
+                action_flag="CETAK",
+                app="OSN",
+                message="Berhasil mencetak laporan OSN-P {}".format(data.bidang_osn)
+    )
     context = {
         'level': "PROVINSI",
         'tag': "OSN-P",
